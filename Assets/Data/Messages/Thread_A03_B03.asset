@@ -1,0 +1,465 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba43a3695d827fc4f890db78ebd1a1ff, type: 3}
+  m_Name: Thread_A03_B03
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ThreadData
+  id: 8b2c6a3b7cc94999a15e057073153946
+  groupTitle: 
+  participants:
+  - {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+  - {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+  devices:
+  - device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+    evidenceRef: A03
+    source: 0
+    serviceKey: service.sms
+    availableFrom: 0
+    muted: 0
+    unreadCount: 0
+    integrityKey: integrity.original
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    evidenceRef: B03
+    source: 0
+    serviceKey: service.sms
+    availableFrom: 1
+    muted: 1
+    unreadCount: 0
+    integrityKey: integrity.original
+  segments:
+  - id: 5474fc54415a4c78bf628516e124bd8e
+    authorNote: "\uC57D 3\uC8FC \uC804"
+    evidenceRefs: []
+    messages:
+    - id: 5f338b0a6a424225850a0e78ed64eb6b
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -21
+        hour: 22
+        minute: 4
+      sortKey: 0
+      body: "\uD560 \uB9D0 \uC788\uB294\uB370"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 57d79eafd3c74614a87fce23efe24a7c
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -21
+        hour: 22
+        minute: 11
+      sortKey: 0
+      body: "\uBB54\uB370"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: eb320ff2978d42c0872e4c9927710115
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -21
+        hour: 22
+        minute: 12
+      sortKey: 0
+      body: "\uBA87 \uAC1C\uB9CC \uBB3C\uC5B4\uBCF4\uB824\uACE0\n\uB2F5 \uC880 \uD574\uC918"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: b57ce5fed7874e7e81b7f833ba36cdb9
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -21
+        hour: 22
+        minute: 30
+      sortKey: 0
+      body: "\uBB58 \uBB3C\uC5B4\uBD10"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: e3f8452687f040d59db340cb35ed6c1d
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -21
+        hour: 22
+        minute: 31
+      sortKey: 0
+      body: "\uC5EC\uAE30\uC11C \uB9D0\uD558\uAE34 \uC880 \uADF8\uB798"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+  - id: b971680147864c2983a44f5cba5eafa1
+    authorNote: "\uC57D 2\uC8FC \uBC18 \uC804"
+    evidenceRefs: []
+    messages:
+    - id: 7cd5d8aac3774c808c3ad792b57f1921
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -18
+        hour: 23
+        minute: 40
+      sortKey: 0
+      body: "\uB108 \uC9C4\uC9DC \uACC4\uC18D \uBAA8\uB974\uB294 \uCC99\uD560 \uAC70\uC57C?"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 3f3cb9038ecc4acbb4101f414b2b0264
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -18
+        hour: 23
+        minute: 52
+      sortKey: 0
+      body: "\uAC11\uC790\uAE30 \uBB54 \uC18C\uB9AC\uC57C"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 3225f2f8057b4ba9aad0baa6ee2706b2
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -18
+        hour: 23
+        minute: 53
+      sortKey: 0
+      body: "\uBB54 \uC18C\uB9B0\uC9C0 \uC54C\uC796\uC544"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 67fc76527e054c119ff072551ce81d1d
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -18
+        hour: 23
+        minute: 58
+      sortKey: 0
+      body: "\uBAB0\uB77C\n\uADF8\uB9AC\uACE0 \uB098\uD55C\uD14C \uADF8\uB9CC \uC5F0\uB77D\uD574"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+  - id: 10540bb4cddf42eca53e79e863620b43
+    authorNote: "\uC57D 2\uC8FC \uC804"
+    evidenceRefs: []
+    messages:
+    - id: 3d4605f60fc74d0cb1c474583c13d8d0
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -14
+        hour: 21
+        minute: 18
+      sortKey: 0
+      body: "\uC9C0\uC6B4\uB2E4\uACE0 \uB05D\uB098\uB294 \uAC70 \uC544\uB2C8\uC57C"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: b406f52451ce47b3bb2590e8ab3dd1c2
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -14
+        hour: 21
+        minute: 19
+      sortKey: 0
+      body: "\uBB58 \uC9C0\uC6E0\uB2E4\uB294 \uAC74\uB370"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 33223f94050e4b7a9e38a0581296baa2
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -14
+        hour: 21
+        minute: 20
+      sortKey: 0
+      body: "\uB410\uC5B4"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: d06e40cdb9a340b3bd02fc33d9129a7f
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -14
+        hour: 21
+        minute: 23
+      sortKey: 0
+      body: "\uB108 \uC694\uC998 \uACC4\uC18D \uC65C \uC774\uB798\n\uC9C4\uC9DC \uACC4\uC18D \uC774\uB7EC\uBA74 \uC2E0\uACE0\uD560 \uAC70\uC57C"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+  - id: 1c3699c01d774104b3521f80c12258c2
+    authorNote: "\uC57D 10\uC77C \uC804"
+    evidenceRefs: []
+    messages:
+    - id: 6df8002851754ece8607ad46b76d2928
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -10
+        hour: 18
+        minute: 42
+      sortKey: 0
+      body: "\uC7A0\uAE50 \uB9CC\uB098\uC11C \uC598\uAE30\uD558\uC790"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 6da1179d6e774fca9d2b4fe562df8025
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -10
+        hour: 18
+        minute: 45
+      sortKey: 0
+      body: "\uC2EB\uC5B4"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 278d9c0584df4ce092c7eb3aa8ef8157
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -10
+        hour: 18
+        minute: 46
+      sortKey: 0
+      body: "\uADF8\uB7FC \uC5B8\uC81C\uAE4C\uC9C0 \uD53C\uD560 \uAC74\uB370"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 6279ef966e6240dda4a41af59354750b
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -10
+        hour: 18
+        minute: 50
+      sortKey: 0
+      body: "\uB0B4\uAC00 \uC65C \uB108\uB97C \uB9CC\uB098\uC57C \uB418\uB294\uB370\n\uADF8\uB9CC \uC880 \uB530\uB77C\uB2E4\uB140"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+  - id: 80cb98f4eccd49f795f49e42b6c490b7
+    authorNote: "\uC57D 1\uC8FC \uC804"
+    evidenceRefs: []
+    messages:
+    - id: 1010b481e3574c9888cd339f51f5fe22
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -7
+        hour: 23
+        minute: 21
+      sortKey: 0
+      body: "\uC774\uBC88\uC5D4 \uADF8\uB0E5 \uC548 \uB118\uC5B4\uAC00"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 501f8bea59ed4e6ea427f7ab3c3986d1
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -7
+        hour: 23
+        minute: 26
+      sortKey: 0
+      body: "\uC9C4\uC9DC \uBB34\uC2A8 \uB9D0 \uD558\uB294\uC9C0\uB3C4 \uBAA8\uB974\uACA0\uACE0\n\uC5F0\uB77D\uD558\uC9C0 \uB9C8"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: aab421a5c825457191f03175c5fdd69b
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -7
+        hour: 23
+        minute: 27
+      sortKey: 0
+      body: "\uADF8\uB798 \uACC4\uC18D \uADF8\uB807\uAC8C \uD574"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+  - id: 087f0786e0f24ec5a133a37dbb50653e
+    authorNote: "\uC0AC\uAC74 2~3\uC77C \uC804"
+    evidenceRefs: []
+    messages:
+    - id: f44a0b5f33e94a458aa4ba0b596307a4
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -2
+        hour: 22
+        minute: 47
+      sortKey: 0
+      body: "\uAC70\uC758 \uB2E4 \uD655\uC778\uD588\uC5B4"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 29df94d2ced0488ebb7a4c03ee578cea
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -2
+        hour: 22
+        minute: 58
+      sortKey: 0
+      body: "\uBB58"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 2f7119679fd94c068f1d314f550ef17f
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -2
+        hour: 22
+        minute: 59
+      sortKey: 0
+      body: "\uB410\uC5B4\n\uACE7 \uC54C\uAC8C \uB420 \uAC70\uC57C"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 7d43dc8156f54cc58a243ccc0320520a
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -2
+        hour: 23
+        minute: 6
+      sortKey: 0
+      body: "\uB108 \uC9C4\uC9DC \uBB34\uC11C\uC6B4 \uAC70 \uC54C\uC544?"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+  - id: 4f45ab8b60d64b1884139d42d6f84ffa
+    authorNote: "\uC0AC\uAC74 \uB2F9\uC77C \u2014 \uCCA8\uBD80 \uCEA1\uCC98 \uB0B4\uC6A9\xB7\uC7A5\uC18C\uBA85 \uBBF8\uD655\uC815"
+    evidenceRefs:
+    - device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+      evidenceRef: A12
+    - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+      evidenceRef: B15
+    messages:
+    - id: 9abd9651069d4a499bc6352182441ce9
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 7
+      sortKey: 0
+      body: "\uCC3E\uC558\uB2E4"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: e4fb33d84c264b86a820795b3822a91d
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 9
+      sortKey: 0
+      body: "\uBB58 \uCC3E\uC558\uB294\uB370"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: edd3a3ebf92b438cb83983834b6d5a33
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 10
+      sortKey: 0
+      body: 
+      attachment: 1
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 8caf4883778d4b45889486fe8f6b4abb
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 10
+      sortKey: 1
+      body: "\uC774\uAC70 \uBCF4\uACE0\uB3C4 \uC544\uB2C8\uB77C\uACE0 \uD560 \uAC70\uC57C?"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 775f8a80528c48eaadb49eec62ed5692
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 13
+      sortKey: 0
+      body: "\uADF8\uAC70 \uC5B4\uB514\uC11C \uBD24\uC5B4"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: ac0cfd1bc4ee4eacab4d17a626aabb4b
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 14
+      sortKey: 0
+      body: "\uC9C1\uC811 \uC640\uC11C \uBD10"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: fd9d47d27a8b4ad898073630b38208e1
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 16
+      sortKey: 0
+      body: "\uC5B4\uB514"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 22c0c4d263e448f5b897ed20acf04a81
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 17
+      sortKey: 0
+      body: 
+      attachment: 2
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 04b14243ca7145e3a5909b2a9c21ef6f
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 19
+      sortKey: 0
+      body: "\uAC70\uAE38 \uC65C \uAC00"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 4a624861dea14357b870297f6f198903
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 20
+      sortKey: 0
+      body: "\uC5EC\uAE30\uC11C \uC598\uAE30\uD558\uC790\n\uC62C \uAC70\uBA74 \uC640"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: f31df3c59d534c339a85195ce4942548
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 26
+      sortKey: 0
+      body: "\u2026"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: b4136f6ebb3a4470b94c40945b616511
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: 0
+        hour: 20
+        minute: 31
+      sortKey: 0
+      body: "\uC54C\uACA0\uC5B4"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 

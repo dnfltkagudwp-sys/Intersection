@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98b730884cb3ea64b8d056ace80ce622, type: 3}
+  m_Name: Case_B
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.CaseData
+  id: f9c52c892fa14518a1a813b641e795e6
+  order: 1
+  owner: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+  displayNameOverride: 
+  availableFrom: 1
+  unsavedContactLabel: "\uBAA8\uB974\uB294 \uBC88\uD638"
+  contacts: []
+  localIndexedFrom: 1

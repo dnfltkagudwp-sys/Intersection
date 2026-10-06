@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1c876e6c429258479ae73935eb13654, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.GameConfig
+  caseYear: 2025
+  caseMonth: 11
+  caseDay: 14
+  cultureName: ko-KR
+  startStage: 0
+  separatorGapMinutes: 60
+  statusClock: 0
+  fixedClockHour: 9
+  fixedClockMinute: 41
+  database: {fileID: 11400000, guid: ef0f9d2758815d947b4921f14106f2b2, type: 2}
+  strings: {fileID: 11400000, guid: e16885164257c8e4f95303bd5ea2b792, type: 2}
+  theme: {fileID: 11400000, guid: 380a8ce4b92417d41a8878f421dd501e, type: 2}
+  apps: {fileID: 11400000, guid: 029e9cdfd14a4544f8f57a63189daff3, type: 2}

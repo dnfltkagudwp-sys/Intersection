@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea63b9d8ba7b8134ab9a3e33407f676b, type: 3}
+  m_Name: Apps
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.AppRegistry
+  apps:
+  - kind: 0
+    nameKey: app.messages
+    order: 0
+    icon: {fileID: 0}
+    implemented: 1
+  - kind: 1
+    nameKey: app.photos
+    order: 1
+    icon: {fileID: 0}
+    implemented: 0
+  - kind: 2
+    nameKey: app.browser
+    order: 2
+    icon: {fileID: 0}
+    implemented: 0
+  - kind: 3
+    nameKey: app.maps
+    order: 3
+    icon: {fileID: 0}
+    implemented: 0
+  - kind: 4
+    nameKey: app.files
+    order: 4
+    icon: {fileID: 0}
+    implemented: 0

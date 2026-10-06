@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b81a1252579f2db4188d06be40648f75, type: 3}
+  m_Name: Theme
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.UITheme
+  regularFont: {fileID: 11400000, guid: 0a28f84cc5929984d8c478c4456fc47b, type: 2}
+  mediumFont: {fileID: 11400000, guid: faa19084ec91dae42b4e8e6e26a253cd, type: 2}
+  boldFont: {fileID: 11400000, guid: 573fbc1e4f4a4e94aab86bae3bc1c8af, type: 2}
+  monoFont: {fileID: 11400000, guid: c872614c23dfde24381b9fe2d6337307, type: 2}
+  roundedSprite: {fileID: 21300000, guid: b1998f62f4cc4154b86872842dfc8d1b, type: 3}
+  circleSprite: {fileID: 21300000, guid: 417ceaf3c2b71e340b1b95950658bf0e, type: 3}
+  avatarSprite: {fileID: 21300000, guid: b19c366e06416aa42a3f1241f1efa24e, type: 3}
+  mutedIcon: {fileID: 0}
+  background: {r: 0.07058824, g: 0.08627451, b: 0.105882354, a: 1}
+  panel: {r: 0.09019608, g: 0.10980392, b: 0.13333334, a: 1}
+  panelRaised: {r: 0.11764706, g: 0.14509805, b: 0.1764706, a: 1}
+  border: {r: 0.16470589, g: 0.19607843, b: 0.23529412, a: 1}
+  text: {r: 0.89411765, g: 0.9098039, b: 0.9254902, a: 1}
+  subText: {r: 0.54901963, g: 0.5882353, b: 0.6313726, a: 1}
+  accent: {r: 0.49019608, g: 0.7137255, b: 0.7764706, a: 1}
+  accentSoft: {r: 0.12156863, g: 0.20784314, b: 0.2509804, a: 1}
+  stage: {r: 0.050980393, g: 0.0627451, b: 0.078431375, a: 1}
+  phoneFrame: {r: 0.16862746, g: 0.1882353, b: 0.21176471, a: 1}
+  phoneScreen: {r: 0, g: 0, b: 0, a: 1}
+  phoneText: {r: 1, g: 1, b: 1, a: 1}
+  phoneSubText: {r: 0.5568628, g: 0.5568628, b: 0.5764706, a: 1}
+  phoneSeparator: {r: 0.17254902, g: 0.17254902, b: 0.18039216, a: 1}
+  phoneAccent: {r: 0.039215688, g: 0.5176471, b: 1, a: 1}
+  phoneField: {r: 0.10980392, g: 0.10980392, b: 0.11764706, a: 1}
+  bubbleOutgoing: {r: 0.1882353, g: 0.81960785, b: 0.34509805, a: 1}
+  bubbleOutgoingText: {r: 1, g: 1, b: 1, a: 1}
+  bubbleIncoming: {r: 0.14901961, g: 0.14901961, b: 0.16470589, a: 1}
+  bubbleIncomingText: {r: 1, g: 1, b: 1, a: 1}
+  attachmentPlaceholder: {r: 0.22745098, g: 0.22745098, b: 0.23529412, a: 1}
+  unreadDot: {r: 0.039215688, g: 0.5176471, b: 1, a: 1}
+  phoneTitleSize: 32
+  phoneRowTitleSize: 18
+  phoneRowPreviewSize: 16
+  phoneMetaSize: 14
+  bubbleTextSize: 19
+  bubbleTimeSize: 12
+  bubbleMaxWidthRatio: 0.72
+  bubblePadding: {x: 14, y: 9}
+  imageAttachmentSize: {x: 190, y: 140}
+  locationAttachmentSize: {x: 210, y: 120}
+  bubbleGroupGap: 3
+  bubbleSenderGap: 12
+  backGlyph: "\u2039"
+  chevronGlyph: "\u203A"
+  attachGlyph: +

@@ -1,0 +1,162 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba43a3695d827fc4f890db78ebd1a1ff, type: 3}
+  m_Name: Thread_A04_C
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ThreadData
+  id: e7ff801140884941a9f3ac0fc5a62ad4
+  groupTitle: 
+  participants:
+  - {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+  - {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+  devices:
+  - device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+    evidenceRef: A04
+    source: 0
+    serviceKey: service.sms
+    availableFrom: 0
+    muted: 0
+    unreadCount: 0
+    integrityKey: integrity.original
+  segments:
+  - id: 3d6e9f0b135c4041b715c4687fd7d169
+    authorNote: "A08 \u2014 C \uD53C\uD574 \uCD08\uAE30, A\uC758 \uB3C4\uC6C0 (\uB9C1\uD06C 1\uAC1C\uB294 \uB0B4\uC6A9 \uBBF8\uC815\uC774\uB77C \uC544\uC9C1 \uB123\uC9C0 \uC54A\uC74C)"
+    evidenceRefs:
+    - device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+      evidenceRef: A08
+    messages:
+    - id: 3ecd7bbb9e2f46cc89785d5dc533254c
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -180
+        hour: 14
+        minute: 22
+      sortKey: 0
+      body: "\uB610 \uC62C\uB77C\uC654\uC5B4. \uC774\uBC88\uC5D4 \uC8FC\uC18C\uAC00 \uB2EC\uB77C."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: d745590145454310a7cd12f084551fd7
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -180
+        hour: 14
+        minute: 30
+      sortKey: 0
+      body: "\uC774\uAC70 \uCEA1\uCC98\uD574\uB458\uAC8C. \uC2E0\uACE0\uD560 \uB54C \uAC19\uC774 \uB0B4\uC790."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: a3cf3c27fd0044178d4ffddcafdfe9e7
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -150
+        hour: 19
+        minute: 5
+      sortKey: 0
+      body: "\uC2E0\uACE0\uB294 \uD588\uB294\uB370 \uB610 \uC9C0\uC6B0\uACE0 \uC0C8\uB85C \uB9CC\uB4E0 \uAC70 \uAC19\uC544."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: fd16a01c70494b1b835db2d9cb14bd4a
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -145
+        hour: 21
+        minute: 12
+      sortKey: 0
+      body: "\uC9C0\uB09C\uBC88 \uAC83\uB3C4 \uC2E0\uACE0 \uC811\uC218\uB410\uB300?"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 5a6441e50bbf4787a2f60d9e5cc13d65
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -145
+        hour: 21
+        minute: 20
+      sortKey: 0
+      body: "\uACC4\uC815 \uC5C6\uC5B4\uC84C\uB2E4\uACE0 \uB354 \uD655\uC778\uC774 \uC548 \uB41C\uB300. \uCEA1\uCC98\uB294 \uAC00\uC9C0\uACE0 \uC788\uC9C0?"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+  - id: a8d3e678629c422aaf7d26c40d7dc9f6
+    authorNote: "A05 \u2014 C\uC758 \uAC70\uBD80\uC640 \uC0AD\uC81C \uC694\uCCAD"
+    evidenceRefs:
+    - device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+      evidenceRef: A05
+    messages:
+    - id: d9524d457a5c46f98aeedbe8f66130c4
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -120
+        hour: 23
+        minute: 2
+      sortKey: 0
+      body: "\uB098 \uC774\uC81C \uC9C4\uC9DC \uADF8 \uC598\uAE30 \uD558\uAE30 \uC2EB\uC5B4."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: bb7d23e877094d228c61a706ace4684a
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -120
+        hour: 23
+        minute: 2
+      sortKey: 1
+      body: "\uC54C\uACA0\uB2E4\uACE0 \uD558\uACE0 \uACC4\uC18D \uBCF4\uC796\uC544."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 55360aa0b06f4c16a8c517df5c4425a6
+      sender: {fileID: 11400000, guid: b213bcd808b51fa49a6af832f3079bc5, type: 2}
+      time:
+        dayOffset: -120
+        hour: 23
+        minute: 5
+      sortKey: 0
+      body: "\uADF8\uB0E5 \uBA87 \uAC1C\uB9CC \uB354 \uD655\uC778\uD558\uBA74 \uB3FC."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 5f6d7c36ae724352847360283fb385f1
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -120
+        hour: 23
+        minute: 6
+      sortKey: 0
+      body: "\uADF8\uAC8C \uC2EB\uB2E4\uACE0. \uADF8\uB0E5 \uADF8\uB9CC\uD558\uC790."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: c5553dd460f243cda2aa5c2e87c9a267
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -120
+        hour: 23
+        minute: 7
+      sortKey: 0
+      body: "\uC804\uC5D0 \uBCF4\uB0B4\uC900 \uCEA1\uCC98\uD55C \uAC70\uB791 \uC0AC\uC9C4\uB4E4\uB3C4 \uB0A8\uC544 \uC788\uC9C0?"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: d1547d920da64275a86629c9b27061ae
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -120
+        hour: 23
+        minute: 7
+      sortKey: 1
+      body: "\uCEA1\uCC98\uB791 \uC0AC\uC9C4\uB3C4 \uADF8\uB0E5 \uB2E4 \uC9C0\uC6CC\uC918. \uAC00\uC9C0\uACE0 \uC788\uB294 \uAC83\uB3C4 \uC2EB\uC5B4."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
