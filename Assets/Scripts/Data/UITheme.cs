@@ -21,6 +21,15 @@ namespace Intersection.Data
         public Sprite mutedIcon;
         [Tooltip("이미지가 없는 사진 자리에 표시하는 일반 그림 기호")]
         public Sprite photoGlyph;
+        public Sprite searchGlyph;
+        public Sprite pageGlyph;
+        public Sprite pinGlyph;
+        public Sprite routeGlyph;
+        public Sprite historyGlyph;
+        public Sprite folderGlyph;
+        public Sprite documentGlyph;
+        [Tooltip("실제 지도 이미지가 없을 때 쓰는 중립 지도 자리 표시 (현실 지형 없음)")]
+        public Sprite mapPlaceholder;
 
         [Header("Work program")]
         public Color background = Hex("12161B");

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb830d7b98759b64cb5ff29e223cae48, type: 3}
+  m_Name: Folder_A_Documents
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.FolderData
+  id: 8ff19c21c8bd46e3bdfd6c9f52f996e5
+  device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+  source: 0
+  path: Documents
+  availableFrom: 0

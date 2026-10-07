@@ -27,14 +27,19 @@ MonoBehaviour:
     nameKey: app.browser
     order: 2
     icon: {fileID: 0}
-    implemented: 0
+    implemented: 1
   - kind: 3
     nameKey: app.maps
     order: 3
     icon: {fileID: 0}
-    implemented: 0
+    implemented: 1
   - kind: 4
     nameKey: app.files
     order: 4
     icon: {fileID: 0}
-    implemented: 0
+    implemented: 1
+  - kind: 5
+    nameKey: app.settings
+    order: 5
+    icon: {fileID: 0}
+    implemented: 1

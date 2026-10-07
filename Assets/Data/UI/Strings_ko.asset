@@ -179,3 +179,107 @@ MonoBehaviour:
     value: "\uCE74\uBA54\uB77C"
   - key: service.messageSave
     value: "\uBA54\uC2DC\uC9C0\uC5D0\uC11C \uC800\uC7A5"
+  - key: death.timeRange
+    value: "{day} \xB7 {start} ~ {end}"
+  - key: list.empty
+    value: "\uD56D\uBAA9 \uC5C6\uC74C"
+  - key: field.datetime
+    value: "\uC77C\uC2DC"
+  - key: field.kind
+    value: "\uC885\uB958"
+  - key: panel.row.time
+    value: "\uAE30\uB85D \uC2DC\uAC01"
+  - key: panel.row.recordCount
+    value: "\uD56D\uBAA9"
+  - key: panel.recordCountValue
+    value: "{count}\uAC74"
+  - key: app.browser.title
+    value: "\uBC29\uBB38 \uAE30\uB85D"
+  - key: browser.kind.search
+    value: "\uAC80\uC0C9"
+  - key: browser.kind.visit
+    value: "\uBC29\uBB38"
+  - key: browser.pageUnavailable
+    value: "\uC800\uC7A5\uB41C \uD398\uC774\uC9C0 \uB0B4\uC6A9 \uC5C6\uC74C"
+  - key: panel.title.browser
+    value: "\uBE0C\uB77C\uC6B0\uC800 \uAE30\uB85D"
+  - key: record.prefix.web
+    value: WEB
+  - key: app.maps.title
+    value: "\uC9C0\uB3C4"
+  - key: maps.section.searches
+    value: "\uCD5C\uADFC \uAC80\uC0C9"
+  - key: maps.section.routes
+    value: "\uACBD\uB85C"
+  - key: maps.section.shared
+    value: "\uACF5\uC720\uB41C \uC704\uCE58"
+  - key: maps.section.history
+    value: "\uC704\uCE58 \uAE30\uB85D"
+  - key: maps.routeFormat
+    value: "{from} \u2192 {to}"
+  - key: maps.sharedSent
+    value: "\uBCF4\uB0B8 \uC704\uCE58 \xB7 {name}"
+  - key: maps.sharedReceived
+    value: "\uBC1B\uC740 \uC704\uCE58 \xB7 {name}"
+  - key: maps.placeUnknown
+    value: "\uC704\uCE58"
+  - key: maps.field.place
+    value: "\uC7A5\uC18C"
+  - key: maps.field.from
+    value: "\uCD9C\uBC1C"
+  - key: maps.field.to
+    value: "\uB3C4\uCC29"
+  - key: maps.field.via
+    value: "\uACBD\uB85C"
+  - key: maps.field.shared
+    value: "\uACF5\uC720"
+  - key: maps.periodFormat
+    value: "{date} {start} \u2013 {end}"
+  - key: panel.title.maps
+    value: "\uC9C0\uB3C4 \uAE30\uB85D"
+  - key: record.prefix.map
+    value: MAP
+  - key: app.files.title
+    value: "\uD30C\uC77C"
+  - key: files.location.local
+    value: "\uC774 \uAE30\uAE30"
+  - key: files.location.cloud
+    value: "\uD074\uB77C\uC6B0\uB4DC"
+  - key: files.location.linked
+    value: "\uC5F0\uB3D9 \uACC4\uC815"
+  - key: files.location.recovered
+    value: "\uBCF5\uAD6C\uB41C \uD56D\uBAA9"
+  - key: files.itemCount
+    value: "{count}\uAC1C \uD56D\uBAA9"
+  - key: files.previewUnavailable
+    value: "\uBBF8\uB9AC\uBCF4\uAE30 \uC5C6\uC74C"
+  - key: files.field.name
+    value: "\uC774\uB984"
+  - key: files.field.modified
+    value: "\uC218\uC815\uD55C \uB0A0\uC9DC"
+  - key: files.field.where
+    value: "\uC704\uCE58"
+  - key: panel.title.files
+    value: "\uD30C\uC77C"
+  - key: record.prefix.file
+    value: FIL
+  - key: app.settings
+    value: "\uC124\uC815"
+  - key: app.settings.title
+    value: "\uC124\uC815"
+  - key: settings.section.current
+    value: "\uD604\uC7AC \uC124\uC815"
+  - key: settings.section.history
+    value: "\uBCC0\uACBD \uAE30\uB85D"
+  - key: settings.changeFormat
+    value: "{before} \u2192 {after}"
+  - key: settings.field.item
+    value: "\uD56D\uBAA9"
+  - key: settings.field.before
+    value: "\uBCC0\uACBD \uC804"
+  - key: settings.field.after
+    value: "\uBCC0\uACBD \uD6C4"
+  - key: panel.title.settings
+    value: "\uC124\uC815 \uAE30\uB85D"
+  - key: record.prefix.setting
+    value: SET

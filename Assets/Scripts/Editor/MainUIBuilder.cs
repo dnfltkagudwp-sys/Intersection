@@ -28,6 +28,7 @@ namespace Intersection.EditorTools
 
         static UITheme theme;
         static (AlbumRowView albumRow, PhotoTileView photoTile) photoPrefabs;
+        static (RecordRowView row, InfoRowView field, ListSectionView section) recordPrefabs;
 
         [MenuItem("Intersection/UI/Build Main Scene UI")]
         public static void Build()
@@ -52,6 +53,7 @@ namespace Intersection.EditorTools
             var infoRow = BuildInfoRow();
             var section = BuildListSection();
             photoPrefabs = (BuildAlbumRow(), BuildPhotoTile());
+            recordPrefabs = (BuildRecordRow(), BuildPhoneFieldRow(), section);
 
             BuildScene(config, threadRow, bubbleRow, separator, section, caseItem, appItem, infoRow);
             Debug.Log("[UI] 화면 골격을 만들었습니다.");
@@ -77,6 +79,22 @@ namespace Intersection.EditorTools
                 theme.mutedIcon = MakeSprite("muted.png", 64, MutedAlpha, Color.white, 0);
             if (theme.photoGlyph == null)
                 theme.photoGlyph = MakeSprite("photo_placeholder.png", 64, PhotoGlyphAlpha, Color.white, 0);
+            if (theme.searchGlyph == null)
+                theme.searchGlyph = MakeSprite("glyph_search.png", 64, (x, y) => Glyph(x, y, SearchShape), Color.white, 0);
+            if (theme.pageGlyph == null)
+                theme.pageGlyph = MakeSprite("glyph_page.png", 64, (x, y) => Glyph(x, y, PageShape), Color.white, 0);
+            if (theme.pinGlyph == null)
+                theme.pinGlyph = MakeSprite("glyph_pin.png", 64, (x, y) => Glyph(x, y, PinShape), Color.white, 0);
+            if (theme.routeGlyph == null)
+                theme.routeGlyph = MakeSprite("glyph_route.png", 64, (x, y) => Glyph(x, y, RouteShape), Color.white, 0);
+            if (theme.historyGlyph == null)
+                theme.historyGlyph = MakeSprite("glyph_history.png", 64, (x, y) => Glyph(x, y, ClockShape), Color.white, 0);
+            if (theme.folderGlyph == null)
+                theme.folderGlyph = MakeSprite("glyph_folder.png", 64, (x, y) => Glyph(x, y, FolderShape), Color.white, 0);
+            if (theme.documentGlyph == null)
+                theme.documentGlyph = MakeSprite("glyph_document.png", 64, (x, y) => Glyph(x, y, DocumentShape), Color.white, 0);
+            if (theme.mapPlaceholder == null)
+                theme.mapPlaceholder = MakeMapPlaceholder("map_placeholder.png", 256);
             EditorUtility.SetDirty(theme);
             AssetDatabase.SaveAssetIfDirty(theme);
         }
@@ -143,6 +161,90 @@ namespace Intersection.EditorTools
             mountains *= Box(10, 16, 54, 48);
             float sun = Mathf.Clamp01(4.5f - Vector2.Distance(p, new Vector2(44, 40)) + 0.5f);
             return Mathf.Max(frame, Mathf.Max(mountains, sun));
+        }
+
+        // ───────── 일반 기호(글리프) — 실제 앱 아이콘을 복제하지 않은 단순 도형 ─────────
+
+        static float Glyph(int px, int py, Func<Vector2, float> shape) => Mathf.Clamp01(shape(new Vector2(px + 0.5f, py + 0.5f)));
+
+        static float Disc(Vector2 p, Vector2 c, float r) => Mathf.Clamp01(r - Vector2.Distance(p, c) + 0.5f);
+
+        static float Ring(Vector2 p, Vector2 c, float r, float w) =>
+            Mathf.Clamp01(w * 0.5f - Mathf.Abs(Vector2.Distance(p, c) - r) + 0.5f);
+
+        static float Seg(Vector2 p, Vector2 a, Vector2 b, float w)
+        {
+            var ab = b - a;
+            float t = Mathf.Clamp01(Vector2.Dot(p - a, ab) / ab.sqrMagnitude);
+            return Mathf.Clamp01(w * 0.5f - Vector2.Distance(p, a + ab * t) + 0.5f);
+        }
+
+        static float Rect01(Vector2 p, float x0, float y0, float x1, float y1) =>
+            Mathf.Clamp01(Mathf.Min(Mathf.Min(p.x - x0, x1 - p.x), Mathf.Min(p.y - y0, y1 - p.y)) + 0.5f);
+
+        static float RectOutline(Vector2 p, float x0, float y0, float x1, float y1, float w) =>
+            Mathf.Clamp01(Rect01(p, x0, y0, x1, y1) - Rect01(p, x0 + w, y0 + w, x1 - w, y1 - w));
+
+        static float SearchShape(Vector2 p) =>
+            Mathf.Max(Ring(p, new Vector2(27, 37), 15, 5), Seg(p, new Vector2(38, 26), new Vector2(54, 10), 6));
+
+        static float PageShape(Vector2 p)
+        {
+            var c = new Vector2(32, 32);
+            float outer = Ring(p, c, 23, 4);
+            float equator = Seg(p, new Vector2(10, 32), new Vector2(54, 32), 3) * Disc(p, c, 23);
+            var squashed = new Vector2(32 + (p.x - 32) / 0.45f, p.y);
+            float meridian = Ring(squashed, c, 23, 4f / 0.45f * 0.45f) * Disc(p, c, 23);
+            return Mathf.Max(outer, Mathf.Max(equator, meridian));
+        }
+
+        static float PinShape(Vector2 p)
+        {
+            float head = Disc(p, new Vector2(32, 40), 17);
+            float t = Mathf.InverseLerp(40, 6, p.y);
+            float tail = p.y <= 40 && p.y >= 6 ? Mathf.Clamp01(13f * (1f - t) - Mathf.Abs(p.x - 32) + 0.5f) : 0f;
+            float hole = Disc(p, new Vector2(32, 40), 6.5f);
+            return Mathf.Max(head, tail) * (1f - hole);
+        }
+
+        static float RouteShape(Vector2 p)
+        {
+            float a = Ring(p, new Vector2(15, 50), 6, 4);
+            float b = Disc(p, new Vector2(49, 14), 7);
+            float line = Mathf.Max(Seg(p, new Vector2(20, 46), new Vector2(42, 40), 4),
+                Mathf.Max(Seg(p, new Vector2(42, 40), new Vector2(22, 26), 4), Seg(p, new Vector2(22, 26), new Vector2(44, 18), 4)));
+            return Mathf.Max(Mathf.Max(a, b), line);
+        }
+
+        static float ClockShape(Vector2 p)
+        {
+            var c = new Vector2(32, 32);
+            return Mathf.Max(Ring(p, c, 23, 4.5f),
+                Mathf.Max(Seg(p, c, new Vector2(32, 48), 4.5f), Seg(p, c, new Vector2(44, 32), 4.5f)));
+        }
+
+        static float FolderShape(Vector2 p) =>
+            Mathf.Max(Rect01(p, 6, 10, 58, 46), Rect01(p, 6, 44, 28, 52));
+
+        static float DocumentShape(Vector2 p) =>
+            Mathf.Max(RectOutline(p, 13, 6, 51, 58, 4.5f),
+                Mathf.Max(Seg(p, new Vector2(21, 42), new Vector2(43, 42), 3.5f),
+                    Mathf.Max(Seg(p, new Vector2(21, 32), new Vector2(43, 32), 3.5f), Seg(p, new Vector2(21, 22), new Vector2(35, 22), 3.5f))));
+
+        /// <summary>현실 지형을 암시하지 않는 중립 지도 자리 표시: 균일한 격자뿐이다.</summary>
+        static Sprite MakeMapPlaceholder(string file, int size)
+        {
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var bg = new Color(0.17f, 0.18f, 0.19f, 1f);
+            var line = new Color(0.24f, 0.25f, 0.27f, 1f);
+            const int step = 32;
+            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                bool grid = x % step < 3 || y % step < 3;
+                tex.SetPixel(x, y, grid ? line : bg);
+            }
+            return SaveSprite(tex, file, 0);
         }
 
         static Sprite MakeAvatar(string file, int size)
@@ -500,6 +602,59 @@ namespace Intersection.EditorTools
             return SavePrefab<PhotoTileView>(root, "PhotoTile");
         }
 
+        static RecordRowView BuildRecordRow()
+        {
+            var root = Node("RecordRow", null);
+            root.sizeDelta = new Vector2(400, 66);
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 66;
+            var bg = Img(root, Color.white);
+            var button = MakeButton(root, bg, new Color(1, 1, 1, 0), new Color(1, 1, 1, 0.08f));
+            var colors = button.colors;
+            colors.disabledColor = new Color(1, 1, 1, 0);
+            button.colors = colors;
+            var view = root.gameObject.AddComponent<RecordRowView>();
+
+            var icon = Img(Place(Node("Icon", root), new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(18, 0), new Vector2(26, 26)),
+                theme.phoneSubText);
+            icon.preserveAspect = true;
+            var block = Fill(Node("Text", root), 58, 0, 150, 0);
+            var title = Text(TopBand(Node("Title", block), 10, 26), theme.mediumFont, theme.phoneRowTitleSize - 1, theme.phoneText);
+            var subtitle = Text(TopBand(Node("Subtitle", block), 36, 20), theme.regularFont, theme.phoneMetaSize, theme.phoneSubText);
+            var trailing = Text(Place(Node("Trailing", root), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-32, 0), new Vector2(140, 22)),
+                theme.regularFont, theme.phoneMetaSize, theme.phoneSubText, TextAlignmentOptions.MidlineRight);
+            var chevron = Text(Place(Node("Chevron", root), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-14, 0), new Vector2(14, 24)),
+                theme.regularFont, 22, theme.phoneSubText, TextAlignmentOptions.MidlineRight);
+            var divider = Node("Divider", root);
+            BottomBand(divider, 0, 1, 18);
+            Img(divider, theme.phoneSeparator);
+
+            Wire(view, "button", button);
+            Wire(view, "icon", icon);
+            Wire(view, "title", title);
+            Wire(view, "subtitle", subtitle);
+            Wire(view, "trailing", trailing);
+            Wire(view, "chevron", chevron);
+            Wire(view, "textBlock", block);
+            return SavePrefab<RecordRowView>(root, "RecordRow");
+        }
+
+        /// <summary>휴대전화 상세 화면의 이름·값 한 줄 (업무 패널 InfoRow와 같은 컴포넌트, 휴대전화 글꼴 크기).</summary>
+        static InfoRowView BuildPhoneFieldRow()
+        {
+            var root = Node("PhoneFieldRow", null);
+            root.sizeDelta = new Vector2(380, 46);
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 46;
+            var view = root.gameObject.AddComponent<InfoRowView>();
+            var label = Text(Fill(Node("Label", root), 0, 0, 260, 0), theme.regularFont, 15, theme.phoneSubText);
+            var value = Text(Fill(Node("Value", root), 100, 0, 0, 0), theme.regularFont, 16, theme.phoneText, TextAlignmentOptions.MidlineRight);
+            var divider = Node("Divider", root);
+            BottomBand(divider, 0, 1);
+            Img(divider, theme.phoneSeparator);
+            Wire(view, "label", label);
+            Wire(view, "value", value);
+            return SavePrefab<InfoRowView>(root, "PhoneFieldRow");
+        }
+
         static ListSectionView BuildListSection()
         {
             var root = Node("ListSection", null);
@@ -799,6 +954,8 @@ namespace Intersection.EditorTools
             var albumList = BuildAlbumList(appArea);
             var photoGrid = BuildPhotoGrid(appArea);
             var photoDetail = BuildPhotoDetail(appArea);
+            var recordList = BuildRecordList(appArea);
+            var recordDetail = BuildRecordDetail(appArea);
 
             var home = Place(Node("HomeIndicator", screen), new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 8), new Vector2(128, 5));
             Rounded(home, new Color(1, 1, 1, 0.75f), 2.5f);
@@ -809,6 +966,82 @@ namespace Intersection.EditorTools
             Wire(view, "albumList", albumList);
             Wire(view, "photoGrid", photoGrid);
             Wire(view, "photoDetail", photoDetail);
+            Wire(view, "recordList", recordList);
+            Wire(view, "recordDetail", recordDetail);
+            return view;
+        }
+
+        /// <summary>브라우저·지도·파일·설정 앱이 함께 쓰는 목록 화면.</summary>
+        static PhoneListView BuildRecordList(RectTransform area)
+        {
+            var rt = Fill(Node("RecordList", area));
+            var view = rt.gameObject.AddComponent<PhoneListView>();
+            var rootTitle = Text(TopBand(Node("Title", rt), 4, 44, 18, 18), theme.boldFont, theme.phoneTitleSize, theme.phoneText);
+            var header = TopBand(Node("Header", rt), 0, 52);
+            var back = BackButton(header, out var backLabel);
+            var headerTitle = Text(TopBand(Node("Title", header), 12, 26, 140, 140), theme.boldFont, 17, theme.phoneText, TextAlignmentOptions.Center);
+            var scrollArea = Fill(Node("Scroll", rt), 0, 56, 0, 22);
+            var scroll = MakeScroll(scrollArea, out var content, 0, new RectOffset(0, 0, 0, 12));
+            var empty = Text(Fill(Node("Empty", rt), 20, 140, 20, 40), theme.regularFont, 16, theme.phoneSubText, TextAlignmentOptions.Top);
+
+            Wire(view, "rootTitle", rootTitle);
+            Wire(view, "header", header.gameObject);
+            Wire(view, "backButton", back);
+            Wire(view, "backLabel", backLabel);
+            Wire(view, "headerTitle", headerTitle);
+            Wire(view, "scroll", scroll);
+            Wire(view, "content", content);
+            Wire(view, "rowPrefab", recordPrefabs.row);
+            Wire(view, "sectionPrefab", recordPrefabs.section);
+            Wire(view, "emptyLabel", empty);
+            rt.gameObject.SetActive(false);
+            return view;
+        }
+
+        /// <summary>브라우저·지도·파일·설정 앱이 함께 쓰는 상세 화면.</summary>
+        static PhoneDetailView BuildRecordDetail(RectTransform area)
+        {
+            var rt = Fill(Node("RecordDetail", area));
+            var view = rt.gameObject.AddComponent<PhoneDetailView>();
+            var header = TopBand(Node("Header", rt), 0, 52);
+            var back = BackButton(header, out var backLabel);
+            var headerTitle = Text(TopBand(Node("Title", header), 12, 26, 140, 140), theme.boldFont, 17, theme.phoneText, TextAlignmentOptions.Center);
+            var scrollArea = Fill(Node("Scroll", rt), 0, 56, 0, 22);
+            var scroll = MakeScroll(scrollArea, out var content, 14, new RectOffset(16, 16, 6, 16));
+
+            var hero = Node("Hero", content);
+            hero.gameObject.AddComponent<LayoutElement>().preferredHeight = 220;
+            var heroBg = Rounded(hero, theme.photoPlaceholder, 12f);
+            heroBg.type = Image.Type.Simple;
+            hero.gameObject.AddComponent<Mask>().showMaskGraphic = true;
+            var heroTex = Fill(Node("Texture", hero)).gameObject.AddComponent<RawImage>();
+            heroTex.raycastTarget = false;
+            var glyph = Img(Place(Node("Glyph", hero), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, 14), new Vector2(48, 48)),
+                theme.phoneAccent, theme.pinGlyph);
+            glyph.preserveAspect = true;
+            var message = Text(Place(Node("Message", hero), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 1f), new Vector2(0, -20), new Vector2(320, 24)),
+                theme.regularFont, 14, theme.phoneSubText, TextAlignmentOptions.Center);
+
+            var headlineRt = Node("Headline", content);
+            var headline = Text(headlineRt, theme.boldFont, 21, theme.phoneText, TextAlignmentOptions.TopLeft, null, true);
+
+            var fields = Node("Fields", content);
+            Stack(fields, 0);
+
+            Wire(view, "backButton", back);
+            Wire(view, "backLabel", backLabel);
+            Wire(view, "headerTitle", headerTitle);
+            Wire(view, "scroll", scroll);
+            Wire(view, "content", content);
+            Wire(view, "heroRoot", hero.gameObject);
+            Wire(view, "heroBackground", heroBg);
+            Wire(view, "heroTexture", heroTex);
+            Wire(view, "heroGlyph", glyph);
+            Wire(view, "heroMessage", message);
+            Wire(view, "headline", headline);
+            Wire(view, "fieldRoot", fields);
+            Wire(view, "fieldPrefab", recordPrefabs.field);
+            rt.gameObject.SetActive(false);
             return view;
         }
 

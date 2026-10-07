@@ -51,9 +51,16 @@ namespace Intersection.EditorTools
             var threads = Find<ThreadData>();
             var photos = Find<PhotoData>();
             var albums = Find<AlbumData>();
+            var browser = Find<BrowserRecord>();
+            var maps = Find<MapRecord>();
+            var files = Find<FileRecord>();
+            var folders = Find<FolderData>();
+            var settings = Find<SettingRecord>();
+            var records = browser.Cast<DeviceRecord>().Concat(maps).Concat(files).Concat(settings).ToList();
 
             // 에셋 ID
-            var allAssets = people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums).ToList();
+            var allAssets = people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums)
+                .Concat(records).Concat(folders).ToList();
             foreach (var a in allAssets.Where(a => string.IsNullOrEmpty(a.Id)))
                 Error($"ID가 비어 있습니다: {Path(a)}", a);
             foreach (var g in allAssets.Where(a => !string.IsNullOrEmpty(a.Id)).GroupBy(a => a.Id).Where(g => g.Count() > 1))
@@ -267,14 +274,92 @@ namespace Intersection.EditorTools
                     Warn($"사진은 있지만 앨범이 없어 사진 앱에서 볼 수 없습니다: {Path(c)}", c);
             }
 
+            // 브라우저·지도·파일·설정 기록 공통
+            foreach (var r in records)
+            {
+                string where = Path(r);
+                if (r.device == null)
+                    Error($"기록의 기기가 비어 있습니다: {where}", r);
+                if (!r.time.IsValid)
+                    Error($"기록 시각이 올바르지 않습니다: {where}", r);
+                CheckKey(r.integrityKey, where, r);
+            }
+            foreach (var g in records.Where(r => r.device != null)
+                         .GroupBy(r => (r.GetType(), r.device, r.time.TotalMinutes, r.sortKey)).Where(g => g.Count() > 1))
+                Error($"같은 기기·같은 종류·같은 시각·같은 sortKey 기록이 {g.Count()}개 있어 순서가 정해지지 않습니다: {string.Join(", ", g.Select(Path))}", g.First());
+
+            foreach (var b in browser.Where(b => string.IsNullOrWhiteSpace(b.title)))
+                Error($"브라우저 기록 제목(검색어)이 비어 있습니다: {Path(b)}", b);
+
+            foreach (var m in maps)
+            {
+                string where = Path(m);
+                if (m.kind == MapRecordKind.Route && (string.IsNullOrWhiteSpace(m.routeFrom) || string.IsNullOrWhiteSpace(m.routeTo)))
+                    Warn($"경로 조회의 출발지·도착지가 비어 있어 중립 표기로 보입니다: {where}", m);
+                if (m.kind == MapRecordKind.LocationHistory)
+                {
+                    if (!m.endTime.IsValid)
+                        Error($"위치 기록 끝 시각이 올바르지 않습니다: {where}", m);
+                    else if (m.endTime.CompareTo(m.time) < 0)
+                        Error($"위치 기록의 끝 시각이 시작보다 이릅니다(시각 역전): {where}", m);
+                }
+            }
+
+            foreach (var f in files)
+            {
+                if (string.IsNullOrWhiteSpace(f.path) || f.path.EndsWith("/"))
+                    Error($"파일 경로가 비어 있거나 폴더로 끝납니다: {Path(f)}", f);
+            }
+            foreach (var g in files.Where(f => f.device != null && !string.IsNullOrEmpty(f.path))
+                         .GroupBy(f => (f.device, f.source, f.path.Trim('/'))).Where(g => g.Count() > 1))
+                Error($"같은 위치에 같은 경로의 파일이 있습니다 ({g.Key.Item3}): {string.Join(", ", g.Select(Path))}", g.First());
+            foreach (var f in folders)
+            {
+                if (f.device == null)
+                    Error($"폴더의 기기가 비어 있습니다: {Path(f)}", f);
+                if (string.IsNullOrWhiteSpace(f.path))
+                    Error($"폴더 경로가 비어 있습니다: {Path(f)}", f);
+            }
+
+            foreach (var s in settings)
+            {
+                string where = Path(s);
+                if (string.IsNullOrWhiteSpace(s.settingKey))
+                    Error($"설정 항목 키가 비어 있습니다: {where}", s);
+                if (s.linkedThread != null && s.device != null && s.linkedThread.StateFor(s.device) == null)
+                    Error($"설정이 가리키는 대화가 이 기기에 없습니다(다른 기기 자료 혼입): {where}", s);
+                if (s.muteChange != MuteChange.None && s.linkedThread == null)
+                    Error($"알림 변경 기록에 대상 대화가 없습니다: {where}", s);
+                if (s.linkedThread == null && (s.itemLabel ?? string.Empty).Contains("{contact}"))
+                    Error($"{{contact}}를 쓰려면 대상 대화가 필요합니다: {where}", s);
+            }
+            // 대화 알림 끔 상태와 마지막 알림 변경 기록이 맞는지
+            foreach (var t in threads)
+            {
+                foreach (var state in t.devices.Where(d => d?.device != null))
+                {
+                    var last = settings
+                        .Where(s => s.device == state.device && s.linkedThread == t && s.muteChange != MuteChange.None)
+                        .OrderBy(s => s.time.TotalMinutes).ThenBy(s => s.sortKey).LastOrDefault();
+                    if (last != null && (last.muteChange == MuteChange.Mute) != state.muted)
+                        Error($"대화 알림 상태({(state.muted ? "끔" : "켬")})가 마지막 설정 변경 기록과 다릅니다: {Path(t)} / {Path(last)}", t);
+                    if (last == null && state.muted)
+                        Warn($"알림 끔 상태인데 설정 변경 기록이 없습니다 ({state.device.name}): {Path(t)}", t);
+                }
+            }
+
             if (config != null && config.database != null)
             {
                 var db = config.database;
                 if (!people.All(db.people.Contains) || !cases.All(db.cases.Contains) || !threads.All(db.threads.Contains)
-                    || !photos.All(db.photos.Contains) || !albums.All(db.albums.Contains))
+                    || !photos.All(db.photos.Contains) || !albums.All(db.albums.Contains)
+                    || !browser.All(db.browser.Contains) || !maps.All(db.maps.Contains) || !files.All(db.files.Contains)
+                    || !folders.All(db.folders.Contains) || !settings.All(db.settings.Contains))
                     Warn("ContentDatabase가 최신이 아닙니다. Intersection/Content/Refresh Content Database를 실행하세요.", db);
                 if (db.people.Any(p => p == null) || db.cases.Any(c => c == null) || db.threads.Any(t => t == null)
-                    || db.photos.Any(p => p == null) || db.albums.Any(a => a == null))
+                    || db.photos.Any(p => p == null) || db.albums.Any(a => a == null)
+                    || db.browser.Any(x => x == null) || db.maps.Any(x => x == null) || db.files.Any(x => x == null)
+                    || db.folders.Any(x => x == null) || db.settings.Any(x => x == null))
                     Error("ContentDatabase에 삭제된 에셋 참조가 남아 있습니다.", db);
             }
 

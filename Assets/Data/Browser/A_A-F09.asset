@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df4bf7357f26ac54eba4aa45e3b93e5c, type: 3}
+  m_Name: A_A-F09
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.BrowserRecord
+  id: e3f9e1f774044fc0956381a332b0bf36
+  device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+  time:
+    dayOffset: -4
+    hour: 9
+    minute: 20
+  sortKey: 0
+  source: 0
+  availableFrom: 0
+  evidenceRef: 
+  integrityKey: integrity.original
+  authorNote: A-F09
+  kind: 0
+  title: "\uB3C4\uC11C\uAD00 \uC6B4\uC601 \uC2DC\uAC04"
+  url: 

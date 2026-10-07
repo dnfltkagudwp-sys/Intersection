@@ -49,19 +49,32 @@ namespace Intersection.EditorTools
             var threads = Load<ThreadData>();
             var photos = Load<PhotoData>();
             var albums = Load<AlbumData>();
-            FixDuplicateAssetIds(people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums));
+            var browser = Load<BrowserRecord>();
+            var maps = Load<MapRecord>();
+            var files = Load<FileRecord>();
+            var folders = Load<FolderData>();
+            var settings = Load<SettingRecord>();
+            FixDuplicateAssetIds(people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums)
+                .Concat(browser).Concat(maps).Concat(files).Concat(folders).Concat(settings));
             FixDuplicateInnerIds(threads);
 
             foreach (var db in Load<ContentDatabase>())
             {
                 if (db.people.SequenceEqual(people) && db.cases.SequenceEqual(cases) && db.threads.SequenceEqual(threads)
-                    && db.photos.SequenceEqual(photos) && db.albums.SequenceEqual(albums))
+                    && db.photos.SequenceEqual(photos) && db.albums.SequenceEqual(albums)
+                    && db.browser.SequenceEqual(browser) && db.maps.SequenceEqual(maps) && db.files.SequenceEqual(files)
+                    && db.folders.SequenceEqual(folders) && db.settings.SequenceEqual(settings))
                     continue;
                 db.people = people;
                 db.cases = cases;
                 db.threads = threads;
                 db.photos = photos;
                 db.albums = albums;
+                db.browser = browser;
+                db.maps = maps;
+                db.files = files;
+                db.folders = folders;
+                db.settings = settings;
                 EditorUtility.SetDirty(db);
                 AssetDatabase.SaveAssetIfDirty(db);
             }

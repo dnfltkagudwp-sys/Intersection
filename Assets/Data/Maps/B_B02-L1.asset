@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4502fc6454cb634cac26b9ff73511fe, type: 3}
+  m_Name: B_B02-L1
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.MapRecord
+  id: 2a0f84820a374f1498ccc1d3afd765f5
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  time:
+    dayOffset: -5
+    hour: 17
+    minute: 30
+  sortKey: 0
+  source: 0
+  availableFrom: 1
+  evidenceRef: B02
+  integrityKey: integrity.original
+  authorNote: "\uD3C9\uC18C \uD558\uAD50 \uACBD\uB85C \uB300\uC2E0 \uD070\uAE38\xB7\uBC84\uC2A4\uC815\uB958\uC7A5 \uCABD"
+  kind: 1
+  placeLabel: 
+  routeFrom: "\uD559\uAD50"
+  routeTo: "\uBC84\uC2A4\uC815\uB958\uC7A5"
+  routeNote: "\uD070\uAE38"
+  endTime:
+    dayOffset: 0
+    hour: 0
+    minute: 0

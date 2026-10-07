@@ -28,6 +28,31 @@ namespace Intersection.Core
 
         /// <summary>사진 앱 앨범 목록의 스크롤 키 (앨범 그리드는 앨범 ID를 키로 쓴다).</summary>
         public const string AlbumListScrollKey = "photos/albums";
+
+        /// <summary>브라우저·지도·파일·설정 앱에서 상세로 연 기록의 불변 ID (앱별).</summary>
+        public readonly Dictionary<AppKind, string> openRecordId = new Dictionary<AppKind, string>();
+
+        /// <summary>파일 앱에서 연 위치. null이면 위치 목록.</summary>
+        public RecordSource? filesLocation;
+
+        /// <summary>파일 앱 위치 안의 현재 폴더 경로 (최상위는 빈 문자열).</summary>
+        public string filesPath = string.Empty;
+
+        public string OpenRecord(AppKind app) => openRecordId.TryGetValue(app, out var id) ? id : null;
+
+        public void SetOpenRecord(AppKind app, string id)
+        {
+            if (id == null)
+                openRecordId.Remove(app);
+            else
+                openRecordId[app] = id;
+        }
+
+        /// <summary>목록 화면의 스크롤 키. 파일 앱은 위치·폴더마다 따로 저장한다.</summary>
+        public string ListScrollKey(AppKind app) =>
+            app == AppKind.Files
+                ? "files/" + (filesLocation.HasValue ? filesLocation.Value.ToString() : "") + "/" + filesPath
+                : "list/" + app;
     }
 
     /// <summary>현재 진행 단계와 선택된 의뢰, 기기별 탐색 상태.</summary>

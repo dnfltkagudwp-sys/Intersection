@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b94c0e0a1ae5044b84d156e93a7bf87, type: 3}
+  m_Name: A_A06-16
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.FileRecord
+  id: 04d84191944143c49a271c3d539357c5
+  device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+  time:
+    dayOffset: -80
+    hour: 22
+    minute: 45
+  sortKey: 0
+  source: 1
+  availableFrom: 2
+  evidenceRef: A06
+  integrityKey: integrity.original
+  authorNote: "\uC775\uBA85 \uACC4\uC815 \uC18C\uAC1C\uBB38\uACFC \uC218\uC815 \uC2DC\uAC01"
+  path: Screenshots/shot_1788.png
+  mediaAssetId: 
+  preview: {fileID: 0}

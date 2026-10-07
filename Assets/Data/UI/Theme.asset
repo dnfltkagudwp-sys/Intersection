@@ -21,6 +21,14 @@ MonoBehaviour:
   avatarSprite: {fileID: 21300000, guid: b19c366e06416aa42a3f1241f1efa24e, type: 3}
   mutedIcon: {fileID: 21300000, guid: d1e8e6206c5928a42ab1687f16a6bee4, type: 3}
   photoGlyph: {fileID: 21300000, guid: bc17fa13fd1bd894e90e99a07e46ef62, type: 3}
+  searchGlyph: {fileID: 21300000, guid: fac3752f04684e344aacd094ec5cb411, type: 3}
+  pageGlyph: {fileID: 21300000, guid: e4df924b011b7df4192a750b139db6c2, type: 3}
+  pinGlyph: {fileID: 21300000, guid: dfd288f7c624ac94a94abeac06c7ae79, type: 3}
+  routeGlyph: {fileID: 21300000, guid: 7f4d500e879097540a16a74f410c6b09, type: 3}
+  historyGlyph: {fileID: 21300000, guid: ef44f72712591834b9600446eebf2fd0, type: 3}
+  folderGlyph: {fileID: 21300000, guid: 564e1137b2edc2640aafe47ecb8c9741, type: 3}
+  documentGlyph: {fileID: 21300000, guid: af8e9877168a9eb4aaa594d96b11347e, type: 3}
+  mapPlaceholder: {fileID: 21300000, guid: 9a523c896514e314fa4c076d795d24c8, type: 3}
   background: {r: 0.07058824, g: 0.08627451, b: 0.105882354, a: 1}
   panel: {r: 0.09019608, g: 0.10980392, b: 0.13333334, a: 1}
   panelRaised: {r: 0.11764706, g: 0.14509805, b: 0.1764706, a: 1}

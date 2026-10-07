@@ -128,7 +128,7 @@ namespace Intersection.UI
             {
                 case AppKind.Messages: return DeviceQuery.Threads(config.database, device, session.Stage).Count;
                 case AppKind.Photos: return PhotoQuery.DevicePhotos(config.database, device, session.Stage).Count;
-                default: return null;
+                default: return IsRecordApp(kind) ? RecordAppCount(kind, device) : (int?)null;
             }
         }
 
@@ -162,6 +162,11 @@ namespace Intersection.UI
             if (nav.app == AppKind.Photos)
             {
                 RenderPhotos(device, nav);
+                return;
+            }
+            if (IsRecordApp(nav.app))
+            {
+                RenderRecords(device, nav);
                 return;
             }
 
@@ -278,6 +283,15 @@ namespace Intersection.UI
                 nav.photoAlbumId = null;
                 nav.openPhotoId = null;
             }
+            else if (IsRecordApp(kind))
+            {
+                nav.SetOpenRecord(kind, null);
+                if (kind == AppKind.Files)
+                {
+                    nav.filesLocation = null;
+                    nav.filesPath = string.Empty;
+                }
+            }
             Refresh();
         }
 
@@ -305,6 +319,11 @@ namespace Intersection.UI
             if (nav.app == AppKind.Photos)
             {
                 BackPhotos(nav);
+                return;
+            }
+            if (IsRecordApp(nav.app))
+            {
+                BackRecords(nav);
                 return;
             }
             if (nav.openThreadId != null)
@@ -342,6 +361,9 @@ namespace Intersection.UI
                 case PhoneView.Screen.PhotoGrid:
                     if (nav.photoAlbumId != null)
                         nav.scroll[nav.photoAlbumId] = phone.PhotoGrid.ScrollPosition;
+                    break;
+                case PhoneView.Screen.RecordList:
+                    nav.scroll[nav.ListScrollKey(nav.app)] = phone.RecordList.ScrollPosition;
                     break;
             }
         }

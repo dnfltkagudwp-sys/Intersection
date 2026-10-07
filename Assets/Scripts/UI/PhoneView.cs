@@ -13,6 +13,8 @@ namespace Intersection.UI
         [SerializeField] AlbumListView albumList;
         [SerializeField] PhotoGridView photoGrid;
         [SerializeField] PhotoDetailView photoDetail;
+        [SerializeField] PhoneListView recordList;
+        [SerializeField] PhoneDetailView recordDetail;
 
         IClock clock;
         UIText text;
@@ -24,6 +26,8 @@ namespace Intersection.UI
         public AlbumListView AlbumList => albumList;
         public PhotoGridView PhotoGrid => photoGrid;
         public PhotoDetailView PhotoDetail => photoDetail;
+        public PhoneListView RecordList => recordList;
+        public PhoneDetailView RecordDetail => recordDetail;
 
         public enum Screen
         {
@@ -32,6 +36,8 @@ namespace Intersection.UI
             AlbumList,
             PhotoGrid,
             PhotoDetail,
+            RecordList,
+            RecordDetail,
         }
 
         struct PhoneTimeFormat
@@ -56,6 +62,8 @@ namespace Intersection.UI
             albumList.gameObject.SetActive(screen == Screen.AlbumList);
             photoGrid.gameObject.SetActive(screen == Screen.PhotoGrid);
             photoDetail.gameObject.SetActive(screen == Screen.PhotoDetail);
+            recordList.gameObject.SetActive(screen == Screen.RecordList);
+            recordDetail.gameObject.SetActive(screen == Screen.RecordDetail);
         }
 
         /// <summary>현재 보이는 화면.</summary>
@@ -64,6 +72,8 @@ namespace Intersection.UI
             : albumList.gameObject.activeSelf ? Screen.AlbumList
             : photoGrid.gameObject.activeSelf ? Screen.PhotoGrid
             : photoDetail.gameObject.activeSelf ? Screen.PhotoDetail
+            : recordList.gameObject.activeSelf ? Screen.RecordList
+            : recordDetail.gameObject.activeSelf ? Screen.RecordDetail
             : Screen.MessageList;
 
         void Update() => RefreshClock(false);

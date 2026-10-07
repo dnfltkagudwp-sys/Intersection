@@ -76,6 +76,14 @@ namespace Intersection.Core
         public string SinceDeathWithTime(RelativeTime t) =>
             text.Format(UIKeys.DeathWithTime, ("day", SinceDeath(t)), ("time", Time(t)));
 
+        /// <summary>시작~끝 시각. 같은 날이면 "사망 당일 · 오후 8:48 ~ 오후 9:20".</summary>
+        public string SinceDeathTimeRange(RelativeTime from, RelativeTime to)
+        {
+            if (from.dayOffset == to.dayOffset)
+                return text.Format(UIKeys.DeathTimeRange, ("day", SinceDeath(from)), ("start", Time(from)), ("end", Time(to)));
+            return text.Format(UIKeys.DeathRange, ("from", SinceDeathWithTime(from)), ("to", SinceDeathWithTime(to)));
+        }
+
         public string SinceDeathRange(RelativeTime from, RelativeTime to)
         {
             if (from.dayOffset == to.dayOffset)

@@ -57,6 +57,78 @@ namespace Intersection.Core
         public const string PanelTakenAt = "panel.row.takenAt";
         public const string RecordPrefixPhoto = "record.prefix.photo";
 
+        // UI-04 공통
+        public const string DeathTimeRange = "death.timeRange";
+        public const string ListEmpty = "list.empty";
+        public const string FieldDateTime = "field.datetime";
+        public const string FieldKind = "field.kind";
+        public const string PanelRecordTime = "panel.row.time";
+        public const string PanelRecordCount = "panel.row.recordCount";
+        public const string PanelRecordCountValue = "panel.recordCountValue";
+
+        // 브라우저
+        public const string BrowserTitle = "app.browser.title";
+        public const string BrowserKindSearch = "browser.kind.search";
+        public const string BrowserKindVisit = "browser.kind.visit";
+        public const string BrowserPageUnavailable = "browser.pageUnavailable";
+        public const string PanelTitleBrowser = "panel.title.browser";
+        public const string RecordPrefixWeb = "record.prefix.web";
+
+        // 지도
+        public const string MapsTitle = "app.maps.title";
+        public const string MapsSectionSearches = "maps.section.searches";
+        public const string MapsSectionRoutes = "maps.section.routes";
+        public const string MapsSectionShared = "maps.section.shared";
+        public const string MapsSectionHistory = "maps.section.history";
+        public const string MapsRouteFormat = "maps.routeFormat";
+        public const string MapsSharedSent = "maps.sharedSent";
+        public const string MapsSharedReceived = "maps.sharedReceived";
+        public const string MapsPlaceUnknown = "maps.placeUnknown";
+        public const string MapsFieldPlace = "maps.field.place";
+        public const string MapsFieldFrom = "maps.field.from";
+        public const string MapsFieldTo = "maps.field.to";
+        public const string MapsFieldVia = "maps.field.via";
+        public const string MapsFieldShared = "maps.field.shared";
+        public const string MapsPeriodFormat = "maps.periodFormat";
+        public const string PanelTitleMaps = "panel.title.maps";
+        public const string RecordPrefixMap = "record.prefix.map";
+
+        // 파일
+        public const string FilesTitle = "app.files.title";
+        public const string FilesLocationLocal = "files.location.local";
+        public const string FilesLocationCloud = "files.location.cloud";
+        public const string FilesLocationLinked = "files.location.linked";
+        public const string FilesLocationRecovered = "files.location.recovered";
+        public const string FilesItemCount = "files.itemCount";
+        public const string FilesPreviewUnavailable = "files.previewUnavailable";
+        public const string FilesFieldName = "files.field.name";
+        public const string FilesFieldModified = "files.field.modified";
+        public const string FilesFieldWhere = "files.field.where";
+        public const string PanelTitleFiles = "panel.title.files";
+        public const string RecordPrefixFile = "record.prefix.file";
+
+        // 설정
+        public const string SettingsTitle = "app.settings.title";
+        public const string SettingsSectionCurrent = "settings.section.current";
+        public const string SettingsSectionHistory = "settings.section.history";
+        public const string SettingsChangeFormat = "settings.changeFormat";
+        public const string SettingsFieldItem = "settings.field.item";
+        public const string SettingsFieldBefore = "settings.field.before";
+        public const string SettingsFieldAfter = "settings.field.after";
+        public const string PanelTitleSettings = "panel.title.settings";
+        public const string RecordPrefixSetting = "record.prefix.setting";
+
+        public static string FilesLocationKey(Intersection.Data.RecordSource source)
+        {
+            switch (source)
+            {
+                case Intersection.Data.RecordSource.Cloud: return FilesLocationCloud;
+                case Intersection.Data.RecordSource.Linked: return FilesLocationLinked;
+                case Intersection.Data.RecordSource.Recovered: return FilesLocationRecovered;
+                default: return FilesLocationLocal;
+            }
+        }
+
         // 우측 업무 기록
         public const string PanelTitleMessageList = "panel.title.messageList";
         public const string PanelTitleThread = "panel.title.thread";
@@ -89,6 +161,15 @@ namespace Intersection.Core
             SearchSectionThreads, SearchSectionMessages, SearchEmpty,
             PhotosAlbumCount, PhotosBack, PhotosEmpty, PanelTitleAlbums, PanelPhotoCount, PanelPhotoCountValue, PanelTakenAt,
             RecordPrefixPhoto,
+            DeathTimeRange, ListEmpty, FieldDateTime, FieldKind, PanelRecordTime, PanelRecordCount, PanelRecordCountValue,
+            BrowserTitle, BrowserKindSearch, BrowserKindVisit, BrowserPageUnavailable, PanelTitleBrowser, RecordPrefixWeb,
+            MapsTitle, MapsSectionSearches, MapsSectionRoutes, MapsSectionShared, MapsSectionHistory, MapsRouteFormat,
+            MapsSharedSent, MapsSharedReceived, MapsPlaceUnknown, MapsFieldPlace, MapsFieldFrom, MapsFieldTo, MapsFieldVia,
+            MapsFieldShared, MapsPeriodFormat, PanelTitleMaps, RecordPrefixMap,
+            FilesTitle, FilesLocationLocal, FilesLocationCloud, FilesLocationLinked, FilesLocationRecovered, FilesItemCount,
+            FilesPreviewUnavailable, FilesFieldName, FilesFieldModified, FilesFieldWhere, PanelTitleFiles, RecordPrefixFile,
+            SettingsTitle, SettingsSectionCurrent, SettingsSectionHistory, SettingsChangeFormat, SettingsFieldItem,
+            SettingsFieldBefore, SettingsFieldAfter, PanelTitleSettings, RecordPrefixSetting,
             PanelTitleMessageList, PanelTitleThread, PanelRecordId, RecordCodeFormat, RecordPrefixThread, PanelOwner, PanelSource, PanelSourceFormat,
             PanelPeriod, PanelIntegrity, PanelThreadCount, PanelThreadCountValue,
             SourceLocal, SourceCloud, SourceLinked, SourceRecovered,

@@ -15,5 +15,10 @@ namespace Intersection.Data
         public List<ThreadData> threads = new List<ThreadData>();
         public List<PhotoData> photos = new List<PhotoData>();
         public List<AlbumData> albums = new List<AlbumData>();
+        public List<BrowserRecord> browser = new List<BrowserRecord>();
+        public List<MapRecord> maps = new List<MapRecord>();
+        public List<FileRecord> files = new List<FileRecord>();
+        public List<FolderData> folders = new List<FolderData>();
+        public List<SettingRecord> settings = new List<SettingRecord>();
     }
 }
