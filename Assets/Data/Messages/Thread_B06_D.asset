@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba43a3695d827fc4f890db78ebd1a1ff, type: 3}
+  m_Name: Thread_B06_D
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ThreadData
+  id: 1d79b84d878f43eb97c664e362419dd0
+  groupTitle: 
+  participants:
+  - {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+  - {fileID: 11400000, guid: da415418a3a4ea04e97d52962a1150d8, type: 2}
+  devices:
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    evidenceRef: B06
+    source: 0
+    serviceKey: service.sms
+    availableFrom: 1
+    muted: 0
+    unreadCount: 0
+    integrityKey: integrity.original
+  segments:
+  - id: 9b5c6213ad71408ba644b1d01ab02d79
+    authorNote: B06-M1~M2
+    evidenceRefs: []
+    messages:
+    - id: b59395528b794705a1df64b576e83d4c
+      sender: {fileID: 11400000, guid: da415418a3a4ea04e97d52962a1150d8, type: 2}
+      time:
+        dayOffset: -132
+        hour: 20
+        minute: 5
+      sortKey: 0
+      body: "\uC9C0\uB09C\uBC88 \uBAA8\uC784 \uC0AC\uC9C4 \uD639\uC2DC \uC788\uC5B4?"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: bd6e2655c6284f02a29eebb6fe758456
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -132
+        hour: 20
+        minute: 12
+      sortKey: 0
+      body: "\uC751, \uB2E8\uCCB4 \uC0AC\uC9C4 \uD55C \uC7A5 \uC788\uC5B4. \uBCF4\uB0B4\uC904\uAC8C."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: bdd9a863b1bc4aad8fd194f4539bd77f
+      sender: {fileID: 11400000, guid: da415418a3a4ea04e97d52962a1150d8, type: 2}
+      time:
+        dayOffset: -131
+        hour: 10
+        minute: 20
+      sortKey: 0
+      body: "\uACE0\uB9C8\uC6CC. \uB2E4\uC74C \uBAA8\uC784 \uB54C \uBD10."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 4bec7ab691874f6da0cd04c846116c5c
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -131
+        hour: 10
+        minute: 25
+      sortKey: 0
+      body: "\uC751, \uADF8\uB54C \uBD10."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 

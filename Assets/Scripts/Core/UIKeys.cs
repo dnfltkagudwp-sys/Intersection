@@ -43,6 +43,9 @@ namespace Intersection.Core
         public const string AttachmentImage = "chat.attachment.image";
         public const string AttachmentLocation = "chat.attachment.location";
         public const string MessagesEmpty = "messages.empty";
+        public const string SearchSectionThreads = "search.section.threads";
+        public const string SearchSectionMessages = "search.section.messages";
+        public const string SearchEmpty = "search.empty";
 
         // 우측 업무 기록
         public const string PanelTitleMessageList = "panel.title.messageList";
@@ -73,6 +76,7 @@ namespace Intersection.Core
             CaseStatusLocal, CaseStatusWaiting,
             PhoneDeviceLabel,
             PreviewImage, PreviewLocation, ChatBack, ChatBackUnread, AttachmentImage, AttachmentLocation, MessagesEmpty,
+            SearchSectionThreads, SearchSectionMessages, SearchEmpty,
             PanelTitleMessageList, PanelTitleThread, PanelRecordId, RecordCodeFormat, RecordPrefixThread, PanelOwner, PanelSource, PanelSourceFormat,
             PanelPeriod, PanelIntegrity, PanelThreadCount, PanelThreadCountValue,
             SourceLocal, SourceCloud, SourceLinked, SourceRecovered,

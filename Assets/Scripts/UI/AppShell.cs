@@ -37,10 +37,11 @@ namespace Intersection.UI
         {
             text = new UIText(config.strings);
             time = new PhoneTime(config, text);
-            session = new SessionState(config.startStage);
+            session = new SessionState(config.EffectiveStartStage);
             foreach (var label in GetComponentsInChildren<LocalizedText>(true))
                 label.Apply(text);
             session.CurrentCase = Cases().FirstOrDefault(c => c.IsAvailable(session.Stage));
+            phone.MessageList.QueryChanged += OnQueryChanged;
         }
 
         void Start()
@@ -81,7 +82,7 @@ namespace Intersection.UI
         void RenderSidebar()
         {
             foreach (var item in sidebarItems)
-                Destroy(item.gameObject);
+                UIPool.Discard(item.gameObject);
             sidebarItems.Clear();
 
             foreach (var c in Cases())
@@ -136,15 +137,15 @@ namespace Intersection.UI
                 return;
 
             var nav = session.Nav(device);
+            // 대화방이 열려 있어도 숨겨진 검색창을 이 기기의 검색어로 맞춘다.
+            phone.MessageList.SetQuery(nav.searchQuery);
             var entries = DeviceQuery.Threads(config.database, device, session.Stage);
             var open = nav.openThreadId != null ? entries.FirstOrDefault(e => e.thread.Id == nav.openThreadId) : null;
             if (open == null)
             {
                 nav.openThreadId = null;
                 phone.ShowList();
-                nav.scroll.TryGetValue(string.Empty, out var listScroll);
-                phone.MessageList.Show(entries, text, time, Theme, OpenThread,
-                    nav.scroll.ContainsKey(string.Empty) ? listScroll : (float?)null);
+                RenderList(device, nav, entries);
                 ShowListPanel(device, entries);
             }
             else
@@ -155,9 +156,38 @@ namespace Intersection.UI
                     ? text.Format(UIKeys.ChatBackUnread, ("count", unread.ToString(time.Culture)))
                     : text.Get(UIKeys.ChatBack);
                 float? scroll = nav.scroll.TryGetValue(open.thread.Id, out var s) ? s : (float?)null;
-                phone.Chat.Show(open.thread, device, open.displayName, back, config, text, time, Back, scroll);
+                string focus = nav.focusMessageId;
+                nav.focusMessageId = null;
+                phone.Chat.Show(open.thread, device, open.displayName, back, config, text, time, Back, scroll, focus);
                 ShowThreadPanel(device, open);
             }
+        }
+
+        /// <summary>대화 목록 또는 이 기기의 검색어에 대한 검색 결과.</summary>
+        void RenderList(CaseData device, DeviceNavigation nav, List<ThreadEntry> entries)
+        {
+            var list = phone.MessageList;
+            float? listScroll = nav.scroll.TryGetValue(string.Empty, out var ls) ? ls : (float?)null;
+            if (string.IsNullOrWhiteSpace(nav.searchQuery))
+            {
+                list.Show(entries, text, time, Theme, OpenThread, listScroll);
+                return;
+            }
+            var threadResults = new List<SearchResult>();
+            var messageResults = new List<SearchResult>();
+            MessageSearch.Run(entries, device, nav.searchQuery, text, time, threadResults, messageResults);
+            list.ShowResults(threadResults, messageResults, text, time, Theme, OpenThread, listScroll);
+        }
+
+        void OnQueryChanged(string query)
+        {
+            var device = session.CurrentCase;
+            if (device == null)
+                return;
+            var nav = session.Nav(device);
+            nav.searchQuery = query ?? string.Empty;
+            nav.scroll.Remove(string.Empty);
+            RenderList(device, nav, DeviceQuery.Threads(config.database, device, session.Stage));
         }
 
         void ShowListPanel(CaseData device, List<ThreadEntry> entries)
@@ -215,23 +245,36 @@ namespace Intersection.UI
             Refresh();
         }
 
-        void OpenThread(ThreadEntry entry)
+        /// <summary>대화방을 연다. 검색 결과의 메시지에서 열었으면 그 메시지 위치로 이동한다.</summary>
+        void OpenThread(ThreadEntry entry, MessageData message)
         {
             var nav = session.Nav(session.CurrentCase);
             SaveScroll();
             nav.openThreadId = entry.thread.Id;
+            nav.focusMessageId = message?.Id;
             nav.scroll.Remove(entry.thread.Id);
             RenderCenter();
         }
 
+        /// <summary>대화방 → (검색 결과 또는) 목록 → 검색어 지우기 순으로 한 단계씩 되돌아간다.</summary>
         void Back()
         {
-            var nav = session.Nav(session.CurrentCase);
-            if (nav.openThreadId == null)
+            var device = session.CurrentCase;
+            if (device == null)
                 return;
-            SaveScroll();
-            nav.openThreadId = null;
-            RenderCenter();
+            var nav = session.Nav(device);
+            if (nav.openThreadId != null)
+            {
+                SaveScroll();
+                nav.openThreadId = null;
+                RenderCenter();
+            }
+            else if (!string.IsNullOrEmpty(nav.searchQuery))
+            {
+                nav.searchQuery = string.Empty;
+                nav.scroll.Remove(string.Empty);
+                RenderCenter();
+            }
         }
 
         void SaveScroll()

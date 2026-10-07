@@ -15,11 +15,11 @@ using Object = UnityEngine.Object;
 namespace Intersection.EditorTools
 {
     /// <summary>
-    /// UI-01 화면 골격(씬 계층·프리팹·생성 스프라이트)을 만든다.
+    /// 메인 화면 골격(씬 계층·프리팹·생성 스프라이트)을 만든다. UI 레이아웃의 유일한 원본이다.
     /// 콘텐츠·문구는 넣지 않고 문자열 키와 데이터 참조만 연결한다.
-    /// 다시 실행하면 UI 루트와 Assets/Prefabs/UI의 UI-01 프리팹을 새로 만든다(데이터 에셋은 건드리지 않는다).
+    /// 다시 실행하면 UI 루트와 Assets/Prefabs/UI의 프리팹을 새로 만든다(데이터 에셋은 건드리지 않는다).
     /// </summary>
-    public static class UI01Builder
+    public static class MainUIBuilder
     {
         const string PrefabDir = "Assets/Prefabs/UI";
         const string SpriteDir = "Assets/Art/UI/Generated";
@@ -28,7 +28,7 @@ namespace Intersection.EditorTools
 
         static UITheme theme;
 
-        [MenuItem("Intersection/UI-01/Build Main Scene UI")]
+        [MenuItem("Intersection/UI/Build Main Scene UI")]
         public static void Build()
         {
             var config = AssetDatabase.FindAssets("t:GameConfig", new[] { "Assets/Data" })
@@ -36,7 +36,7 @@ namespace Intersection.EditorTools
                 .FirstOrDefault();
             if (config == null || config.theme == null)
             {
-                Debug.LogError("[UI-01] Assets/Data에 GameConfig와 Theme가 필요합니다.");
+                Debug.LogError("[UI] Assets/Data에 GameConfig와 Theme가 필요합니다.");
                 return;
             }
             theme = config.theme;
@@ -49,9 +49,10 @@ namespace Intersection.EditorTools
             var caseItem = BuildSidebarItem("CaseItem", true);
             var appItem = BuildSidebarItem("AppItem", false);
             var infoRow = BuildInfoRow();
+            var section = BuildListSection();
 
-            BuildScene(config, threadRow, bubbleRow, separator, caseItem, appItem, infoRow);
-            Debug.Log("[UI-01] 화면 골격을 만들었습니다.");
+            BuildScene(config, threadRow, bubbleRow, separator, section, caseItem, appItem, infoRow);
+            Debug.Log("[UI] 화면 골격을 만들었습니다.");
         }
 
         // ───────────── 테마 자산 ─────────────
@@ -70,6 +71,8 @@ namespace Intersection.EditorTools
                 theme.circleSprite = MakeSprite("circle.png", 128, (x, y) => RoundedAlpha(x, y, 128, 64f), Color.white, 0);
             if (theme.avatarSprite == null)
                 theme.avatarSprite = MakeAvatar("avatar_person.png", 128);
+            if (theme.mutedIcon == null)
+                theme.mutedIcon = MakeSprite("muted.png", 64, MutedAlpha, Color.white, 0);
             EditorUtility.SetDirty(theme);
             AssetDatabase.SaveAssetIfDirty(theme);
         }
@@ -92,6 +95,28 @@ namespace Intersection.EditorTools
             for (int x = 0; x < size; x++)
                 tex.SetPixel(x, y, new Color(color.r, color.g, color.b, alpha(x, y)));
             return SaveSprite(tex, file, border);
+        }
+
+        /// <summary>알림 끔 아이콘: 종 모양에 사선. 실제 앱 아이콘을 복제하지 않은 일반 기호.</summary>
+        static float MutedAlpha(int px, int py)
+        {
+            var p = new Vector2(px + 0.5f, py + 0.5f);
+            float Disc(Vector2 c, float r) => Mathf.Clamp01(r - Vector2.Distance(p, c) + 0.5f);
+            float Box(float x0, float y0, float x1, float y1) =>
+                Mathf.Clamp01(Mathf.Min(Mathf.Min(p.x - x0, x1 - p.x), Mathf.Min(p.y - y0, y1 - p.y)) + 0.5f);
+            float bell = Mathf.Max(Disc(new Vector2(32, 38), 15f), Box(17, 20, 47, 38));
+            bell = Mathf.Max(bell, Box(11, 15, 53, 21));
+            bell = Mathf.Max(bell, Disc(new Vector2(32, 9), 5f));
+            bell = Mathf.Max(bell, Disc(new Vector2(32, 54), 3f));
+            // 사선 (좌상 → 우하), 둘레를 비워 종과 구분한다.
+            var a = new Vector2(10, 56);
+            var b = new Vector2(54, 8);
+            var ab = b - a;
+            float t = Mathf.Clamp01(Vector2.Dot(p - a, ab) / ab.sqrMagnitude);
+            float d = Vector2.Distance(p, a + ab * t);
+            float slash = Mathf.Clamp01(3f - d + 0.5f);
+            float gap = Mathf.Clamp01(7f - d + 0.5f);
+            return Mathf.Max(bell * (1f - gap), slash);
         }
 
         static Sprite MakeAvatar(string file, int size)
@@ -325,13 +350,27 @@ namespace Intersection.EditorTools
                 theme.unreadDot, theme.circleSprite);
             Img(Place(Node("Avatar", root), new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(16, 0), new Vector2(46, 46)),
                 Color.white, theme.avatarSprite);
-            var title = Text(TopBand(Node("Title", root), 13, 24, 74, 120), theme.boldFont, theme.phoneRowTitleSize, theme.phoneText);
+            // 이름 바로 뒤에 알림 끔 아이콘이 붙는다. 이름이 길면 이름만 말줄임된다.
+            var titleRow = TopBand(Node("TitleRow", root), 13, 24, 74, 120);
+            var titleLayout = titleRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            titleLayout.childAlignment = TextAnchor.MiddleLeft;
+            titleLayout.childControlWidth = true;
+            titleLayout.childControlHeight = false;
+            titleLayout.childForceExpandWidth = false;
+            titleLayout.childForceExpandHeight = false;
+            titleLayout.spacing = 6;
+            var titleRt = Node("Title", titleRow);
+            titleRt.sizeDelta = new Vector2(200, 24);
+            var title = Text(titleRt, theme.boldFont, theme.phoneRowTitleSize, theme.phoneText);
+            var mutedRt = Node("MutedIcon", titleRow);
+            mutedRt.sizeDelta = new Vector2(15, 15);
+            var mutedLayout = mutedRt.gameObject.AddComponent<LayoutElement>();
+            mutedLayout.minWidth = mutedLayout.preferredWidth = 15;
+            var muted = Img(mutedRt, theme.phoneSubText, theme.mutedIcon);
             var date = Text(Place(Node("Date", root), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-32, -15), new Vector2(100, 20)),
                 theme.regularFont, theme.phoneMetaSize, theme.phoneSubText, TextAlignmentOptions.MidlineRight);
             var chevron = Text(Place(Node("Chevron", root), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-14, -12), new Vector2(14, 24)),
                 theme.regularFont, 22, theme.phoneSubText, TextAlignmentOptions.MidlineRight);
-            var muted = Img(Place(Node("MutedIcon", root), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-136, -18), new Vector2(14, 14)),
-                theme.phoneSubText);
             var preview = Text(TopBand(Node("Preview", root), 40, 22, 74, 18), theme.regularFont, theme.phoneRowPreviewSize, theme.phoneSubText);
             var divider = Node("Divider", root);
             BottomBand(divider, 0, 1, 74);
@@ -378,6 +417,18 @@ namespace Intersection.EditorTools
             var label = Text(Fill(Node("Label", root), 0, 12, 0, 6), theme.mediumFont, 13, theme.phoneSubText, TextAlignmentOptions.Center);
             Wire(view, "label", label);
             return SavePrefab<DateSeparatorView>(root, "DateSeparator");
+        }
+
+        static ListSectionView BuildListSection()
+        {
+            var root = Node("ListSection", null);
+            root.sizeDelta = new Vector2(400, 40);
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 40;
+            var view = root.gameObject.AddComponent<ListSectionView>();
+            var label = Text(Fill(Node("Label", root), 18, 12, 18, 4), theme.boldFont, 17, theme.phoneText,
+                TextAlignmentOptions.BottomLeft);
+            Wire(view, "label", label);
+            return SavePrefab<ListSectionView>(root, "ListSection");
         }
 
         static SidebarItemView BuildSidebarItem(string name, bool isCase)
@@ -432,7 +483,7 @@ namespace Intersection.EditorTools
         // ───────────── 씬 ─────────────
 
         static void BuildScene(GameConfig config, ThreadRowView threadRow, BubbleRowView bubbleRow, DateSeparatorView separator,
-            SidebarItemView caseItem, SidebarItemView appItem, InfoRowView infoRow)
+            ListSectionView section, SidebarItemView caseItem, SidebarItemView appItem, InfoRowView infoRow)
         {
             var scene = EditorSceneManager.GetActiveScene();
             foreach (var old in scene.GetRootGameObjects().Where(g => g.name == RootName))
@@ -482,7 +533,7 @@ namespace Intersection.EditorTools
 
             BuildSidebar(left, out var caseRoot, out var appRoot);
             var panel = BuildWorkPanel(right, infoRow);
-            var phone = BuildCenter(center, threadRow, bubbleRow, separator, out var deviceLabel);
+            var phone = BuildCenter(center, threadRow, bubbleRow, separator, section, out var deviceLabel);
 
             var shell = canvasGo.AddComponent<AppShell>();
             Wire(shell, "config", config);
@@ -605,7 +656,7 @@ namespace Intersection.EditorTools
         }
 
         static PhoneView BuildCenter(RectTransform center, ThreadRowView threadRow, BubbleRowView bubbleRow,
-            DateSeparatorView separator, out TMP_Text deviceLabel)
+            DateSeparatorView separator, ListSectionView section, out TMP_Text deviceLabel)
         {
             Img(center, theme.stage);
             var toolbar = TopBand(Node("Toolbar", center), 0, 60);
@@ -662,7 +713,7 @@ namespace Intersection.EditorTools
             Img(Place(Node("Nub", indicators), new Vector2(1, 0.5f), new Vector2(1, 0.5f), Vector2.zero, new Vector2(2, 5)), new Color(1, 1, 1, 0.5f));
 
             var appArea = Fill(Node("AppArea", screen), 0, 48, 0, 0);
-            var list = BuildMessageList(appArea, threadRow);
+            var list = BuildMessageList(appArea, threadRow, section);
             var chat = BuildChat(appArea, bubbleRow, separator);
 
             var home = Place(Node("HomeIndicator", screen), new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 8), new Vector2(128, 5));
@@ -674,23 +725,59 @@ namespace Intersection.EditorTools
             return view;
         }
 
-        static MessageListView BuildMessageList(RectTransform area, ThreadRowView threadRow)
+        static MessageListView BuildMessageList(RectTransform area, ThreadRowView threadRow, ListSectionView section)
         {
             var rt = Fill(Node("MessageList", area));
             var view = rt.gameObject.AddComponent<MessageListView>();
             Text(TopBand(Node("Title", rt), 4, 44, 18, 18), theme.boldFont, theme.phoneTitleSize, theme.phoneText, key: "app.messages.title");
-            var search = TopBand(Node("Search", rt), 56, 38, 16, 16);
-            Rounded(search, theme.phoneField, 10f);
-            Text(Fill(Node("Placeholder", search), 14, 0, 14, 0), theme.regularFont, 16, theme.phoneSubText, key: "messages.searchPlaceholder");
+            var search = BuildSearchField(TopBand(Node("Search", rt), 56, 38, 16, 16));
             var scrollArea = Fill(Node("Scroll", rt), 0, 104, 0, 22);
             var scroll = MakeScroll(scrollArea, out var content, 0, new RectOffset(0, 0, 0, 12));
             var empty = Text(Fill(Node("Empty", rt), 20, 140, 20, 40), theme.regularFont, 16, theme.phoneSubText, TextAlignmentOptions.Top);
 
+            Wire(view, "searchField", search);
             Wire(view, "scroll", scroll);
             Wire(view, "content", content);
             Wire(view, "rowPrefab", threadRow);
+            Wire(view, "sectionPrefab", section);
             Wire(view, "emptyLabel", empty);
             return view;
+        }
+
+        /// <summary>메시지 앱 내부 검색창 (한 줄 입력).</summary>
+        static TMP_InputField BuildSearchField(RectTransform rt)
+        {
+            var bg = Rounded(rt, theme.phoneField, 10f);
+            bg.raycastTarget = true;
+            var area = Fill(Node("TextArea", rt), 14, 0, 14, 0);
+            area.gameObject.AddComponent<RectMask2D>();
+            var placeholder = Text(Fill(Node("Placeholder", area)), theme.regularFont, 16, theme.phoneSubText,
+                key: "messages.searchPlaceholder");
+            var input = Text(Fill(Node("Text", area)), theme.regularFont, 16, theme.phoneText);
+            input.overflowMode = TextOverflowModes.Overflow;
+
+            var field = rt.gameObject.AddComponent<TMP_InputField>();
+            field.targetGraphic = bg;
+            field.textViewport = area;
+            field.textComponent = input;
+            field.placeholder = placeholder;
+            field.fontAsset = theme.regularFont;
+            field.pointSize = 16;
+            field.lineType = TMP_InputField.LineType.SingleLine;
+            field.characterLimit = 40;
+            field.restoreOriginalTextOnEscape = false;
+            field.onFocusSelectAll = false;
+            field.customCaretColor = true;
+            field.caretColor = theme.phoneAccent;
+            field.caretWidth = 2;
+            field.selectionColor = new Color(theme.phoneAccent.r, theme.phoneAccent.g, theme.phoneAccent.b, 0.35f);
+            var colors = field.colors;
+            colors.normalColor = Color.white;
+            colors.highlightedColor = Color.white;
+            colors.selectedColor = Color.white;
+            colors.pressedColor = Color.white;
+            field.colors = colors;
+            return field;
         }
 
         static ChatView BuildChat(RectTransform area, BubbleRowView bubbleRow, DateSeparatorView separator)

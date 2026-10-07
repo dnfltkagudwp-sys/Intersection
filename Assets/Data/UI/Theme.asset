@@ -19,7 +19,7 @@ MonoBehaviour:
   roundedSprite: {fileID: 21300000, guid: b1998f62f4cc4154b86872842dfc8d1b, type: 3}
   circleSprite: {fileID: 21300000, guid: 417ceaf3c2b71e340b1b95950658bf0e, type: 3}
   avatarSprite: {fileID: 21300000, guid: b19c366e06416aa42a3f1241f1efa24e, type: 3}
-  mutedIcon: {fileID: 0}
+  mutedIcon: {fileID: 21300000, guid: d1e8e6206c5928a42ab1687f16a6bee4, type: 3}
   background: {r: 0.07058824, g: 0.08627451, b: 0.105882354, a: 1}
   panel: {r: 0.09019608, g: 0.10980392, b: 0.13333334, a: 1}
   panelRaised: {r: 0.11764706, g: 0.14509805, b: 0.1764706, a: 1}

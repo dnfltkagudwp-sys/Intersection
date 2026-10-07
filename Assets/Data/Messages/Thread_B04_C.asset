@@ -1,0 +1,188 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba43a3695d827fc4f890db78ebd1a1ff, type: 3}
+  m_Name: Thread_B04_C
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ThreadData
+  id: 998dfe0f12654973981f80666d3a5677
+  groupTitle: 
+  participants:
+  - {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+  - {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+  devices:
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    evidenceRef: B04
+    source: 0
+    serviceKey: service.sms
+    availableFrom: 1
+    muted: 0
+    unreadCount: 0
+    integrityKey: integrity.original
+  segments:
+  - id: 426ed4b04fa245e7b1e3aa12ea9562e2
+    authorNote: "D-242 \uCCAB \uC5F0\uB77D"
+    evidenceRefs: []
+    messages:
+    - id: 3415f81b7967450fb591435893f223e8
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -242
+        hour: 21
+        minute: 10
+      sortKey: 0
+      body: "\uB313\uAE00\uC5D0\uC11C \uC598\uAE30\uD55C \uC154\uCE20, \uC5EC\uAE30\uB85C \uBCF4\uB0B4\uC918\uB3C4 \uB3FC?"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 2e01a84871844780887c8255cf310586
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -242
+        hour: 21
+        minute: 14
+      sortKey: 0
+      body: "\uC751. \uB108\uB3C4 \uAC19\uC740 \uB3D9\uB124 \uD559\uAD50\uB77C\uACE0 \uD574\uC11C \uBC18\uAC00\uC6E0\uC5B4."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+  - id: 424751f4d2dd43e98bb7f2e5816d6d60
+    authorNote: "D-225 \uCE74\uD398 \uC57D\uC18D + B05-01 \uCC29\uC7A5 \uC0AC\uC9C4 (c-outfit-01, B07 \uACC4\uBCF4)"
+    evidenceRefs:
+    - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+      evidenceRef: B05
+    messages:
+    - id: d73e151afc474febb5d2249eb99d007b
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -225
+        hour: 16
+        minute: 12
+      sortKey: 0
+      body: "\uC218\uC5C5 \uB05D\uB098\uBA74 \uCE74\uD398\uC5D0\uC11C \uC7A0\uAE50 \uBCFC\uB798? \uC2E4\uC81C \uC0C9\uB3C4 \uAC19\uC774 \uBCF4\uC790."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 5bdaa256d1e447c5805328fe86076969
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -225
+        hour: 16
+        minute: 16
+      sortKey: 0
+      body: "\uC88B\uC544. 5\uC2DC\uCBE4 \uB3C4\uCC29\uD560\uAC8C."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: ebcfaf5c00d04e8eb5be687f487911f9
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -225
+        hour: 16
+        minute: 40
+      sortKey: 0
+      body: "\uC624\uB298 \uC774 \uC637 \uC785\uC744\uAE4C? \uACF5\uAC1C \uAE00\uC5D4 \uC548 \uC62C\uB9B0 \uC0AC\uC9C4\uC778\uB370 \uD55C\uBC88 \uBD10\uC918."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 5e4607aa966942f08f8670a84a7b683f
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -225
+        hour: 16
+        minute: 40
+      sortKey: 1
+      body: 
+      attachment: 1
+      mediaAssetId: c-outfit-01
+      attachmentLabel: 
+    - id: 6648407da13e4393a280a8b442dd125b
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -225
+        hour: 16
+        minute: 42
+      sortKey: 0
+      body: "\uD30C\uB780\uC0C9\uC774 \uB354 \uB098\uC544 \uBCF4\uC5EC. \uC18C\uB9E4 \uC790\uC218\uB3C4 \uADC0\uC5FD\uACE0."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 1da1302c1b7e4503a22239a5354712df
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -225
+        hour: 18
+        minute: 40
+      sortKey: 0
+      body: 
+      attachment: 1
+      mediaAssetId: 
+      attachmentLabel: 
+  - id: 912d3a8bb3e541f3a550cb6560915b0c
+    authorNote: "D-224 \uC774\uD6C4"
+    evidenceRefs:
+    - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+      evidenceRef: B05
+    messages:
+    - id: af9328617e2746e8843b98261b3205fc
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -224
+        hour: 15
+        minute: 30
+      sortKey: 0
+      body: "\uC5B4\uC81C \uC7AC\uBC0C\uC5C8\uC5B4. \uB2E4\uC74C\uC5D0 \uB610 \uBCF4\uC790."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 6386821d895745ffa7a2aa35c524e8fa
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -221
+        hour: 20
+        minute: 18
+      sortKey: 0
+      body: 
+      attachment: 1
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 9d42d3f275504f43b5dc6f553023ccec
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -218
+        hour: 19
+        minute: 2
+      sortKey: 0
+      body: 
+      attachment: 1
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 90893e023cf745368251f3ec3e63aa3a
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -216
+        hour: 14
+        minute: 47
+      sortKey: 0
+      body: 
+      attachment: 1
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 4fd65d24e55744ba84b8bdb64db3006d
+      sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+      time:
+        dayOffset: -212
+        hour: 21
+        minute: 33
+      sortKey: 0
+      body: 
+      attachment: 1
+      mediaAssetId: 
+      attachmentLabel: 

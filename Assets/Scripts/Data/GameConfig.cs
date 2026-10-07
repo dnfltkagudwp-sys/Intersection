@@ -30,6 +30,21 @@ namespace Intersection.Data
         [Header("진행")]
         public ProgressStage startStage = ProgressStage.P0;
 
+        [Tooltip("에디터·개발 빌드에서만 적용. 진행 시스템(UI-07) 전까지 검수용으로 시작 단계를 바꾼다.")]
+        public bool useDevStartStage;
+        public ProgressStage devStartStage = ProgressStage.P1;
+
+        public ProgressStage EffectiveStartStage
+        {
+            get
+            {
+                // 에디터와 개발 빌드에서만 검수용 시작 단계를 쓴다. 정식 빌드는 항상 startStage.
+                if (useDevStartStage && (Application.isEditor || Debug.isDebugBuild))
+                    return devStartStage;
+                return startStage;
+            }
+        }
+
         [Header("메시지 앱")]
         [Tooltip("이 시간(분) 이상 간격이 벌어지면 대화 안에 날짜 구분선을 넣는다")]
         public int separatorGapMinutes = 60;

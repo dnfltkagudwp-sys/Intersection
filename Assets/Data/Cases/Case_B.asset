@@ -18,5 +18,23 @@ MonoBehaviour:
   displayNameOverride: 
   availableFrom: 1
   unsavedContactLabel: "\uBAA8\uB974\uB294 \uBC88\uD638"
-  contacts: []
+  contacts:
+  - person: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
+    savedName: "\uC815\uC720\uC9C4"
+  - person: {fileID: 11400000, guid: da415418a3a4ea04e97d52962a1150d8, type: 2}
+    savedName: "\uAC15\uB098\uB9B0"
+  - person: {fileID: 11400000, guid: 9595336ecab1246409a38a859dbfaee5, type: 2}
+    savedName: "\uC5C4\uB9C8"
+  - person: {fileID: 11400000, guid: d924e6c6d3fcd3a4098883ff85ccc5ff, type: 2}
+    savedName: "\uD558\uC740"
+  - person: {fileID: 11400000, guid: 84f2d9e9a07e14946b50efe3893ef3dc, type: 2}
+    savedName: "\uB2E4\uC5F0\uC774"
+  - person: {fileID: 11400000, guid: 27294392cfc8daa4aa3e018e3b592163, type: 2}
+    savedName: "\uC9C0\uC218 \uC5B8\uB2C8"
+  - person: {fileID: 11400000, guid: 2d7531f8487fbe84ca61ddbfd96bba97, type: 2}
+    savedName: "\uC624\uC138\uB9B0"
+  - person: {fileID: 11400000, guid: c82cb4c72ce27d646ba65ebad0143af9, type: 2}
+    savedName: "\uBC30\uC900\uC601"
+  - person: {fileID: 11400000, guid: de39e254c683f7046b95699eb16e1f0c, type: 2}
+    savedName: "\uC784\uAC00\uB78C"
   localIndexedFrom: 1

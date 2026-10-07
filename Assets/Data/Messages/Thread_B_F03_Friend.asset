@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba43a3695d827fc4f890db78ebd1a1ff, type: 3}
+  m_Name: Thread_B_F03_Friend
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ThreadData
+  id: 507e632f52584cdca8aeac3ba7e46acc
+  groupTitle: 
+  participants:
+  - {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+  - {fileID: 11400000, guid: 84f2d9e9a07e14946b50efe3893ef3dc, type: 2}
+  devices:
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    evidenceRef: 
+    source: 0
+    serviceKey: service.sms
+    availableFrom: 1
+    muted: 0
+    unreadCount: 0
+    integrityKey: integrity.original
+  segments:
+  - id: 98c07c9a7d7446c48dfa667cc50471a5
+    authorNote: B-F03
+    evidenceRefs: []
+    messages:
+    - id: facdf4b35da14fbd946341a4d5df40df
+      sender: {fileID: 11400000, guid: 84f2d9e9a07e14946b50efe3893ef3dc, type: 2}
+      time:
+        dayOffset: -2
+        hour: 12
+        minute: 40
+      sortKey: 0
+      body: "\uC0C8\uB85C \uC0DD\uAE34 \uC2DD\uB2F9 \uAC00\uBD24\uC5B4?"
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 
+    - id: 5615073635f04d76a3323e86f65a76a0
+      sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
+      time:
+        dayOffset: -2
+        hour: 12
+        minute: 52
+      sortKey: 0
+      body: "\uB2E4\uC74C \uC8FC\uC5D0 \uAC00\uBCF4\uC790."
+      attachment: 0
+      mediaAssetId: 
+      attachmentLabel: 

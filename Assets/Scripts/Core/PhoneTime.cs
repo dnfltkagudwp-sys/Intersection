@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Intersection.Data;
 
@@ -48,6 +49,15 @@ namespace Intersection.Core
             if (date.Year == caseDate.Year)
                 return date.ToString(text.Get(UIKeys.FormatMonthDay), culture);
             return date.ToString(text.Get(UIKeys.FormatFullDate), culture);
+        }
+
+        /// <summary>검색에서 맞춰 볼 수 있는 이 메시지의 표시 날짜들.</summary>
+        public IEnumerable<string> SearchDates(RelativeTime t)
+        {
+            var date = ToDateTime(t);
+            yield return DayLabel(t, false);
+            yield return date.ToString(text.Get(UIKeys.FormatMonthDay), culture);
+            yield return date.ToString(text.Get(UIKeys.FormatFullDate), culture);
         }
 
         /// <summary>업무 패널용 "사망 14일 전" 표기.</summary>

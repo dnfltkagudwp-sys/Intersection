@@ -17,6 +17,8 @@ MonoBehaviour:
   caseDay: 14
   cultureName: ko-KR
   startStage: 0
+  useDevStartStage: 1
+  devStartStage: 1
   separatorGapMinutes: 60
   statusClock: 0
   fixedClockHour: 9

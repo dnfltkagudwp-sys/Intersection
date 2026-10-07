@@ -13,6 +13,12 @@ namespace Intersection.Core
 
         /// <summary>대화방·목록별 스크롤 위치 (불변 ID 키, 목록은 빈 문자열).</summary>
         public readonly Dictionary<string, float> scroll = new Dictionary<string, float>();
+
+        /// <summary>메시지 앱 내부 검색어. 기기마다 따로 유지된다.</summary>
+        public string searchQuery = string.Empty;
+
+        /// <summary>검색 결과에서 연 메시지의 불변 ID. 대화방을 처음 그릴 때 한 번만 사용한다.</summary>
+        public string focusMessageId;
     }
 
     /// <summary>현재 진행 단계와 선택된 의뢰, 기기별 탐색 상태.</summary>

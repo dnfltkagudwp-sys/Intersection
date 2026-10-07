@@ -82,6 +82,26 @@ namespace Intersection.Core
             }
         }
 
+        /// <summary>말풍선에 실제로 보이는 문구. 검색도 이 문구를 기준으로 한다.</summary>
+        public static string DisplayText(MessageData message, UIText text)
+        {
+            switch (message.attachment)
+            {
+                case AttachmentKind.Image:
+                    return text.Get(UIKeys.AttachmentImage);
+                case AttachmentKind.Location:
+                    return string.IsNullOrEmpty(message.attachmentLabel)
+                        ? text.Get(UIKeys.AttachmentLocation)
+                        : message.attachmentLabel;
+                default:
+                    return message.body;
+            }
+        }
+
+        /// <summary>1:1 상대 또는 단체방 구성원의 이 기기 기준 표시명 (주인 제외).</summary>
+        public static IEnumerable<string> ParticipantNames(ThreadData thread, CaseData device) =>
+            thread.participants.Where(p => p != null && p != device.owner).Select(p => ContactName(p, device));
+
         public static int UnreadExcept(List<ThreadEntry> entries, ThreadData except) =>
             entries.Where(e => e.thread != except).Sum(e => e.state.unreadCount);
     }

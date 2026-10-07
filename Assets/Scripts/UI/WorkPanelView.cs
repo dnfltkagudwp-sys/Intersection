@@ -27,7 +27,7 @@ namespace Intersection.UI
         {
             recordTitle.text = title;
             foreach (var r in rows)
-                Destroy(r.gameObject);
+                UIPool.Discard(r.gameObject);
             rows.Clear();
             foreach (var row in info)
             {
