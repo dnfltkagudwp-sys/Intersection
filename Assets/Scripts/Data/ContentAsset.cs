@@ -25,8 +25,11 @@ namespace Intersection.Data
             return true;
         }
 
-        /// <summary>복제된 에셋이 원본과 같은 ID를 갖게 됐을 때만 사용한다.</summary>
-        public void RegenerateId() => id = NewId();
+        /// <summary>
+        /// 복제된 에셋이 원본과 같은 ID를 갖게 됐을 때만 사용한다.
+        /// 내부 항목(구간·메시지 등)을 가진 에셋은 그 ID도 함께 새로 발급한다.
+        /// </summary>
+        public virtual void RegenerateIds() => id = NewId();
 
         protected virtual void OnValidate()
         {

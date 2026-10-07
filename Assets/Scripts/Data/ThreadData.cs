@@ -153,6 +153,72 @@ namespace Intersection.Data
             return null;
         }
 
+        public override void RegenerateIds()
+        {
+            base.RegenerateIds();
+            foreach (var s in segments)
+            {
+                if (s == null)
+                    continue;
+                s.RegenerateId();
+                if (s.messages == null)
+                    continue;
+                foreach (var m in s.messages)
+                    m?.RegenerateId();
+            }
+        }
+
+        /// <summary>내부 구간·메시지 ID 목록 (다른 에셋과의 중복 검사용).</summary>
+        public IEnumerable<string> InnerIds
+        {
+            get
+            {
+                foreach (var s in segments)
+                {
+                    if (s == null)
+                        continue;
+                    yield return s.Id;
+                    if (s.messages == null)
+                        continue;
+                    foreach (var m in s.messages)
+                    {
+                        if (m != null)
+                            yield return m.Id;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 다른 대화에서 이미 쓰는 내부 ID를 새로 발급한다(구간·메시지를 다른 대화에서 복사해 온 경우).
+        /// 변경이 있었으면 true.
+        /// </summary>
+        public bool RegenerateTakenInnerIds(HashSet<string> taken)
+        {
+            bool changed = false;
+            foreach (var s in segments)
+            {
+                if (s == null)
+                    continue;
+                if (taken.Contains(s.Id))
+                {
+                    s.RegenerateId();
+                    changed = true;
+                }
+                if (s.messages == null)
+                    continue;
+                foreach (var m in s.messages)
+                {
+                    if (m != null && taken.Contains(m.Id))
+                    {
+                        m.RegenerateId();
+                        changed = true;
+                    }
+                }
+            }
+            return changed;
+        }
+
         public override bool EnsureIds()
         {
             bool changed = base.EnsureIds();

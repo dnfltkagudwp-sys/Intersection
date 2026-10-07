@@ -147,3 +147,7 @@ MonoBehaviour:
     value: "\uBB38\uC790(SMS)"
   - key: integrity.original
     value: "\uC6D0\uBCF8 \uC720\uC9C0"
+  - key: record.codeFormat
+    value: '{prefix}-{code}'
+  - key: record.prefix.thread
+    value: MSG

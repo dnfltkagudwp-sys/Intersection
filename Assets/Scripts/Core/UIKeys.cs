@@ -48,6 +48,8 @@ namespace Intersection.Core
         public const string PanelTitleMessageList = "panel.title.messageList";
         public const string PanelTitleThread = "panel.title.thread";
         public const string PanelRecordId = "panel.row.recordId";
+        public const string RecordCodeFormat = "record.codeFormat";
+        public const string RecordPrefixThread = "record.prefix.thread";
         public const string PanelOwner = "panel.row.owner";
         public const string PanelSource = "panel.row.source";
         public const string PanelSourceFormat = "panel.sourceFormat";
@@ -71,7 +73,7 @@ namespace Intersection.Core
             CaseStatusLocal, CaseStatusWaiting,
             PhoneDeviceLabel,
             PreviewImage, PreviewLocation, ChatBack, ChatBackUnread, AttachmentImage, AttachmentLocation, MessagesEmpty,
-            PanelTitleMessageList, PanelTitleThread, PanelRecordId, PanelOwner, PanelSource, PanelSourceFormat,
+            PanelTitleMessageList, PanelTitleThread, PanelRecordId, RecordCodeFormat, RecordPrefixThread, PanelOwner, PanelSource, PanelSourceFormat,
             PanelPeriod, PanelIntegrity, PanelThreadCount, PanelThreadCountValue,
             SourceLocal, SourceCloud, SourceLinked, SourceRecovered,
         };

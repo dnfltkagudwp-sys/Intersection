@@ -182,7 +182,8 @@ namespace Intersection.UI
                     ("service", text.Get(entry.state.serviceKey)));
             workPanel.Show(text.Format(UIKeys.PanelTitleThread, ("name", entry.displayName)), new[]
             {
-                Row(UIKeys.PanelRecordId, entry.state.evidenceRef, Theme.monoFont),
+                // 증거 마스터 ID(evidenceRef)는 표시하지 않는다. 모든 대화가 같은 형식의 중립 코드를 가진다.
+                Row(UIKeys.PanelRecordId, RecordCode.Format(text, UIKeys.RecordPrefixThread, entry.thread.Id, device.Id), Theme.monoFont),
                 Row(UIKeys.PanelOwner, device.owner != null ? device.owner.fullName : device.DisplayName, Theme.regularFont),
                 Row(UIKeys.PanelSource, source, Theme.regularFont),
                 Row(UIKeys.PanelPeriod, time.SinceDeathRange(ordered[0].time, ordered[ordered.Count - 1].time), Theme.regularFont),
