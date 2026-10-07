@@ -19,6 +19,15 @@ namespace Intersection.Core
 
         /// <summary>검색 결과에서 연 메시지의 불변 ID. 대화방을 처음 그릴 때 한 번만 사용한다.</summary>
         public string focusMessageId;
+
+        /// <summary>사진 앱에서 열려 있는 앨범의 불변 ID. null이면 앨범 목록.</summary>
+        public string photoAlbumId;
+
+        /// <summary>한 장 보기로 열린 사진의 불변 ID. null이면 그리드.</summary>
+        public string openPhotoId;
+
+        /// <summary>사진 앱 앨범 목록의 스크롤 키 (앨범 그리드는 앨범 ID를 키로 쓴다).</summary>
+        public const string AlbumListScrollKey = "photos/albums";
     }
 
     /// <summary>현재 진행 단계와 선택된 의뢰, 기기별 탐색 상태.</summary>

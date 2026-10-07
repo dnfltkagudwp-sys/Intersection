@@ -157,3 +157,25 @@ MonoBehaviour:
     value: "\uBA54\uC2DC\uC9C0"
   - key: search.empty
     value: "\uACB0\uACFC \uC5C6\uC74C"
+  - key: app.photos.title
+    value: "\uC568\uBC94"
+  - key: photos.albumCount
+    value: '{count}'
+  - key: photos.back
+    value: "\uC568\uBC94"
+  - key: photos.empty
+    value: "\uC0AC\uC9C4 \uC5C6\uC74C"
+  - key: panel.title.albums
+    value: "\uC0AC\uC9C4 \uC568\uBC94"
+  - key: panel.row.photoCount
+    value: "\uC0AC\uC9C4"
+  - key: panel.photoCountValue
+    value: "{count}\uC7A5"
+  - key: panel.row.takenAt
+    value: "\uCD2C\uC601 \uC2DC\uAC01"
+  - key: record.prefix.photo
+    value: PHO
+  - key: service.camera
+    value: "\uCE74\uBA54\uB77C"
+  - key: service.messageSave
+    value: "\uBA54\uC2DC\uC9C0\uC5D0\uC11C \uC800\uC7A5"

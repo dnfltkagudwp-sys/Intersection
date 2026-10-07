@@ -19,6 +19,8 @@ namespace Intersection.Data
         public Sprite circleSprite;
         public Sprite avatarSprite;
         public Sprite mutedIcon;
+        [Tooltip("이미지가 없는 사진 자리에 표시하는 일반 그림 기호")]
+        public Sprite photoGlyph;
 
         [Header("Work program")]
         public Color background = Hex("12161B");
@@ -45,6 +47,9 @@ namespace Intersection.Data
         public Color bubbleIncomingText = Hex("FFFFFF");
         public Color attachmentPlaceholder = Hex("3A3A3C");
         public Color unreadDot = Hex("0A84FF");
+        [Tooltip("이미지가 없는 사진의 자리 표시 기본색")]
+        public Color photoPlaceholder = Hex("2C2C2E");
+        public Color photoPlaceholderGlyph = Hex("5A5A5E");
 
         [Header("Phone sizes (1920x1080 기준 px)")]
         public float phoneTitleSize = 32f;
@@ -59,6 +64,8 @@ namespace Intersection.Data
         public Vector2 locationAttachmentSize = new Vector2(210f, 120f);
         public float bubbleGroupGap = 3f;
         public float bubbleSenderGap = 12f;
+        [Range(2, 6)] public int photoGridColumns = 4;
+        public float photoGridSpacing = 2f;
 
         [Header("Glyphs")]
         public string backGlyph = "‹";

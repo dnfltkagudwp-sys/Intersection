@@ -22,7 +22,7 @@ MonoBehaviour:
     nameKey: app.photos
     order: 1
     icon: {fileID: 0}
-    implemented: 0
+    implemented: 1
   - kind: 2
     nameKey: app.browser
     order: 2

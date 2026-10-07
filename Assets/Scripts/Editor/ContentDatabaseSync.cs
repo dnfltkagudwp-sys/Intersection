@@ -10,10 +10,22 @@ namespace Intersection.EditorTools
     /// Assets/Data 아래 콘텐츠 에셋이 추가·삭제·이동되면 ContentDatabase 목록을 자동 갱신한다.
     /// 새 대화방·인물·의뢰를 만들 때 코드나 목록을 손으로 고칠 필요가 없다.
     /// </summary>
+    [InitializeOnLoad]
     public class ContentDatabaseSync : AssetPostprocessor
     {
         const string DataRoot = "Assets/Data/";
         static bool scheduled;
+
+        // 에셋 변경 직후의 지연 호출은 에디터가 다음 틱을 돌 때 실행된다.
+        // 그 전에 플레이를 누르는 경우를 위해 플레이 진입 직전에도 한 번 맞춘다.
+        static ContentDatabaseSync()
+        {
+            EditorApplication.playModeStateChanged += state =>
+            {
+                if (state == PlayModeStateChange.ExitingEditMode)
+                    Sync();
+            };
+        }
 
         static void OnPostprocessAllAssets(string[] imported, string[] deleted, string[] moved, string[] movedFrom)
         {
@@ -35,16 +47,21 @@ namespace Intersection.EditorTools
             var people = Load<PersonData>();
             var cases = Load<CaseData>();
             var threads = Load<ThreadData>();
-            FixDuplicateAssetIds(people.Cast<ContentAsset>().Concat(cases).Concat(threads));
+            var photos = Load<PhotoData>();
+            var albums = Load<AlbumData>();
+            FixDuplicateAssetIds(people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums));
             FixDuplicateInnerIds(threads);
 
             foreach (var db in Load<ContentDatabase>())
             {
-                if (db.people.SequenceEqual(people) && db.cases.SequenceEqual(cases) && db.threads.SequenceEqual(threads))
+                if (db.people.SequenceEqual(people) && db.cases.SequenceEqual(cases) && db.threads.SequenceEqual(threads)
+                    && db.photos.SequenceEqual(photos) && db.albums.SequenceEqual(albums))
                     continue;
                 db.people = people;
                 db.cases = cases;
                 db.threads = threads;
+                db.photos = photos;
+                db.albums = albums;
                 EditorUtility.SetDirty(db);
                 AssetDatabase.SaveAssetIfDirty(db);
             }

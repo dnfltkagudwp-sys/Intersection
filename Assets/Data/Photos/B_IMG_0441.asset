@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f3af5f01e154384381ac7ae8f6350bc, type: 3}
+  m_Name: B_IMG_0441
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.PhotoData
+  id: 50102f6f7ab740d7bff4d1b70266d13a
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  fileName: IMG_0441.jpg
+  takenAt:
+    dayOffset: -216
+    hour: 14
+    minute: 48
+  sortKey: 0
+  isScreenshot: 0
+  source: 0
+  serviceKey: service.messageSave
+  availableFrom: 1
+  evidenceRef: B05
+  mediaAssetId: b05-05
+  image: {fileID: 0}
+  integrityKey: integrity.original
+  authorNote: "B05-05 \uC637\uAC00\uAC8C \uC9C4\uC5F4\uB300"

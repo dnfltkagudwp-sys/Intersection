@@ -47,6 +47,16 @@ namespace Intersection.Core
         public const string SearchSectionMessages = "search.section.messages";
         public const string SearchEmpty = "search.empty";
 
+        // 사진 앱
+        public const string PhotosAlbumCount = "photos.albumCount";
+        public const string PhotosBack = "photos.back";
+        public const string PhotosEmpty = "photos.empty";
+        public const string PanelTitleAlbums = "panel.title.albums";
+        public const string PanelPhotoCount = "panel.row.photoCount";
+        public const string PanelPhotoCountValue = "panel.photoCountValue";
+        public const string PanelTakenAt = "panel.row.takenAt";
+        public const string RecordPrefixPhoto = "record.prefix.photo";
+
         // 우측 업무 기록
         public const string PanelTitleMessageList = "panel.title.messageList";
         public const string PanelTitleThread = "panel.title.thread";
@@ -77,6 +87,8 @@ namespace Intersection.Core
             PhoneDeviceLabel,
             PreviewImage, PreviewLocation, ChatBack, ChatBackUnread, AttachmentImage, AttachmentLocation, MessagesEmpty,
             SearchSectionThreads, SearchSectionMessages, SearchEmpty,
+            PhotosAlbumCount, PhotosBack, PhotosEmpty, PanelTitleAlbums, PanelPhotoCount, PanelPhotoCountValue, PanelTakenAt,
+            RecordPrefixPhoto,
             PanelTitleMessageList, PanelTitleThread, PanelRecordId, RecordCodeFormat, RecordPrefixThread, PanelOwner, PanelSource, PanelSourceFormat,
             PanelPeriod, PanelIntegrity, PanelThreadCount, PanelThreadCountValue,
             SourceLocal, SourceCloud, SourceLinked, SourceRecovered,

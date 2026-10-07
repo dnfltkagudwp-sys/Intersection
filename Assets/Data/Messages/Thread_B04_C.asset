@@ -123,7 +123,7 @@ MonoBehaviour:
       sortKey: 0
       body: 
       attachment: 1
-      mediaAssetId: 
+      mediaAssetId: b05-02
       attachmentLabel: 
   - id: 912d3a8bb3e541f3a550cb6560915b0c
     authorNote: "D-224 \uC774\uD6C4"
@@ -151,7 +151,7 @@ MonoBehaviour:
       sortKey: 0
       body: 
       attachment: 1
-      mediaAssetId: 
+      mediaAssetId: b05-03
       attachmentLabel: 
     - id: 9d42d3f275504f43b5dc6f553023ccec
       sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
@@ -162,7 +162,7 @@ MonoBehaviour:
       sortKey: 0
       body: 
       attachment: 1
-      mediaAssetId: 
+      mediaAssetId: b05-04
       attachmentLabel: 
     - id: 90893e023cf745368251f3ec3e63aa3a
       sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
@@ -173,7 +173,7 @@ MonoBehaviour:
       sortKey: 0
       body: 
       attachment: 1
-      mediaAssetId: 
+      mediaAssetId: b05-05
       attachmentLabel: 
     - id: 4fd65d24e55744ba84b8bdb64db3006d
       sender: {fileID: 11400000, guid: 147aa044257a35a4382444cccd5dd0aa, type: 2}
@@ -184,5 +184,5 @@ MonoBehaviour:
       sortKey: 0
       body: 
       attachment: 1
-      mediaAssetId: 
+      mediaAssetId: b05-06
       attachmentLabel: 

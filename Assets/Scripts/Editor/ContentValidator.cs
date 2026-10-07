@@ -49,9 +49,11 @@ namespace Intersection.EditorTools
             var people = Find<PersonData>();
             var cases = Find<CaseData>();
             var threads = Find<ThreadData>();
+            var photos = Find<PhotoData>();
+            var albums = Find<AlbumData>();
 
             // 에셋 ID
-            var allAssets = people.Cast<ContentAsset>().Concat(cases).Concat(threads).ToList();
+            var allAssets = people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums).ToList();
             foreach (var a in allAssets.Where(a => string.IsNullOrEmpty(a.Id)))
                 Error($"ID가 비어 있습니다: {Path(a)}", a);
             foreach (var g in allAssets.Where(a => !string.IsNullOrEmpty(a.Id)).GroupBy(a => a.Id).Where(g => g.Count() > 1))
@@ -209,12 +211,70 @@ namespace Intersection.EditorTools
                 }
             }
 
+            // 사진
+            foreach (var p in photos)
+            {
+                string where = Path(p);
+                if (p.device == null)
+                    Error($"사진의 기기가 비어 있습니다: {where}", p);
+                if (string.IsNullOrWhiteSpace(p.fileName))
+                    Error($"사진 파일명이 비어 있습니다: {where}", p);
+                if (!p.takenAt.IsValid)
+                    Error($"촬영 시각이 올바르지 않습니다: {where}", p);
+                CheckKey(p.serviceKey, where, p);
+                CheckKey(p.integrityKey, where, p);
+            }
+            foreach (var g in photos.Where(p => p.device != null).GroupBy(p => (p.device, p.takenAt.TotalMinutes, p.sortKey)).Where(g => g.Count() > 1))
+                Error($"같은 기기·같은 촬영 시각·같은 sortKey 사진이 {g.Count()}장 있어 순서가 정해지지 않습니다: {string.Join(", ", g.Select(Path))}", g.First());
+            foreach (var g in photos.Where(p => p.device != null && !string.IsNullOrEmpty(p.fileName)).GroupBy(p => (p.device, p.fileName)).Where(g => g.Count() > 1))
+                Error($"같은 기기에 같은 파일명이 있습니다 ({g.Key.fileName}): {string.Join(", ", g.Select(Path))}", g.First());
+
+            // 메시지 첨부가 가리키는 이미지 자산이 사진 데이터에 있는지 (미정 자산은 비워 두면 검사하지 않는다)
+            var mediaIds = new HashSet<string>(photos.Where(p => !string.IsNullOrEmpty(p.mediaAssetId)).Select(p => p.mediaAssetId));
+            foreach (var t in threads)
+            {
+                foreach (var m in t.AllMessages.Where(m => m.attachment == AttachmentKind.Image && !string.IsNullOrEmpty(m.mediaAssetId)))
+                {
+                    if (!mediaIds.Contains(m.mediaAssetId))
+                        Warn($"첨부 자산 '{m.mediaAssetId}'를 가진 사진 데이터가 없습니다: {Path(t)} [{m.time}]", t);
+                }
+            }
+
+            // 앨범
+            foreach (var a in albums)
+            {
+                string where = Path(a);
+                if (a.device == null)
+                    Error($"앨범의 기기가 비어 있습니다: {where}", a);
+                if (string.IsNullOrWhiteSpace(a.title))
+                    Error($"앨범 이름이 비어 있습니다: {where}", a);
+                if (a.kind == AlbumKind.Manual)
+                {
+                    foreach (var p in a.photos)
+                    {
+                        if (p == null)
+                            Error($"앨범에 비어 있는 사진 참조가 있습니다: {where}", a);
+                        else if (p.device != a.device)
+                            Error($"다른 기기의 사진이 앨범에 들어 있습니다 ({p.name}): {where}", a);
+                    }
+                }
+                else if (a.photos.Count > 0)
+                    Warn($"{a.kind} 앨범은 photos 목록을 쓰지 않습니다: {where}", a);
+            }
+            foreach (var c in cases)
+            {
+                if (photos.Any(p => p.device == c) && !albums.Any(a => a.device == c))
+                    Warn($"사진은 있지만 앨범이 없어 사진 앱에서 볼 수 없습니다: {Path(c)}", c);
+            }
+
             if (config != null && config.database != null)
             {
                 var db = config.database;
-                if (!people.All(db.people.Contains) || !cases.All(db.cases.Contains) || !threads.All(db.threads.Contains))
+                if (!people.All(db.people.Contains) || !cases.All(db.cases.Contains) || !threads.All(db.threads.Contains)
+                    || !photos.All(db.photos.Contains) || !albums.All(db.albums.Contains))
                     Warn("ContentDatabase가 최신이 아닙니다. Intersection/Content/Refresh Content Database를 실행하세요.", db);
-                if (db.people.Any(p => p == null) || db.cases.Any(c => c == null) || db.threads.Any(t => t == null))
+                if (db.people.Any(p => p == null) || db.cases.Any(c => c == null) || db.threads.Any(t => t == null)
+                    || db.photos.Any(p => p == null) || db.albums.Any(a => a == null))
                     Error("ContentDatabase에 삭제된 에셋 참조가 남아 있습니다.", db);
             }
 

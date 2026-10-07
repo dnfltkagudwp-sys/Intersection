@@ -10,6 +10,9 @@ namespace Intersection.UI
         [SerializeField] TMP_Text clockLabel;
         [SerializeField] MessageListView messageList;
         [SerializeField] ChatView chat;
+        [SerializeField] AlbumListView albumList;
+        [SerializeField] PhotoGridView photoGrid;
+        [SerializeField] PhotoDetailView photoDetail;
 
         IClock clock;
         UIText text;
@@ -18,6 +21,18 @@ namespace Intersection.UI
 
         public MessageListView MessageList => messageList;
         public ChatView Chat => chat;
+        public AlbumListView AlbumList => albumList;
+        public PhotoGridView PhotoGrid => photoGrid;
+        public PhotoDetailView PhotoDetail => photoDetail;
+
+        public enum Screen
+        {
+            MessageList,
+            Chat,
+            AlbumList,
+            PhotoGrid,
+            PhotoDetail,
+        }
 
         struct PhoneTimeFormat
         {
@@ -33,17 +48,23 @@ namespace Intersection.UI
             RefreshClock(true);
         }
 
-        public void ShowList()
+        /// <summary>한 번에 한 앱의 한 화면만 보인다.</summary>
+        public void Show(Screen screen)
         {
-            messageList.gameObject.SetActive(true);
-            chat.gameObject.SetActive(false);
+            messageList.gameObject.SetActive(screen == Screen.MessageList);
+            chat.gameObject.SetActive(screen == Screen.Chat);
+            albumList.gameObject.SetActive(screen == Screen.AlbumList);
+            photoGrid.gameObject.SetActive(screen == Screen.PhotoGrid);
+            photoDetail.gameObject.SetActive(screen == Screen.PhotoDetail);
         }
 
-        public void ShowChat()
-        {
-            messageList.gameObject.SetActive(false);
-            chat.gameObject.SetActive(true);
-        }
+        /// <summary>현재 보이는 화면.</summary>
+        public Screen Current =>
+            chat.gameObject.activeSelf ? Screen.Chat
+            : albumList.gameObject.activeSelf ? Screen.AlbumList
+            : photoGrid.gameObject.activeSelf ? Screen.PhotoGrid
+            : photoDetail.gameObject.activeSelf ? Screen.PhotoDetail
+            : Screen.MessageList;
 
         void Update() => RefreshClock(false);
 

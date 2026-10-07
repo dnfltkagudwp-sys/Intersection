@@ -4,10 +4,10 @@
 
 ## 현재 상태
 
-- **UI-01·UI-02 검수 완료.** 다음 단계는 UI-03(사진 앱). UI 제작 패킷 11절 순서대로 진행하며, 각 단계 검수 전에는 다음 단계로 넘어가지 않는다.
+- **UI-01·UI-02·UI-03 검수 완료.** 다음 단계는 UI-04(브라우저·지도·파일·설정). UI 제작 패킷 11절 순서대로 진행하며, 각 단계 검수 전에는 다음 단계로 넘어가지 않는다.
 - 진행 시스템(UI-07) 전까지 B 의뢰(P1부터 접근) 검수를 위해 `GameConfig.useDevStartStage = true`, `devStartStage = P1`로 둔다. 에디터·개발 빌드에서만 적용되며 정식 시작 단계 `startStage`는 P0 그대로다.
 - 우측 패널 "기록 ID"는 증거 ID가 아니라 모든 기록에 같은 형식인 중립 코드(`RecordCode`, 원본 ID+기기 ID 기반)를 표시한다. 증거 마스터 ID는 화면에 노출하지 않는다.
-- A-F·B-F 일상 더미의 인물 이름·저장명·단체방 제목·전화번호, 메시지의 분 단위 시각(v0.3에 명시된 값 제외)은 화면 검수용 임시값이며 정식 설정이 아니다. 사용자가 나중에 정식 일상 데이터를 한꺼번에 넣어 교체할 예정이므로, 이 임시값을 기획 근거로 삼거나 다른 문서·데이터에서 참조하지 않는다. 이후 단계에서 화면 검수에 일상 데이터가 더 필요하면 같은 원칙의 임시값으로만 추가하고 임시라고 보고한다.
+- A-F·B-F 일상 더미의 인물 이름·저장명·단체방 제목·전화번호, 메시지의 분 단위 시각(v0.3에 명시된 값 제외), B폰 사진 파일명, 모든 사진의 분 단위 촬영 시각은 화면 검수용 임시값이며 정식 설정이 아니다. 사진 이미지는 아직 없으며 `PhotoData.image`가 비어 있으면 중립 자리 표시로 보인다. 사용자가 나중에 정식 일상 데이터를 한꺼번에 넣어 교체할 예정이므로, 이 임시값을 기획 근거로 삼거나 다른 문서·데이터에서 참조하지 않는다. 이후 단계에서 화면 검수에 일상 데이터가 더 필요하면 같은 원칙의 임시값으로만 추가하고 임시라고 보고한다.
 - 메인 씬 `Assets/Scenes/Main.unity`의 `IntersectionUI`는 `Intersection/UI/Build Main Scene UI` 메뉴(`Scripts/Editor/MainUIBuilder.cs`)가 생성한다. UI 레이아웃의 유일한 원본이며, 다시 실행하면 UI 루트와 UI 프리팹을 새로 만들므로 씬·프리팹 수작업 수정은 빌더에도 반영해야 한다. 데이터 에셋은 건드리지 않는다.
 - 콘텐츠 편집: `Assets/Data` 아래 에셋을 추가·수정·삭제하면 `ContentDatabase`가 자동 갱신된다. 수정 후 `Intersection/Content/Validate`로 검증한다(빌드 전에도 자동 실행되어 오류 시 빌드 중단).
 - 임시 `caseDate`와 상태바 시계 모드는 `Assets/Data/GameConfig.asset`, 화면 문구·날짜 형식은 `Assets/Data/UI/Strings_ko.asset`, 색·글꼴·크기는 `Assets/Data/UI/Theme.asset`, 앱 목록은 `Assets/Data/UI/Apps.asset`.
@@ -51,7 +51,7 @@
 
 ```
 Scripts/   Core(진행 단계·업무 상태·날짜 변환·조회 등 게임 로직) / Data(ScriptableObject 정의) / UI(뷰) / Editor(빌더·검증·DB 동기화)
-Data/      GameConfig·ContentDatabase / People(인물) / Cases(A·B 의뢰 = 기기·주소록) / Messages(대화 원본) / UI(문자열·테마·앱 등록)
+Data/      GameConfig·ContentDatabase / People(인물) / Cases(A·B 의뢰 = 기기·주소록) / Messages(대화 원본) / Photos(사진 1장 = 에셋 1개, 앨범) / UI(문자열·테마·앱 등록)
            / Evidence(증거, 마스터 표 ID로 파일명) / Deductions(추론·CROSS)
 Art/       UI(Generated = 빌더가 만든 스프라이트) / Icons / Photos(게임 속 폰 사진 = 증거 이미지)
 Prefabs/   UI

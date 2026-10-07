@@ -27,6 +27,7 @@ namespace Intersection.EditorTools
         const float SpriteRadius = 24f;
 
         static UITheme theme;
+        static (AlbumRowView albumRow, PhotoTileView photoTile) photoPrefabs;
 
         [MenuItem("Intersection/UI/Build Main Scene UI")]
         public static void Build()
@@ -50,6 +51,7 @@ namespace Intersection.EditorTools
             var appItem = BuildSidebarItem("AppItem", false);
             var infoRow = BuildInfoRow();
             var section = BuildListSection();
+            photoPrefabs = (BuildAlbumRow(), BuildPhotoTile());
 
             BuildScene(config, threadRow, bubbleRow, separator, section, caseItem, appItem, infoRow);
             Debug.Log("[UI] 화면 골격을 만들었습니다.");
@@ -73,6 +75,8 @@ namespace Intersection.EditorTools
                 theme.avatarSprite = MakeAvatar("avatar_person.png", 128);
             if (theme.mutedIcon == null)
                 theme.mutedIcon = MakeSprite("muted.png", 64, MutedAlpha, Color.white, 0);
+            if (theme.photoGlyph == null)
+                theme.photoGlyph = MakeSprite("photo_placeholder.png", 64, PhotoGlyphAlpha, Color.white, 0);
             EditorUtility.SetDirty(theme);
             AssetDatabase.SaveAssetIfDirty(theme);
         }
@@ -117,6 +121,28 @@ namespace Intersection.EditorTools
             float slash = Mathf.Clamp01(3f - d + 0.5f);
             float gap = Mathf.Clamp01(7f - d + 0.5f);
             return Mathf.Max(bell * (1f - gap), slash);
+        }
+
+        /// <summary>이미지 없는 사진 자리 표시용 일반 그림 기호: 테두리 사각형 + 산 + 해. 어떤 장면도 암시하지 않는다.</summary>
+        static float PhotoGlyphAlpha(int px, int py)
+        {
+            var p = new Vector2(px + 0.5f, py + 0.5f);
+            float Box(float x0, float y0, float x1, float y1) =>
+                Mathf.Clamp01(Mathf.Min(Mathf.Min(p.x - x0, x1 - p.x), Mathf.Min(p.y - y0, y1 - p.y)) + 0.5f);
+            float frame = Mathf.Clamp01(Box(6, 12, 58, 52) - Box(10, 16, 54, 48));
+            // 산: 두 삼각형 (아래 변 y=16)
+            float Tri(float cx, float top, float half)
+            {
+                float h = top - 16f;
+                float t = (p.y - 16f) / h;
+                if (t < 0f || t > 1f) return 0f;
+                float w = half * (1f - t);
+                return Mathf.Clamp01(w - Mathf.Abs(p.x - cx) + 0.5f);
+            }
+            float mountains = Mathf.Max(Tri(24, 38, 16), Tri(40, 32, 13));
+            mountains *= Box(10, 16, 54, 48);
+            float sun = Mathf.Clamp01(4.5f - Vector2.Distance(p, new Vector2(44, 40)) + 0.5f);
+            return Mathf.Max(frame, Mathf.Max(mountains, sun));
         }
 
         static Sprite MakeAvatar(string file, int size)
@@ -419,6 +445,61 @@ namespace Intersection.EditorTools
             return SavePrefab<DateSeparatorView>(root, "DateSeparator");
         }
 
+        static AlbumRowView BuildAlbumRow()
+        {
+            var root = Node("AlbumRow", null);
+            root.sizeDelta = new Vector2(400, 84);
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 84;
+            var bg = Img(root, Color.white);
+            var button = MakeButton(root, bg, new Color(1, 1, 1, 0), new Color(1, 1, 1, 0.08f));
+            var view = root.gameObject.AddComponent<AlbumRowView>();
+
+            var coverRt = Place(Node("Cover", root), new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(16, 0), new Vector2(64, 64));
+            coverRt.gameObject.AddComponent<RectMask2D>();
+            var cover = coverRt.gameObject.AddComponent<RawImage>();
+            cover.raycastTarget = false;
+            var glyph = Img(Place(Node("Glyph", coverRt), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(30, 30)),
+                theme.photoPlaceholderGlyph, theme.photoGlyph);
+            var title = Text(TopBand(Node("Title", root), 20, 24, 94, 40), theme.mediumFont, theme.phoneRowTitleSize, theme.phoneText);
+            var count = Text(TopBand(Node("Count", root), 44, 20, 94, 40), theme.regularFont, theme.phoneRowPreviewSize, theme.phoneSubText);
+            var chevron = Text(Place(Node("Chevron", root), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-14, 0), new Vector2(14, 24)),
+                theme.regularFont, 22, theme.phoneSubText, TextAlignmentOptions.MidlineRight);
+            var divider = Node("Divider", root);
+            BottomBand(divider, 0, 1, 94);
+            Img(divider, theme.phoneSeparator);
+
+            Wire(view, "button", button);
+            Wire(view, "cover", cover);
+            Wire(view, "coverGlyph", glyph);
+            Wire(view, "title", title);
+            Wire(view, "count", count);
+            Wire(view, "chevron", chevron);
+            return SavePrefab<AlbumRowView>(root, "AlbumRow");
+        }
+
+        static PhotoTileView BuildPhotoTile()
+        {
+            var root = Node("PhotoTile", null);
+            root.sizeDelta = new Vector2(100, 100);
+            var image = root.gameObject.AddComponent<RawImage>();
+            image.color = theme.photoPlaceholder;
+            var button = root.gameObject.AddComponent<Button>();
+            button.targetGraphic = image;
+            var colors = button.colors;
+            colors.highlightedColor = new Color(0.85f, 0.85f, 0.85f, 1f);
+            colors.selectedColor = new Color(0.85f, 0.85f, 0.85f, 1f);
+            colors.pressedColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+            button.colors = colors;
+            var view = root.gameObject.AddComponent<PhotoTileView>();
+            var glyph = Img(Place(Node("Glyph", root), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(30, 30)),
+                theme.photoPlaceholderGlyph, theme.photoGlyph);
+
+            Wire(view, "button", button);
+            Wire(view, "image", image);
+            Wire(view, "glyph", glyph);
+            return SavePrefab<PhotoTileView>(root, "PhotoTile");
+        }
+
         static ListSectionView BuildListSection()
         {
             var root = Node("ListSection", null);
@@ -715,6 +796,9 @@ namespace Intersection.EditorTools
             var appArea = Fill(Node("AppArea", screen), 0, 48, 0, 0);
             var list = BuildMessageList(appArea, threadRow, section);
             var chat = BuildChat(appArea, bubbleRow, separator);
+            var albumList = BuildAlbumList(appArea);
+            var photoGrid = BuildPhotoGrid(appArea);
+            var photoDetail = BuildPhotoDetail(appArea);
 
             var home = Place(Node("HomeIndicator", screen), new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 8), new Vector2(128, 5));
             Rounded(home, new Color(1, 1, 1, 0.75f), 2.5f);
@@ -722,7 +806,114 @@ namespace Intersection.EditorTools
             Wire(view, "clockLabel", clock);
             Wire(view, "messageList", list);
             Wire(view, "chat", chat);
+            Wire(view, "albumList", albumList);
+            Wire(view, "photoGrid", photoGrid);
+            Wire(view, "photoDetail", photoDetail);
             return view;
+        }
+
+        /// <summary>휴대전화 앱 머리말의 뒤로가기 버튼 (파란 글자).</summary>
+        static Button BackButton(RectTransform header, out TMP_Text label)
+        {
+            var back = Place(Node("Back", header), new Vector2(0, 1), new Vector2(0, 1), new Vector2(8, -6), new Vector2(150, 34));
+            var backBg = Img(back, Color.white);
+            var button = MakeButton(back, backBg, new Color(1, 1, 1, 0), new Color(1, 1, 1, 0.08f));
+            label = Text(Fill(Node("Label", back), 6, 0, 0, 0), theme.regularFont, 18, theme.phoneAccent);
+            return button;
+        }
+
+        static AlbumListView BuildAlbumList(RectTransform area)
+        {
+            var rt = Fill(Node("AlbumList", area));
+            var view = rt.gameObject.AddComponent<AlbumListView>();
+            Text(TopBand(Node("Title", rt), 4, 44, 18, 18), theme.boldFont, theme.phoneTitleSize, theme.phoneText, key: "app.photos.title");
+            var scrollArea = Fill(Node("Scroll", rt), 0, 56, 0, 22);
+            var scroll = MakeScroll(scrollArea, out var content, 0, new RectOffset(0, 0, 0, 12));
+            Wire(view, "scroll", scroll);
+            Wire(view, "content", content);
+            Wire(view, "rowPrefab", photoPrefabs.albumRow);
+            rt.gameObject.SetActive(false);
+            return view;
+        }
+
+        static PhotoGridView BuildPhotoGrid(RectTransform area)
+        {
+            var rt = Fill(Node("PhotoGrid", area));
+            var view = rt.gameObject.AddComponent<PhotoGridView>();
+            var header = TopBand(Node("Header", rt), 0, 52);
+            var back = BackButton(header, out var backLabel);
+            var title = Text(TopBand(Node("Title", header), 12, 26, 140, 140), theme.boldFont, 17, theme.phoneText, TextAlignmentOptions.Center);
+
+            var scrollArea = Fill(Node("Scroll", rt), 0, 56, 0, 22);
+            var scroll = MakeScroll(scrollArea, out var content, 0, new RectOffset(0, 0, 0, 0));
+            Object.DestroyImmediate(content.GetComponent<VerticalLayoutGroup>());
+            var grid = content.gameObject.AddComponent<GridLayoutGroup>();
+            grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
+            grid.startAxis = GridLayoutGroup.Axis.Horizontal;
+            grid.childAlignment = TextAnchor.UpperLeft;
+            var empty = Text(Fill(Node("Empty", rt), 20, 140, 20, 40), theme.regularFont, 16, theme.phoneSubText, TextAlignmentOptions.Top);
+
+            Wire(view, "backButton", back);
+            Wire(view, "backLabel", backLabel);
+            Wire(view, "title", title);
+            Wire(view, "scroll", scroll);
+            Wire(view, "content", content);
+            Wire(view, "grid", grid);
+            Wire(view, "tilePrefab", photoPrefabs.photoTile);
+            Wire(view, "emptyLabel", empty);
+            rt.gameObject.SetActive(false);
+            return view;
+        }
+
+        static PhotoDetailView BuildPhotoDetail(RectTransform area)
+        {
+            var rt = Fill(Node("PhotoDetail", area));
+            Img(rt, theme.phoneScreen);
+            var view = rt.gameObject.AddComponent<PhotoDetailView>();
+            var header = TopBand(Node("Header", rt), 0, 60);
+            var back = BackButton(header, out var backLabel);
+            var date = Text(TopBand(Node("Date", header), 8, 22, 140, 140), theme.boldFont, 15, theme.phoneText, TextAlignmentOptions.Center);
+            var timeLabel = Text(TopBand(Node("Time", header), 31, 18, 140, 140), theme.regularFont, 12, theme.phoneSubText, TextAlignmentOptions.Center);
+
+            var stage = Fill(Node("Stage", rt), 0, 64, 0, 78);
+            var photoRt = Fill(Node("Photo", stage));
+            var image = photoRt.gameObject.AddComponent<RawImage>();
+            image.raycastTarget = false;
+            var fitter = photoRt.gameObject.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+            fitter.aspectRatio = 0.75f;
+            var glyph = Img(Place(Node("Glyph", photoRt), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(64, 64)),
+                theme.photoPlaceholderGlyph, theme.photoGlyph);
+
+            var bar = BottomBand(Node("BottomBar", rt), 22, 52);
+            TMP_Text prevLabel, nextLabel;
+            var prev = StepButton(bar, "Prev", 0f, out prevLabel);
+            var next = StepButton(bar, "Next", 1f, out nextLabel);
+
+            Wire(view, "backButton", back);
+            Wire(view, "backLabel", backLabel);
+            Wire(view, "dateLabel", date);
+            Wire(view, "timeLabel", timeLabel);
+            Wire(view, "image", image);
+            Wire(view, "fitter", fitter);
+            Wire(view, "glyph", glyph);
+            Wire(view, "prevButton", prev);
+            Wire(view, "nextButton", next);
+            Wire(view, "prevLabel", prevLabel);
+            Wire(view, "nextLabel", nextLabel);
+            rt.gameObject.SetActive(false);
+            return view;
+        }
+
+        /// <summary>한 장 보기의 앞/뒤 이동 버튼. side 0=왼쪽, 1=오른쪽.</summary>
+        static Button StepButton(RectTransform bar, string name, float side, out TMP_Text label)
+        {
+            var rt = Place(Node(name, bar), new Vector2(side, 0.5f), new Vector2(side, 0.5f), new Vector2(side == 0f ? 20 : -20, 0), new Vector2(52, 44));
+            rt.gameObject.AddComponent<CanvasGroup>();
+            var bg = Img(rt, Color.white);
+            var button = MakeButton(rt, bg, new Color(1, 1, 1, 0), new Color(1, 1, 1, 0.08f));
+            label = Text(Fill(Node("Label", rt)), theme.regularFont, 30, theme.phoneAccent, TextAlignmentOptions.Center);
+            return button;
         }
 
         static MessageListView BuildMessageList(RectTransform area, ThreadRowView threadRow, ListSectionView section)
@@ -787,10 +978,7 @@ namespace Intersection.EditorTools
 
             var header = TopBand(Node("Header", rt), 0, 92);
             Line(header, "BottomLine", true, 0, false).color = theme.phoneSeparator;
-            var back = Place(Node("Back", header), new Vector2(0, 1), new Vector2(0, 1), new Vector2(8, -6), new Vector2(150, 34));
-            var backBg = Img(back, Color.white);
-            var backButton = MakeButton(back, backBg, new Color(1, 1, 1, 0), new Color(1, 1, 1, 0.08f));
-            var backLabel = Text(Fill(Node("Label", back), 6, 0, 0, 0), theme.regularFont, 18, theme.phoneAccent);
+            var backButton = BackButton(header, out var backLabel);
             Img(Place(Node("Avatar", header), new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -6), new Vector2(44, 44)),
                 Color.white, theme.avatarSprite);
             var title = Text(TopBand(Node("Title", header), 54, 22, 40, 40), theme.mediumFont, 14, theme.phoneText, TextAlignmentOptions.Center);

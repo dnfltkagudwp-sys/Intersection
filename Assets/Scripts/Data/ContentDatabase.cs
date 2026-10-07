@@ -13,5 +13,7 @@ namespace Intersection.Data
         public List<PersonData> people = new List<PersonData>();
         public List<CaseData> cases = new List<CaseData>();
         public List<ThreadData> threads = new List<ThreadData>();
+        public List<PhotoData> photos = new List<PhotoData>();
+        public List<AlbumData> albums = new List<AlbumData>();
     }
 }

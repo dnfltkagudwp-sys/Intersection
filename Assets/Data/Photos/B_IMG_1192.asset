@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f3af5f01e154384381ac7ae8f6350bc, type: 3}
+  m_Name: B_IMG_1192
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.PhotoData
+  id: fa4b950aac7d47a7974c62a41ba1c6dc
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  fileName: IMG_1192.jpg
+  takenAt:
+    dayOffset: -5
+    hour: 15
+    minute: 22
+  sortKey: 0
+  isScreenshot: 0
+  source: 0
+  serviceKey: 
+  availableFrom: 1
+  evidenceRef: B01
+  mediaAssetId: face-b-daily
+  image: {fileID: 0}
+  integrityKey: integrity.original
+  authorNote: "B01 \uCE74\uD398 \uC55E\uC5D0\uC11C \uCE5C\uAD6C\uAC00 \uCC0D\uC5B4\uC900 \uC77C\uC0C1 \uC0AC\uC9C4. A01-18\uACFC \uC5BC\uAD74\xB7\uC637\xB7\uAC00\uBC29 \uAC19\uC74C"

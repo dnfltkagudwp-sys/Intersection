@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f3af5f01e154384381ac7ae8f6350bc, type: 3}
+  m_Name: B_IMG_1195
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.PhotoData
+  id: 86c14f925ddf43efb69fad8ded1dde5f
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  fileName: IMG_1195.jpg
+  takenAt:
+    dayOffset: -5
+    hour: 18
+    minute: 50
+  sortKey: 0
+  isScreenshot: 0
+  source: 0
+  serviceKey: service.camera
+  availableFrom: 1
+  evidenceRef: 
+  mediaAssetId: 
+  image: {fileID: 0}
+  integrityKey: integrity.original
+  authorNote: "B-F07 \uCE5C\uAD6C\uB4E4\uACFC \uB2E8\uCCB4 \uC0AC\uC9C4 (C/D \uC5C6\uC74C)"

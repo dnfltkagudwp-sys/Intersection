@@ -11,10 +11,11 @@ using UnityEngine.UI;
 namespace Intersection.UI
 {
     /// <summary>
-    /// UI-01 외곽 셸. 원본 데이터(ContentDatabase) → 표시 상태(SessionState) → 각 뷰로 흘려보낸다.
+    /// 메인 셸. 원본 데이터(ContentDatabase) → 표시 상태(SessionState) → 각 뷰로 흘려보낸다.
     /// 화면 문구는 모두 StringTable, 콘텐츠는 모두 데이터 에셋에서 온다.
+    /// 사진 앱 부분은 AppShell.Photos.cs에 있다.
     /// </summary>
-    public class AppShell : MonoBehaviour
+    public partial class AppShell : MonoBehaviour
     {
         [SerializeField] GameConfig config;
         [SerializeField] TopBarView topBar;
@@ -57,6 +58,13 @@ namespace Intersection.UI
                 return;
             if (keyboard.escapeKey.wasPressedThisFrame)
                 Back();
+            if (phone.Current == PhoneView.Screen.PhotoDetail)
+            {
+                if (keyboard.leftArrowKey.wasPressedThisFrame)
+                    StepPhoto(-1);
+                else if (keyboard.rightArrowKey.wasPressedThisFrame)
+                    StepPhoto(1);
+            }
             // 화면을 열 때 특정 행을 미리 선택하지 않는다. 키보드 조작을 시작하면 그때 첫 항목에 포커스를 준다.
             bool navigate = keyboard.upArrowKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame
                 || keyboard.tabKey.wasPressedThisFrame;
@@ -99,16 +107,28 @@ namespace Intersection.UI
 
             var current = session.CurrentCase;
             var nav = session.Nav(current);
-            int threadCount = DeviceQuery.Threads(config.database, current, session.Stage).Count;
             foreach (var app in config.apps.apps.Where(a => a != null).OrderBy(a => a.order))
             {
                 var def = app;
                 // 개수는 실제로 조회 가능한 데이터가 있는 앱만 계산해 표시한다.
-                string count = app.kind == AppKind.Messages && app.implemented ? threadCount.ToString(time.Culture) : null;
+                int? n = app.implemented ? AppItemCount(app.kind, current) : null;
+                string count = n.HasValue ? n.Value.ToString(time.Culture) : null;
                 var item = Instantiate(appItemPrefab, appListRoot);
                 item.Bind(null, text.Get(app.nameKey), count, current != null && nav.app == app.kind,
                     app.implemented && current != null, Theme.accentSoft, Color.clear, () => OpenApp(def.kind));
                 sidebarItems.Add(item);
+            }
+        }
+
+        int? AppItemCount(AppKind kind, CaseData device)
+        {
+            if (device == null)
+                return null;
+            switch (kind)
+            {
+                case AppKind.Messages: return DeviceQuery.Threads(config.database, device, session.Stage).Count;
+                case AppKind.Photos: return PhotoQuery.DevicePhotos(config.database, device, session.Stage).Count;
+                default: return null;
             }
         }
 
@@ -137,20 +157,26 @@ namespace Intersection.UI
                 return;
 
             var nav = session.Nav(device);
-            // 대화방이 열려 있어도 숨겨진 검색창을 이 기기의 검색어로 맞춘다.
+            // 다른 화면이 열려 있어도 숨겨진 검색창을 이 기기의 검색어로 맞춘다.
             phone.MessageList.SetQuery(nav.searchQuery);
+            if (nav.app == AppKind.Photos)
+            {
+                RenderPhotos(device, nav);
+                return;
+            }
+
             var entries = DeviceQuery.Threads(config.database, device, session.Stage);
             var open = nav.openThreadId != null ? entries.FirstOrDefault(e => e.thread.Id == nav.openThreadId) : null;
             if (open == null)
             {
                 nav.openThreadId = null;
-                phone.ShowList();
+                phone.Show(PhoneView.Screen.MessageList);
                 RenderList(device, nav, entries);
                 ShowListPanel(device, entries);
             }
             else
             {
-                phone.ShowChat();
+                phone.Show(PhoneView.Screen.Chat);
                 int unread = DeviceQuery.UnreadExcept(entries, open.thread);
                 string back = unread > 0
                     ? text.Format(UIKeys.ChatBackUnread, ("count", unread.ToString(time.Culture)))
@@ -194,7 +220,7 @@ namespace Intersection.UI
         {
             workPanel.Show(text.Get(UIKeys.PanelTitleMessageList), new[]
             {
-                Row(UIKeys.PanelOwner, device.owner != null ? device.owner.fullName : device.DisplayName, Theme.regularFont),
+                Row(UIKeys.PanelOwner, OwnerName(device), Theme.regularFont),
                 Row(UIKeys.PanelSource, text.Get(UIKeys.SourceLocal), Theme.regularFont),
                 Row(UIKeys.PanelThreadCount,
                     text.Format(UIKeys.PanelThreadCountValue, ("count", entries.Count.ToString(time.Culture))),
@@ -205,21 +231,25 @@ namespace Intersection.UI
         void ShowThreadPanel(CaseData device, ThreadEntry entry)
         {
             var ordered = DeviceQuery.Ordered(entry.thread);
-            string source = string.IsNullOrEmpty(entry.state.serviceKey)
-                ? text.Get(UIKeys.SourceKey(entry.state.source))
-                : text.Format(UIKeys.PanelSourceFormat,
-                    ("source", text.Get(UIKeys.SourceKey(entry.state.source))),
-                    ("service", text.Get(entry.state.serviceKey)));
             workPanel.Show(text.Format(UIKeys.PanelTitleThread, ("name", entry.displayName)), new[]
             {
                 // 증거 마스터 ID(evidenceRef)는 표시하지 않는다. 모든 대화가 같은 형식의 중립 코드를 가진다.
                 Row(UIKeys.PanelRecordId, RecordCode.Format(text, UIKeys.RecordPrefixThread, entry.thread.Id, device.Id), Theme.monoFont),
-                Row(UIKeys.PanelOwner, device.owner != null ? device.owner.fullName : device.DisplayName, Theme.regularFont),
-                Row(UIKeys.PanelSource, source, Theme.regularFont),
+                Row(UIKeys.PanelOwner, OwnerName(device), Theme.regularFont),
+                Row(UIKeys.PanelSource, SourceText(entry.state.source, entry.state.serviceKey), Theme.regularFont),
                 Row(UIKeys.PanelPeriod, time.SinceDeathRange(ordered[0].time, ordered[ordered.Count - 1].time), Theme.regularFont),
                 Row(UIKeys.PanelIntegrity, string.IsNullOrEmpty(entry.state.integrityKey) ? null : text.Get(entry.state.integrityKey), Theme.regularFont),
             });
         }
+
+        static string OwnerName(CaseData device) => device.owner != null ? device.owner.fullName : device.DisplayName;
+
+        /// <summary>"로컬 · 문자(SMS)"처럼 출처와 확정된 생성 경로. 경로가 없으면 출처만.</summary>
+        string SourceText(RecordSource source, string serviceKey) =>
+            string.IsNullOrEmpty(serviceKey)
+                ? text.Get(UIKeys.SourceKey(source))
+                : text.Format(UIKeys.PanelSourceFormat,
+                    ("source", text.Get(UIKeys.SourceKey(source))), ("service", text.Get(serviceKey)));
 
         WorkPanelView.Row Row(string labelKey, string value, TMP_FontAsset font) =>
             new WorkPanelView.Row { label = text.Get(labelKey), value = value, font = font };
@@ -241,7 +271,13 @@ namespace Intersection.UI
             SaveScroll();
             // 좌측 앱 버튼은 해당 앱의 최상위 화면을 연다.
             nav.app = kind;
-            nav.openThreadId = null;
+            if (kind == AppKind.Messages)
+                nav.openThreadId = null;
+            else if (kind == AppKind.Photos)
+            {
+                nav.photoAlbumId = null;
+                nav.openPhotoId = null;
+            }
             Refresh();
         }
 
@@ -256,13 +292,21 @@ namespace Intersection.UI
             RenderCenter();
         }
 
-        /// <summary>대화방 → (검색 결과 또는) 목록 → 검색어 지우기 순으로 한 단계씩 되돌아간다.</summary>
+        /// <summary>
+        /// 한 단계씩 되돌아간다.
+        /// 메시지: 대화방 → (검색 결과 또는) 목록 → 검색어 지우기 / 사진: 한 장 보기 → 그리드 → 앨범 목록
+        /// </summary>
         void Back()
         {
             var device = session.CurrentCase;
             if (device == null)
                 return;
             var nav = session.Nav(device);
+            if (nav.app == AppKind.Photos)
+            {
+                BackPhotos(nav);
+                return;
+            }
             if (nav.openThreadId != null)
             {
                 SaveScroll();
@@ -277,15 +321,29 @@ namespace Intersection.UI
             }
         }
 
+        /// <summary>지금 보이는 화면의 스크롤 위치를 그 화면의 키로 저장한다.</summary>
         void SaveScroll()
         {
             if (session.CurrentCase == null)
                 return;
             var nav = session.Nav(session.CurrentCase);
-            if (nav.openThreadId == null)
-                nav.scroll[string.Empty] = phone.MessageList.ScrollPosition;
-            else
-                nav.scroll[nav.openThreadId] = phone.Chat.ScrollPosition;
+            switch (phone.Current)
+            {
+                case PhoneView.Screen.MessageList:
+                    nav.scroll[string.Empty] = phone.MessageList.ScrollPosition;
+                    break;
+                case PhoneView.Screen.Chat:
+                    if (nav.openThreadId != null)
+                        nav.scroll[nav.openThreadId] = phone.Chat.ScrollPosition;
+                    break;
+                case PhoneView.Screen.AlbumList:
+                    nav.scroll[DeviceNavigation.AlbumListScrollKey] = phone.AlbumList.ScrollPosition;
+                    break;
+                case PhoneView.Screen.PhotoGrid:
+                    if (nav.photoAlbumId != null)
+                        nav.scroll[nav.photoAlbumId] = phone.PhotoGrid.ScrollPosition;
+                    break;
+            }
         }
     }
 }

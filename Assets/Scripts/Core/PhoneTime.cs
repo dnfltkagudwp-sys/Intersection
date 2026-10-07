@@ -32,6 +32,9 @@ namespace Intersection.Core
         /// <summary>대화 목록 오른쪽의 날짜 표기.</summary>
         public string ListLabel(RelativeTime t) => DayLabel(t, true);
 
+        /// <summary>날짜만 (오늘·어제·요일·날짜). 사진 한 장 보기 머리말 등에 쓴다.</summary>
+        public string DateLabel(RelativeTime t) => DayLabel(t, false);
+
         /// <summary>대화 안 날짜 구분선.</summary>
         public string Separator(RelativeTime t) =>
             text.Format(UIKeys.SeparatorTemplate, ("date", DayLabel(t, false)), ("time", Time(t)));
