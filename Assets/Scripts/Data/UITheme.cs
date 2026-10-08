@@ -41,6 +41,11 @@ namespace Intersection.Data
         [Tooltip("비교 화면이 열려 있는 동안 조작을 막은 좌측·우측 패널의 불투명도")]
         [Range(0.2f, 1f)] public float compareDimAlpha = 0.45f;
 
+        [Header("화면 배율")]
+        [Tooltip("1920×1080 기준 화면을 작은 해상도에서 줄일 때의 최소 배율. 1366×768처럼 작은 화면에서 글자·버튼이 너무 작아지지 않게 하며, " +
+                 "남는 공간은 중앙 휴대전화 영역이 줄어 맞춘다.")]
+        [Range(0.5f, 1f)] public float minUIScale = 0.9f;
+
         [Header("Work program")]
         public Color background = Hex("12161B");
         public Color panel = Hex("171C22");

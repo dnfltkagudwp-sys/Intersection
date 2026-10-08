@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Intersection.Core;
 using Intersection.Data;
 using Intersection.UI;
 using TMPro;
@@ -31,6 +32,7 @@ namespace Intersection.EditorTools
         static (RecordRowView row, InfoRowView field, ListSectionView section) recordPrefabs;
         static PinnedItemView pinnedPrefab;
         static (Button button, TMP_Text label, Image background, TMP_Text status) toolbarSelect;
+        static (Button button, TMP_Text label, Image background) toolbarRecords;
         static RectTransform requestRoot;
 
         [MenuItem("Intersection/UI/Build Main Scene UI")]
@@ -800,7 +802,7 @@ namespace Intersection.EditorTools
                 camera.backgroundColor = theme.background;
             }
 
-            var canvasGo = new GameObject(RootName, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            var canvasGo = new GameObject(RootName, typeof(RectTransform), typeof(Canvas), typeof(MinScaleCanvasScaler), typeof(GraphicRaycaster));
             canvasGo.layer = LayerMask.NameToLayer("UI");
             var canvas = canvasGo.GetComponent<Canvas>();
             canvas.renderMode = camera != null ? RenderMode.ScreenSpaceCamera : RenderMode.ScreenSpaceOverlay;
@@ -810,6 +812,8 @@ namespace Intersection.EditorTools
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
             scaler.matchWidthOrHeight = 0.5f;
+            // 작은 화면에서도 테마의 최소 배율 아래로 줄이지 않는다(글자·버튼 가독성).
+            Wire(scaler, "theme", theme);
             var root = (RectTransform)canvasGo.transform;
 
             if (Object.FindAnyObjectByType<EventSystem>() == null)
@@ -857,6 +861,9 @@ namespace Intersection.EditorTools
             Wire(shell, "selectToggleLabel", toolbarSelect.label);
             Wire(shell, "selectToggleBackground", toolbarSelect.background);
             Wire(shell, "selectStatus", toolbarSelect.status);
+            Wire(shell, "workRecordsButton", toolbarRecords.button);
+            Wire(shell, "workRecordsLabel", toolbarRecords.label);
+            Wire(shell, "workRecordsBackground", toolbarRecords.background);
             Wire(shell, "requestListRoot", requestRoot);
             Wire(shell, "compareView", compareView);
             Wire(shell, "sidebarGroup", sidebarGroup);
@@ -949,7 +956,7 @@ namespace Intersection.EditorTools
             var heading = Text(Fill(Node("Heading", headingRow), 0, 0, 120, 0), theme.mediumFont, 13, theme.subText);
             var back = Place(Node("BackToCurrent", headingRow), new Vector2(1, 0.5f), new Vector2(1, 0.5f), Vector2.zero, new Vector2(116, 22));
             var backButton = MakeButton(back, Img(back, Color.clear), Color.white, Color.white);
-            Text(Fill(Node("Label", back)), theme.mediumFont, 13, theme.accent, TextAlignmentOptions.MidlineRight, "panel.backToCurrent");
+            var backLabel = Text(Fill(Node("Label", back)), theme.mediumFont, 13, theme.accent, TextAlignmentOptions.MidlineRight, UIKeys.PanelBackToCurrent);
             var title = Text(Node("RecordTitle", content), theme.boldFont, 19, theme.text, TextAlignmentOptions.TopLeft, null, true);
             var body = Text(Node("RecordBody", content), theme.regularFont, 14, theme.text, TextAlignmentOptions.TopLeft, null, true);
             var info = Node("Info", content);
@@ -1005,8 +1012,12 @@ namespace Intersection.EditorTools
             var tutorial = Text(tutorialRt, theme.mediumFont, 13, theme.accent);
             var headerRt = TopBand(Node("WorkListHeader", bottom), 38, 24);
             var header = MakeButton(headerRt, Img(headerRt, Color.clear), Color.white, Color.white);
-            var headerLabel = Text(Fill(Node("Label", headerRt), 0, 0, 80, 0), theme.mediumFont, 13, theme.subText);
+            var headerLabel = Text(Fill(Node("Label", headerRt), 0, 0, 150, 0), theme.mediumFont, 13, theme.subText);
             var headerToggle = Text(Fill(Node("Toggle", headerRt)), theme.mediumFont, 13, theme.accent, TextAlignmentOptions.MidlineRight);
+            // 머리말 오른쪽: `전체 보기`(우측 패널 전체를 작업 기록 목록으로) · 접기/펼치기
+            var fullOpenRt = Place(Node("FullView", headerRt), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-60, 0), new Vector2(76, 24));
+            var fullOpen = MakeButton(fullOpenRt, Rounded(fullOpenRt, theme.accentSoft, 6f), Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            Text(Fill(Node("Label", fullOpenRt)), theme.mediumFont, 12, theme.accent, TextAlignmentOptions.Center, UIKeys.PanelFullViewOpen);
             var listArea = TopBand(Node("WorkList", bottom), 68, 120);
             MakeScroll(listArea, out var listContent, 6, new RectOffset(0, 0, 0, 4));
             var listEmpty = Text(TopBand(Node("WorkListEmpty", bottom), 68, 20, 2, 2), theme.regularFont, 14, theme.subText);
@@ -1018,6 +1029,7 @@ namespace Intersection.EditorTools
             slotsNote.gameObject.SetActive(false);
             var slotButtons = new Button[2];
             var slotTitles = new TMP_Text[2];
+            var slotMetas = new TMP_Text[2];
             var slotRemoves = new Button[2];
             for (int i = 0; i < 2; i++)
             {
@@ -1030,7 +1042,9 @@ namespace Intersection.EditorTools
                 var outline = Fill(Node("Outline", slot));
                 Img(outline, theme.panelRaised, theme.selectionOutline, 8f).raycastTarget = false;
                 slotButtons[i] = MakeButton(slot, slotBg, Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
-                slotTitles[i] = Text(Fill(Node("Title", slot), 10, 0, 28, 0), theme.mediumFont, 12, theme.text);
+                // 두 줄: 제목 / 의뢰 표시명 · 기록 코드 (필터로 목록에서 숨겨져도 칸에서 알아볼 수 있게)
+                slotTitles[i] = Text(TopBand(Node("Title", slot), 4, 17, 10, 28), theme.mediumFont, 12, theme.text);
+                slotMetas[i] = Text(TopBand(Node("Meta", slot), 21, 15, 10, 28), theme.monoFont, 11, theme.subText);
                 var remove = Place(Node("Remove", slot), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-2, 0), new Vector2(26, 26));
                 slotRemoves[i] = MakeButton(remove, Img(remove, Color.clear), Color.white, Color.white);
                 Text(Fill(Node("Label", remove)), theme.mediumFont, 15, theme.subText, TextAlignmentOptions.Center);
@@ -1044,6 +1058,18 @@ namespace Intersection.EditorTools
             var compareButton = MakeButton(compare, Rounded(compare, theme.accentSoft, 8f), Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
             Text(Fill(Node("Label", compare)), theme.boldFont, 15, theme.accent, TextAlignmentOptions.Center, "panel.compare");
 
+            var full = BuildFullList(right, pad, bottomH, view);
+
+            // 키보드 포커스 테두리 (키보드로 조작할 때만 보이며, 위치는 실행 중 WorkPanelView가 맞춘다)
+            var ring = Node("FocusRing", right);
+            Img(ring, theme.accent, theme.selectionOutline, 8f).raycastTarget = false;
+            ring.gameObject.SetActive(false);
+
+            Wire(view, "focusRing", ring);
+            Wire(view, "fullArea", full);
+            Wire(view, "fullViewButton", fullOpen);
+            WireArray(view, "slotMetas", slotMetas);
+            Wire(view, "backLinkLabel", backLabel);
             Wire(view, "heading", heading);
             Wire(view, "backLink", backButton);
             Wire(view, "recordTitle", title);
@@ -1088,6 +1114,133 @@ namespace Intersection.EditorTools
             Wire(view, "listEmpty", listEmpty);
             Wire(view, "compareRect", compare);
             return view;
+        }
+
+        /// <summary>
+        /// 작업 기록 전체 보기. 기록 정보 영역과 같은 자리(아래 고정 영역 위)를 채운다.
+        /// 머리말(제목 · 개수, `< 현재 화면`) → 상태 필터 한 줄 → 의뢰 드롭다운 → 독립 스크롤 목록.
+        /// 필터 이름·의뢰 이름은 실행 중 문자열·데이터에서 채운다.
+        /// </summary>
+        static RectTransform BuildFullList(RectTransform right, float pad, float bottomH, WorkPanelView view)
+        {
+            var full = Fill(Node("FullList", right), pad, 72, pad, 22 + bottomH + 10);
+
+            var titleRow = TopBand(Node("TitleRow", full), 0, 26);
+            var titleGroup = Fill(Node("Title", titleRow), 0, 0, 124, 0);
+            var titleLayout = titleGroup.gameObject.AddComponent<HorizontalLayoutGroup>();
+            titleLayout.spacing = 8;
+            titleLayout.childAlignment = TextAnchor.MiddleLeft;
+            titleLayout.childControlWidth = titleLayout.childControlHeight = true;
+            titleLayout.childForceExpandWidth = false;
+            titleLayout.childForceExpandHeight = true;
+            var title = Text(Node("Label", titleGroup), theme.boldFont, 17, theme.text);
+            var count = Text(Node("Count", titleGroup), theme.monoFont, 13, theme.subText);
+            var close = Place(Node("Close", titleRow), new Vector2(1, 0.5f), new Vector2(1, 0.5f), Vector2.zero, new Vector2(116, 26));
+            var closeButton = MakeButton(close, Img(close, Color.clear), Color.white, Color.white);
+            var closeLabel = Text(Fill(Node("Label", close)), theme.mediumFont, 13, theme.accent, TextAlignmentOptions.MidlineRight);
+
+            // 상태 필터 한 줄 (전체·핀·보존·삭제·메모). 한 번에 하나만 켜진다.
+            var filters = TopBand(Node("Filters", full), 38, 32);
+            var filterRow = filters.gameObject.AddComponent<HorizontalLayoutGroup>();
+            filterRow.spacing = 4;
+            filterRow.childControlWidth = filterRow.childControlHeight = true;
+            filterRow.childForceExpandWidth = filterRow.childForceExpandHeight = true;
+            const int filterCount = 5;
+            var filterButtons = new Button[filterCount];
+            var filterLabels = new TMP_Text[filterCount];
+            var filterOn = new GameObject[filterCount];
+            for (int i = 0; i < filterCount; i++)
+            {
+                filterButtons[i] = ActionButton(Node("Filter" + i, filters), out filterLabels[i], null, 13);
+                filterOn[i] = ToggleOutline(filterButtons[i]);
+            }
+
+            // 의뢰 필터: `모든 의뢰` + 데이터의 의뢰 표시명
+            var caseFilter = BuildDropdown(TopBand(Node("CaseFilter", full), 76, 32));
+
+            var listArea = Fill(Node("List", full), 0, 118, 0, 0);
+            var scroll = MakeScroll(listArea, out var listContent, 6, new RectOffset(0, 0, 0, 4));
+            var empty = Text(TopBand(Node("Empty", full), 122, 20, 2, 2), theme.regularFont, 14, theme.subText);
+
+            Wire(view, "fullTitle", title);
+            Wire(view, "fullCount", count);
+            Wire(view, "fullBack", closeButton);
+            Wire(view, "fullBackLabel", closeLabel);
+            WireArray(view, "filterButtons", filterButtons);
+            WireArray(view, "filterLabels", filterLabels);
+            WireArray(view, "filterOn", filterOn);
+            Wire(view, "caseFilter", caseFilter);
+            Wire(view, "fullScroll", scroll);
+            Wire(view, "fullListRoot", listContent);
+            Wire(view, "fullEmpty", empty);
+            full.gameObject.SetActive(false);
+            return full;
+        }
+
+        /// <summary>업무 프로그램 톤의 드롭다운 (TMP_Dropdown 템플릿 구조: Template/Viewport/Content/Item).</summary>
+        static TMP_Dropdown BuildDropdown(RectTransform rt)
+        {
+            const float itemH = 30;
+            var bg = Rounded(rt, theme.panelRaised, 8f);
+            bg.raycastTarget = true;
+            var caption = Text(Fill(Node("Label", rt), 12, 0, 30, 0), theme.mediumFont, 13, theme.text);
+            Text(Place(Node("Arrow", rt), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-10, 0), new Vector2(16, 16)),
+                theme.regularFont, 9, theme.subText, TextAlignmentOptions.Center, UIKeys.DropdownArrow);
+
+            var template = Node("Template", rt);
+            template.anchorMin = new Vector2(0, 0);
+            template.anchorMax = new Vector2(1, 0);
+            template.pivot = new Vector2(0.5f, 1);
+            template.anchoredPosition = new Vector2(0, -2);
+            template.sizeDelta = new Vector2(0, itemH * 4 + 8);
+            Rounded(template, theme.panelRaised, 8f).raycastTarget = true;
+            var outline = Fill(Node("Outline", template));
+            Img(outline, theme.border, theme.selectionOutline, 8f).raycastTarget = false;
+            var templateScroll = template.gameObject.AddComponent<ScrollRect>();
+            templateScroll.horizontal = false;
+            templateScroll.movementType = ScrollRect.MovementType.Clamped;
+            templateScroll.scrollSensitivity = 30f;
+            var viewport = Fill(Node("Viewport", template), 4, 4, 4, 4);
+            viewport.gameObject.AddComponent<RectMask2D>();
+            Img(viewport, new Color(0, 0, 0, 0)).raycastTarget = true;
+            var content = Node("Content", viewport);
+            content.anchorMin = new Vector2(0, 1);
+            content.anchorMax = new Vector2(1, 1);
+            content.pivot = new Vector2(0.5f, 1);
+            content.sizeDelta = new Vector2(0, itemH);
+            templateScroll.viewport = viewport;
+            templateScroll.content = content;
+
+            var item = TopBand(Node("Item", content), 0, itemH);
+            var itemBg = Rounded(Fill(Node("Item Background", item)), theme.panelRaised, 6f);
+            itemBg.raycastTarget = true;
+            var check = Place(Node("Item Checkmark", item), new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(8, 0), new Vector2(14, 14));
+            var checkImg = Img(check, theme.accent, theme.selectionCheck);
+            checkImg.preserveAspect = true;
+            var itemLabel = Text(Fill(Node("Item Label", item), 30, 0, 8, 0), theme.mediumFont, 13, theme.text);
+            var toggle = item.gameObject.AddComponent<Toggle>();
+            toggle.targetGraphic = itemBg;
+            toggle.graphic = checkImg;
+            toggle.isOn = true;
+            var colors = toggle.colors;
+            colors.normalColor = Color.white;
+            colors.highlightedColor = colors.selectedColor = new Color(1.25f, 1.25f, 1.25f, 1f);
+            colors.pressedColor = new Color(1.4f, 1.4f, 1.4f, 1f);
+            toggle.colors = colors;
+            template.gameObject.SetActive(false);
+
+            var dropdown = rt.gameObject.AddComponent<TMP_Dropdown>();
+            dropdown.targetGraphic = bg;
+            dropdown.template = template;
+            dropdown.captionText = caption;
+            dropdown.itemText = itemLabel;
+            var ddColors = dropdown.colors;
+            ddColors.normalColor = Color.white;
+            ddColors.highlightedColor = ddColors.selectedColor = new Color(1.25f, 1.25f, 1.25f, 1f);
+            ddColors.pressedColor = new Color(1.4f, 1.4f, 1.4f, 1f);
+            dropdown.colors = ddColors;
+            dropdown.options.Clear();
+            return dropdown;
         }
 
         static Button ActionButton(RectTransform rt, out TMP_Text label, string key, float size, TMP_FontAsset font = null)
@@ -1166,9 +1319,12 @@ namespace Intersection.EditorTools
             Img(pinIcon, theme.pinMarkColor, theme.pinGlyph).preserveAspect = true;
             // 오른쪽: 비교 버튼(`+ 비교`/`비교 중`, 핀한 기록만), 그 왼쪽 위에 보존·삭제 배지
             var title = Text(TopBand(Node("Title", root), 9, 22, 32, 124), theme.mediumFont, 14, theme.text);
-            var meta = Text(TopBand(Node("Meta", root), 31, 18, 32, 80), theme.monoFont, 11, theme.subText);
+            var meta = Text(TopBand(Node("Meta", root), 31, 18, 32, 124), theme.monoFont, 11, theme.subText);
             var badge = Text(Place(Node("Badge", root), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-78, -9), new Vector2(44, 22)),
                 theme.mediumFont, 12, theme.accent, TextAlignmentOptions.MidlineRight);
+            // 작업메모가 있으면 배지 아래에 `메모`
+            var memoMark = Text(Place(Node("MemoMark", root), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-78, -31), new Vector2(44, 18)),
+                theme.mediumFont, 11, theme.subText, TextAlignmentOptions.MidlineRight);
             var compareRt = Place(Node("Compare", root), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-8, 0), new Vector2(62, 28));
             var compareGroup = compareRt.gameObject.AddComponent<CanvasGroup>();
             var compareBg = Rounded(compareRt, theme.panel, 8f);
@@ -1184,6 +1340,7 @@ namespace Intersection.EditorTools
             Wire(view, "title", title);
             Wire(view, "meta", meta);
             Wire(view, "badge", badge);
+            Wire(view, "memoMark", memoMark);
             return SavePrefab<PinnedItemView>(root, "PinnedItem");
         }
 
@@ -1215,7 +1372,13 @@ namespace Intersection.EditorTools
             var selectButton = MakeButton(select, selectBg, Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
             var selectLabel = Text(Fill(Node("Label", select)), theme.mediumFont, 14, theme.text, TextAlignmentOptions.Center);
             // 고르기 중 안내 또는 고른 기록 종류 ("고를 기록을 누르세요" / "메시지 선택됨")
-            var selectStatus = Text(Place(Node("SelectStatus", toolbar), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-144, 0), new Vector2(240, 30)),
+            // 작업 기록 전체 보기 진입 (`작업 기록 {count}`, 전체 보기 중에는 켜진 상태로 표시). 문구·개수는 실행 중 채운다.
+            var records = Place(Node("WorkRecords", toolbar), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-140, 0), new Vector2(124, 36));
+            var recordsBg = Rounded(records, theme.panelRaised, 8f);
+            var recordsButton = MakeButton(records, recordsBg, Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            var recordsLabel = Text(Fill(Node("Label", records), 8, 0, 8, 0), theme.mediumFont, 14, theme.text, TextAlignmentOptions.Center);
+            toolbarRecords = (recordsButton, recordsLabel, recordsBg);
+            var selectStatus = Text(Place(Node("SelectStatus", toolbar), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-274, 0), new Vector2(240, 30)),
                 theme.mediumFont, 14, theme.accent, TextAlignmentOptions.MidlineRight);
             toolbarSelect = (selectButton, selectLabel, selectBg, selectStatus);
 

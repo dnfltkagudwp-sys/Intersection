@@ -55,8 +55,8 @@ namespace Intersection.UI
         /// <summary>검수·테스트용 업무 상태 저장소.</summary>
         public WorkStore Store => store;
 
-        /// <summary>핀·분류·메모 조작이 적용되는 기록 (패널에 보이는 기록).</summary>
-        RecordRef ActionTarget => focus == PanelFocus.Current ? sourceFocus ?? currentRecord : focusRecord;
+        /// <summary>핀·분류·메모 조작이 적용되는 기록 (패널에 보이는 기록). 전체 보기 목록에는 없다(P·1·2·0 무시).</summary>
+        RecordRef ActionTarget => focus != PanelFocus.Current ? focusRecord : fullView ? null : sourceFocus ?? currentRecord;
 
         void InitWork()
         {
@@ -71,6 +71,8 @@ namespace Intersection.UI
             SelectionBus.IsPinned = store.IsPinned;
             SelectionBus.SelectRequested = Pick;
             selectToggle.onClick.AddListener(() => SetSelecting(!selecting));
+            workPanel.BindFullView(ShowWorkRecords);
+            workRecordsButton.onClick.AddListener(ShowWorkRecords);
             SyncSelection();
         }
 
@@ -97,6 +99,9 @@ namespace Intersection.UI
             if (selecting == on)
                 return;
             selecting = on;
+            // 기록 고르기는 휴대전화 화면 안을 고르는 모드라 전체 보기를 닫고 간단한 패널로 돌아간다.
+            if (on)
+                fullView = false;
             // 고르기를 시작하거나 끝내면 패널은 현재 열람으로 돌아간다.
             SaveScroll();
             RenderCenter();
@@ -122,6 +127,7 @@ namespace Intersection.UI
             // 휴대전화에 열린 기록과 같아도 작업 기록으로 띄운다(원본 열기·비교에 추가 같은 보조 행동은 여기서만 제공).
             focus = PanelFocus.WorkRecord;
             focusRecord = target;
+            lastDetailKey = target.Key;
             compareWarnKey = null;
             RefreshWorkPanel();
         }
@@ -156,9 +162,16 @@ namespace Intersection.UI
             RefreshWorkPanel();
         }
 
-        /// <summary>RenderCenter 뒤에 호출된다. 패널이 보여줄 대상에 따라 내용·머리말·조작을 그린다.</summary>
+        /// <summary>
+        /// RenderCenter 뒤에 호출된다. 패널이 보여줄 대상에 따라 내용·머리말·조작을 그린다.
+        /// 전체 보기면 focus가 Current일 때 목록, 다른 기록이면 그 상세(`< 작업 기록`)를 보여준다.
+        /// 다시 그린 뒤 패널에 있던 키보드 포커스를 같은 기록·조작으로 되살린다.
+        /// </summary>
         void RefreshWorkPanel()
         {
+            var keyboardFocus = workPanel.CaptureFocus();
+            if (fullView && selecting)
+                fullView = false;
             if (focus == PanelFocus.Picked && !selecting)
                 focus = PanelFocus.Current;
             if (focus != PanelFocus.Current && focusRecord == null)
@@ -166,7 +179,14 @@ namespace Intersection.UI
             // 비교 슬롯 정리는 보조 행동(비교에 추가/빼기)을 그리기 전에 한다.
             PruneCompareSlots();
 
-            if (focus == PanelFocus.Current)
+            bool fullList = fullView && focus == PanelFocus.Current;
+            workPanel.SetMode(!fullView ? WorkPanelView.Mode.Simple
+                : fullList ? WorkPanelView.Mode.FullList : WorkPanelView.Mode.FullDetail);
+            if (fullList)
+            {
+                // 목록은 RenderWorkList가 그린다.
+            }
+            else if (focus == PanelFocus.Current)
             {
                 if (sourceFocus != null && (currentRecord == null || sourceFocus.Key != currentRecord.Key))
                     DrawRecord(sourceFocus);
@@ -179,7 +199,11 @@ namespace Intersection.UI
                 DrawRecord(focusRecord);
                 string heading = text.Get(focus == PanelFocus.Picked ? UIKeys.PanelHeadingPicked
                     : focus == PanelFocus.Request ? UIKeys.PanelHeadingRequest : UIKeys.PanelHeadingWork);
-                workPanel.SetHeading(heading, PanelShowsOther ? ReturnPanelToCurrent : (System.Action)null);
+                if (fullView)
+                    workPanel.SetHeading(heading, ReturnToFullList, text.Get(UIKeys.PanelBackToList));
+                else
+                    workPanel.SetHeading(heading, PanelShowsOther ? ReturnPanelToCurrent : (System.Action)null,
+                        text.Get(UIKeys.PanelBackToCurrent));
             }
             RenderRecordTools();
 
@@ -188,7 +212,10 @@ namespace Intersection.UI
             RenderWorkList();
             RenderCompareSlots();
             RenderTutorialLine();
+            RenderWorkToolbar();
             SyncSelection();
+            workPanel.ApplyNavigation();
+            workPanel.RestoreFocus(keyboardFocus, fullList ? lastDetailKey : null);
         }
 
         WorkPanelView.Actions ActionsFor(RecordRef target) => new WorkPanelView.Actions
@@ -389,6 +416,8 @@ namespace Intersection.UI
             if (!PlanSource(target, out var device, out var apply, out _))
                 return;
             SaveScroll();
+            // 원본은 중앙 휴대전화에 열리므로 전체 보기를 끝낸다.
+            fullView = false;
             EndSelectingForNavigation();
             session.CurrentCase = device;
             apply(session.Nav(device));
@@ -435,78 +464,6 @@ namespace Intersection.UI
             workPanel.Show(res.title, res.body, rows);
         }
 
-        // ───────────── 작업 기록 목록 ─────────────
-
-        /// <summary>
-        /// 핀·분류·메모 중 하나라도 있는 기록. 열람만 한 기록은 넣지 않는다.
-        /// 핀한 기록이 위(핀 순서), 나머지는 기기별(현재 기기 먼저)로 묶어 의뢰 요청 → 원본 시각 최신순 → 불변 키 순.
-        /// </summary>
-        void RenderWorkList()
-        {
-            var deviceOrder = Cases().Select((c, i) => (c.Id, i)).ToDictionary(x => x.Id, x => x.i);
-            string currentDevice = session.CurrentCase != null ? session.CurrentCase.Id : null;
-            var actionKey = ActionTarget?.Key;
-
-            var worked = store.All
-                .Where(e => e.pinned || e.classification != Classification.Unclassified || !string.IsNullOrEmpty(e.memo))
-                .Select(e => (entry: e, res: RecordResolver.Resolve(e.target, config.database, text)))
-                .ToList();
-
-            int DeviceRank(string id) =>
-                id == currentDevice ? -1 : id != null && deviceOrder.TryGetValue(id, out var i) ? i : int.MaxValue;
-            int TimeRank((WorkEntry entry, ResolvedRecord res) x) =>
-                x.entry.target.kind == RecordKind.Request ? 0 : x.res.found && x.res.hasTime ? 1 : 2;
-            int Minutes(ResolvedRecord r) => !r.found || !r.hasTime ? 0 : (r.hasEnd ? r.endTime : r.time).TotalMinutes;
-
-            var ordered = worked.Where(x => x.entry.pinned).OrderBy(x => x.entry.pinOrder)
-                .Concat(worked.Where(x => !x.entry.pinned)
-                    .OrderBy(x => DeviceRank(x.entry.target.deviceId))
-                    .ThenBy(TimeRank)
-                    .ThenByDescending(x => Minutes(x.res))
-                    .ThenBy(x => x.entry.target.Key, System.StringComparer.Ordinal));
-
-            var items = new List<WorkPanelView.WorkItem>();
-            bool slotsFull = compareSlots.All(s => s != null);
-            foreach (var (e, res) in ordered)
-            {
-                var target = e.target;
-                string code = RecordCode.Format(text, RecordResolver.PrefixFor(target.kind), target.recordId, target.deviceId);
-                // 목록의 `+ 비교`: 핀한 기록만. 칸에 있으면 `비교 중`(다시 누르면 뺌), 칸이 차 있으면 비활성. 자동 교체는 하지 않는다.
-                var compare = PinnedItemView.CompareState.Hidden;
-                if (e.pinned)
-                {
-                    if (SlotOf(target.Key) >= 0)
-                        compare = PinnedItemView.CompareState.InSlot;
-                    else if (CompareBlockReason(target) == null)
-                        compare = slotsFull ? PinnedItemView.CompareState.Disabled : PinnedItemView.CompareState.Add;
-                }
-                items.Add(new WorkPanelView.WorkItem
-                {
-                    compare = compare,
-                    compareLabel = text.Get(compare == PinnedItemView.CompareState.InSlot ? UIKeys.ListCompareOn : UIKeys.ListCompareAdd),
-                    onCompare = () => ToggleCompareSlot(target),
-                    title = res.found ? res.title : text.Get(res.duplicate ? UIKeys.PanelMissingDuplicate : UIKeys.PanelMissing),
-                    meta = text.Format(UIKeys.WorkItemMeta, ("owner", res.device != null ? OwnerName(res.device) : string.Empty), ("code", code)),
-                    badge = e.classification == Classification.Unclassified ? null : text.Get(UIKeys.ClassKey(e.classification)),
-                    pinned = e.pinned,
-                    selected = actionKey != null && actionKey == target.Key,
-                    missing = !res.found,
-                    onClick = () => OpenWorkRecord(target),
-                });
-            }
-            workPanel.ShowWorkList(items, text.Format(UIKeys.PanelWorkListHeader, ("count", items.Count.ToString(time.Culture))),
-                text.Get(UIKeys.PanelWorkEmpty), text.Get(UIKeys.PanelWorkCollapse), text.Get(UIKeys.PanelWorkExpand),
-                Theme.accentSoft, Theme.panelRaised, Theme.subText,
-                new WorkPanelView.CompareButtonStyle
-                {
-                    onColor = Theme.accentSoft,
-                    onTextColor = Theme.accent,
-                    idleColor = Theme.panel,
-                    idleTextColor = Theme.accent,
-                    disabledAlpha = Theme.compareDimAlpha,
-                });
-        }
-
         // ───────────── 의뢰 요청·튜토리얼 ─────────────
 
         IEnumerable<WorkRequestData> Requests(CaseData device) =>
@@ -540,6 +497,7 @@ namespace Intersection.UI
             store.MarkViewed(target);
             focus = PanelFocus.Request;
             focusRecord = target;
+            lastDetailKey = target.Key;
             RefreshWorkPanel();
         }
 
@@ -585,8 +543,9 @@ namespace Intersection.UI
         // ───────────── 키보드 ─────────────
 
         /// <summary>
-        /// Esc 우선순위: 비교 화면이면 비교 종료 → 메모 입력 중이면 입력값을 저장하고 포커스만 해제 → 패널에 다른 기록을 띄웠으면 현재 열람으로
-        /// → 고르기 모드면 종료 → 휴대전화 뒤로. 한 번의 Esc는 한 단계만 처리한다.
+        /// Esc 우선순위: 비교 화면이면 비교 종료 → 메모 입력 중이면 입력값을 저장하고 포커스만 해제
+        /// → 전체 보기 상세면 전체 목록으로 → 전체 목록이면 간단한 패널로 → 패널에 다른 기록을 띄웠으면 현재 열람으로
+        /// → 고르기 모드면 종료 → 휴대전화 뒤로. 한 번의 Esc는 한 단계만 처리하고 아래 단계로 넘기지 않는다.
         /// </summary>
         void HandleEscape()
         {
@@ -594,6 +553,10 @@ namespace Intersection.UI
                 ExitCompare();
             else if (workPanel.IsEditingMemo || memoWasFocused)
                 workPanel.EndMemoEdit();
+            else if (FullDetailOpen)
+                ReturnToFullList();
+            else if (fullView)
+                CloseFullView();
             else if (PanelShowsOther)
                 ReturnPanelToCurrent();
             else if (selecting)

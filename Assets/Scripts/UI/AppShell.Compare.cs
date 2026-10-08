@@ -125,9 +125,13 @@ namespace Intersection.UI
             {
                 var target = compareSlots[i];
                 int index = i;
+                var res = target == null ? null : RecordResolver.Resolve(target, config.database, text);
+                // 슬롯은 필터로 목록에서 숨겨져도 그대로 남으므로 칸 안에 제목·의뢰 표시명·기록 코드를 함께 보여준다.
+                // 칸을 누르면 작업 기록을 연다(전체 보기 중이면 전체 보기 안의 상세).
                 items.Add(target == null ? null : new WorkPanelView.SlotItem
                 {
-                    title = RecordResolver.Resolve(target, config.database, text).title,
+                    title = res.title,
+                    meta = WorkMeta(target, res),
                     onOpen = () => OpenWorkRecord(target),
                     onRemove = () =>
                     {

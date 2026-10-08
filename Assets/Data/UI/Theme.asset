@@ -34,6 +34,7 @@ MonoBehaviour:
   selectionColor: {r: 0.039215688, g: 0.5176471, b: 1, a: 1}
   pinMarkColor: {r: 1, g: 0.8392157, b: 0.039215688, a: 1}
   compareDimAlpha: 0.45
+  minUIScale: 0.9
   background: {r: 0.07058824, g: 0.08627451, b: 0.105882354, a: 1}
   panel: {r: 0.09019608, g: 0.10980392, b: 0.13333334, a: 1}
   panelRaised: {r: 0.11764706, g: 0.14509805, b: 0.1764706, a: 1}

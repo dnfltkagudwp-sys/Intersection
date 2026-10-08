@@ -170,6 +170,24 @@ namespace Intersection.Core
         public const string CompareKindFormat = "compare.kindFormat";
         public const string CompareAppWork = "compare.app.work";
 
+        // UI-05/06 보완: 작업 기록 전체 보기
+        public const string PanelFullViewOpen = "panel.fullViewOpen";
+        public const string PanelBackToCurrent = "panel.backToCurrent";
+        public const string PanelBackToList = "panel.backToList";
+        public const string FullViewTitle = "fullView.title";
+        public const string FullViewCount = "fullView.count";
+        public const string FullViewCountFiltered = "fullView.countFiltered";
+        public const string FullViewNoMatch = "fullView.noMatch";
+        public const string FilterAll = "fullView.filter.all";
+        public const string FilterPinned = "fullView.filter.pinned";
+        public const string FilterKeep = "fullView.filter.keep";
+        public const string FilterDelete = "fullView.filter.delete";
+        public const string FilterMemo = "fullView.filter.memo";
+        public const string FilterAllCases = "fullView.filter.allCases";
+        public const string ListMemoMark = "list.memoMark";
+        public const string DropdownArrow = "dropdown.arrow";
+        public const string ToolbarWorkRecords = "toolbar.workRecords";
+
         // 툴바 "○○ 선택됨"에 쓰는 기록 종류 이름
         public const string KindThread = "kind.thread";
         public const string KindMessage = "kind.message";
@@ -270,6 +288,9 @@ namespace Intersection.Core
             CompareBlockedUnavailable, CompareSlotsHeader, CompareSlotsOneMore, CompareSlotsReady, CompareSlotsFullNote,
             ListCompareAdd, ListCompareOn, TutorialDoneLine, CompareSlotEmpty, CompareSlotRemove, CompareRowKind,
             CompareKindFormat, CompareAppWork,
+            PanelFullViewOpen, PanelBackToCurrent, PanelBackToList, FullViewTitle, FullViewCount, FullViewCountFiltered,
+            FullViewNoMatch, FilterAll, FilterPinned, FilterKeep, FilterDelete, FilterMemo, FilterAllCases, ListMemoMark,
+            DropdownArrow, ToolbarWorkRecords,
             KindThread, KindMessage, KindAttachment, KindLocationShare, KindPhoto, KindBrowser, KindMap, KindFile,
             KindSetting, KindRequest,
             RecordPrefixRequest, TutorialDone, TutorialActive, TutorialWaiting, TutorialLine,

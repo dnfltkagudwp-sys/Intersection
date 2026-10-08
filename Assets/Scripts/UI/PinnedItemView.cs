@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace Intersection.UI
 {
     /// <summary>
-    /// 우측 작업 기록 목록 한 줄. 핀한 기록은 핀 아이콘, 처리 후보는 보존·삭제 배지로 구분한다.
+    /// 우측 작업 기록 목록 한 줄. 핀한 기록은 핀 아이콘, 처리 후보는 보존·삭제 배지, 작업메모가 있으면 메모 표시로 구분한다.
     /// 핀한 기록에는 작은 비교 버튼(`+ 비교` / `비교 중`)이 있어 우측 상세를 거치지 않고 비교 칸에 넣고 뺄 수 있다.
     /// 원본을 찾지 못하면 누락 상태로 표시한다.
     /// </summary>
@@ -30,6 +30,8 @@ namespace Intersection.UI
         [SerializeField] TMP_Text title;
         [SerializeField] TMP_Text meta;
         [SerializeField] TMP_Text badge;
+        [Tooltip("작업메모가 있는 기록 표시")]
+        [SerializeField] TMP_Text memoMark;
 
         [Header("비교 버튼")]
         [SerializeField] Button compareButton;
@@ -40,7 +42,12 @@ namespace Intersection.UI
         Color titleColor;
         bool captured;
 
-        public void Bind(string titleText, string metaText, string badgeText, bool pinned, bool selected, bool missing,
+        /// <summary>이 행이 가리키는 기록의 불변 키. 다시 그린 뒤 키보드 포커스를 같은 행으로 돌려줄 때 쓴다.</summary>
+        public string Key { get; set; }
+        public Button Body => button;
+        public Button CompareButton => compareButton;
+
+        public void Bind(string titleText, string metaText, string badgeText, string memoText, bool pinned, bool selected, bool missing,
             Color selectedColor, Color idleColor, Color missingColor, Action onClick)
         {
             if (!captured)
@@ -54,6 +61,8 @@ namespace Intersection.UI
             meta.text = metaText;
             badge.text = badgeText ?? string.Empty;
             badge.gameObject.SetActive(!string.IsNullOrEmpty(badgeText));
+            memoMark.text = memoText ?? string.Empty;
+            memoMark.gameObject.SetActive(!string.IsNullOrEmpty(memoText));
             background.color = selected ? selectedColor : idleColor;
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => onClick());

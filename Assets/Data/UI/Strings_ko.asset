@@ -413,3 +413,33 @@ MonoBehaviour:
     value: "\uBE44\uAD50 \uC911"
   - key: tutorial.doneLine
     value: "{task} \uC5C5\uBB34 \uC644\uB8CC"
+  - key: panel.fullViewOpen
+    value: "전체 보기"
+  - key: panel.backToList
+    value: "< 작업 기록"
+  - key: fullView.title
+    value: "작업 기록"
+  - key: fullView.count
+    value: '{total}'
+  - key: fullView.countFiltered
+    value: '{shown} / {total}'
+  - key: fullView.noMatch
+    value: "조건에 맞는 작업 기록 없음"
+  - key: fullView.filter.all
+    value: "전체"
+  - key: fullView.filter.pinned
+    value: "핀"
+  - key: fullView.filter.keep
+    value: "보존"
+  - key: fullView.filter.delete
+    value: "삭제"
+  - key: fullView.filter.memo
+    value: "메모"
+  - key: fullView.filter.allCases
+    value: "모든 의뢰"
+  - key: list.memoMark
+    value: "메모"
+  - key: dropdown.arrow
+    value: "▼"
+  - key: toolbar.workRecords
+    value: "작업 기록 {count}"

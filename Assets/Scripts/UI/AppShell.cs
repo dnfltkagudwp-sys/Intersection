@@ -66,28 +66,56 @@ namespace Intersection.UI
                 return;
             }
             bool typing = IsTyping();
+            // 펼친 의뢰 드롭다운은 방향키·Enter·Esc를 스스로 처리한다(Esc는 목록만 닫고 아래 단계로 넘기지 않는다).
+            bool dropdownOpen = workPanel.CaseFilterExpanded;
+            var mouse = Mouse.current;
+            if (mouse != null && (mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame))
+                workPanel.KeyboardFocus = false;
             if (keyboard.escapeKey.wasPressedThisFrame)
-                HandleEscape();
-            else if (!typing && keyboard.sKey.wasPressedThisFrame)
+            {
+                if (!dropdownOpen)
+                    HandleEscape();
+            }
+            else if (!typing && !dropdownOpen && keyboard.sKey.wasPressedThisFrame)
                 SetSelecting(!selecting);
-            HandleWorkKeys(keyboard);
-            if (!typing && phone.Current == PhoneView.Screen.PhotoDetail)
+            if (!dropdownOpen)
+                HandleWorkKeys(keyboard);
+
+            var events = EventSystem.current;
+            var selected = events != null ? events.currentSelectedGameObject : null;
+            // 패널에 키보드 포커스가 있으면 방향키는 패널 탐색에만 쓴다(사진 넘기기·휴대전화 자동 탐색 없음).
+            bool panelFocused = workPanel.Owns(selected);
+            if (!typing && !panelFocused && phone.Current == PhoneView.Screen.PhotoDetail)
             {
                 if (keyboard.leftArrowKey.wasPressedThisFrame)
                     StepPhoto(-1);
                 else if (keyboard.rightArrowKey.wasPressedThisFrame)
                     StepPhoto(1);
             }
-            // 화면을 열 때 특정 행을 미리 선택하지 않는다. 키보드 조작을 시작하면 그때 첫 항목에 포커스를 준다.
-            bool navigate = keyboard.upArrowKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame
-                || keyboard.tabKey.wasPressedThisFrame;
-            var events = EventSystem.current;
-            if (navigate && events != null && events.currentSelectedGameObject == null)
+            bool tab = keyboard.tabKey.wasPressedThisFrame;
+            bool arrows = keyboard.upArrowKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame
+                || keyboard.leftArrowKey.wasPressedThisFrame || keyboard.rightArrowKey.wasPressedThisFrame;
+            bool submit = keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame;
+            if (tab && !typing && !dropdownOpen && (panelFocused || fullView))
             {
-                var first = phone.GetComponentsInChildren<Selectable>().FirstOrDefault(s => s.IsInteractable());
-                if (first != null)
-                    first.Select();
+                // 패널 안 Tab 순서: 전체 목록은 닫기 → 상태 필터 → 의뢰 필터 → 기록 행 → 비교 칸 → 비교. 전체 보기 중 처음 Tab은 켜진 필터로.
+                workPanel.KeyboardFocus = true;
+                bool shift = keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed;
+                workPanel.FocusNext(shift);
             }
+            else if (!panelFocused)
+            {
+                // 화면을 열 때 특정 행을 미리 선택하지 않는다. 키보드 조작을 시작하면 그때 첫 항목에 포커스를 준다.
+                bool navigate = keyboard.upArrowKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame || tab;
+                if (navigate && events != null && selected == null)
+                {
+                    var first = phone.GetComponentsInChildren<Selectable>().FirstOrDefault(s => s.IsInteractable());
+                    if (first != null)
+                        first.Select();
+                }
+            }
+            else if (arrows || submit)
+                workPanel.KeyboardFocus = true;
             // 입력창이 같은 프레임에 먼저 Esc를 처리해 포커스가 풀렸어도 메모 Esc로 인식하도록 기억한다.
             memoWasFocused = workPanel.IsEditingMemo;
         }
@@ -109,7 +137,8 @@ namespace Intersection.UI
         /// </summary>
         void RenderCenter()
         {
-            if (!(focus == PanelFocus.Picked && selecting))
+            // 전체 보기 중에는 휴대전화를 이동해도 패널의 목록·상세를 그대로 둔다.
+            if (!fullView && !(focus == PanelFocus.Picked && selecting))
             {
                 focus = PanelFocus.Current;
                 focusRecord = null;
