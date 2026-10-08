@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3105beace738662489091e6b994c7d18, type: 3}
+  m_Name: Job_A_Inventory
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ProgressJobData
+  id: aad298a42c0445beb7fc5b81437e3e0e
+  device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+  order: 0
+  request: {fileID: 11400000, guid: eb75ffbb5bc3dca4198eb7c1e99cd474, type: 2}
+  unlocksSources: 0100000002000000i
+  actionKey: job.inventory.action
+  notReadyKey: job.inventory.notReady
+  runningKey: job.inventory.running
+  doneKey: job.inventory.done
+  shortRunningKey: job.inventory.shortRunning
+  shortDoneKey: job.inventory.shortDone
+  startConditions:
+  - kind: 0
+    tutorial: {fileID: 11400000, guid: a96429b5f81780a4abcaae535b90bdbd, type: 2}
+    request: {fileID: 0}
+    job: {fileID: 0}
+    minCount: 1
+    source: 0
+  onStart:
+  - id: b857457a494141839c2c0c3006a717cd
+    kind: 0
+    stage: 1
+    job: {fileID: 0}
+    templateKey: 
+    caseToken: {fileID: 0}
+  onComplete:
+  - id: b7fbc127211b4d228a97e02ef1959223
+    kind: 0
+    stage: 2
+    job: {fileID: 0}
+    templateKey: 
+    caseToken: {fileID: 0}
+  - id: 79689cb643394fd38d668524c3d0ee28
+    kind: 2
+    stage: 0
+    job: {fileID: 0}
+    templateKey: notify.linkedDone
+    caseToken: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+  completedExternally: 0
+  authorNote: "\uC2DC\uC81C\uD488 \uC784\uC2DC \uAE30\uC900: T01/T02 \uD29C\uD1A0\uB9AC\uC5BC \uC644\uB8CC \uD6C4 \uC2DC\uC791 \uAC00\uB2A5. \uC2DC\uC791\uD558\uBA74 B \uC758\uB8B0 \uC811\uADFC(P1). B \uC778\uBCA4\uD1A0\uB9AC \uC2DC\uC791 \uC2DC \uC644\uB8CC\uB418\uC5B4 P2."

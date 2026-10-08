@@ -188,6 +188,25 @@ namespace Intersection.Core
         public const string DropdownArrow = "dropdown.arrow";
         public const string ToolbarWorkRecords = "toolbar.workRecords";
 
+        // UI-07 검색·진행·알림
+        public const string StatusLocalReady = "status.localReady";
+        public const string SearchTitle = "globalSearch.title";
+        public const string SearchHint = "globalSearch.hint";
+        public const string GlobalSearchEmpty = "globalSearch.empty";
+        public const string SearchCount = "globalSearch.count";
+        public const string SearchGroup = "globalSearch.group";
+        public const string SearchMeta = "globalSearch.meta";
+        public const string SearchMetaNoTime = "globalSearch.metaNoTime";
+        public const string SearchClose = "globalSearch.close";
+        public const string NotificationsTitle = "notifications.title";
+        public const string NotificationsMarkAll = "notifications.markAll";
+        public const string NotificationsEmpty = "notifications.empty";
+        public const string PanelUnavailable = "panel.unavailable";
+        public const string PanelUnavailableBody = "panel.unavailableBody";
+
+        /// <summary>알림 템플릿에서 쓸 수 있는 토큰. 검증 도구가 템플릿의 다른 토큰을 오류로 잡는다.</summary>
+        public static readonly string[] NotificationTokens = { "caseDisplayName", "count" };
+
         // 툴바 "○○ 선택됨"에 쓰는 기록 종류 이름
         public const string KindThread = "kind.thread";
         public const string KindMessage = "kind.message";
@@ -291,6 +310,8 @@ namespace Intersection.Core
             PanelFullViewOpen, PanelBackToCurrent, PanelBackToList, FullViewTitle, FullViewCount, FullViewCountFiltered,
             FullViewNoMatch, FilterAll, FilterPinned, FilterKeep, FilterDelete, FilterMemo, FilterAllCases, ListMemoMark,
             DropdownArrow, ToolbarWorkRecords,
+            StatusLocalReady, SearchTitle, SearchHint, GlobalSearchEmpty, SearchCount, SearchGroup, SearchMeta, SearchMetaNoTime,
+            SearchClose, NotificationsTitle, NotificationsMarkAll, NotificationsEmpty, PanelUnavailable, PanelUnavailableBody,
             KindThread, KindMessage, KindAttachment, KindLocationShare, KindPhoto, KindBrowser, KindMap, KindFile,
             KindSetting, KindRequest,
             RecordPrefixRequest, TutorialDone, TutorialActive, TutorialWaiting, TutorialLine,

@@ -41,15 +41,18 @@ namespace Intersection.UI
             session = new SessionState(config.EffectiveStartStage);
             foreach (var label in GetComponentsInChildren<LocalizedText>(true))
                 label.Apply(text);
-            session.CurrentCase = Cases().FirstOrDefault(c => c.IsAvailable(session.Stage));
             phone.MessageList.QueryChanged += OnQueryChanged;
             InitWork();
+            // 접근 단계는 진행 저장 파일에서 읽는다(없으면 시작 단계).
+            InitProgress();
+            session.CurrentCase = Cases().FirstOrDefault(c => c.IsAvailable(session.Stage));
         }
 
         void Start()
         {
             phone.Init(ClockFactory.Create(config), text, time.Culture);
             Refresh();
+            RenderNotifications();
         }
 
         void Update()
@@ -76,7 +79,7 @@ namespace Intersection.UI
                 if (!dropdownOpen)
                     HandleEscape();
             }
-            else if (!typing && !dropdownOpen && keyboard.sKey.wasPressedThisFrame)
+            else if (!typing && !dropdownOpen && !searchView.IsOpen && keyboard.sKey.wasPressedThisFrame)
                 SetSelecting(!selecting);
             if (!dropdownOpen)
                 HandleWorkKeys(keyboard);
@@ -85,7 +88,9 @@ namespace Intersection.UI
             var selected = events != null ? events.currentSelectedGameObject : null;
             // 패널에 키보드 포커스가 있으면 방향키는 패널 탐색에만 쓴다(사진 넘기기·휴대전화 자동 탐색 없음).
             bool panelFocused = workPanel.Owns(selected);
-            if (!typing && !panelFocused && phone.Current == PhoneView.Screen.PhotoDetail)
+            // 검색 결과가 휴대전화를 덮고 있으면 사진 넘기기·휴대전화 자동 탐색도 하지 않는다.
+            bool phoneCovered = searchView.IsOpen;
+            if (!typing && !panelFocused && !phoneCovered && phone.Current == PhoneView.Screen.PhotoDetail)
             {
                 if (keyboard.leftArrowKey.wasPressedThisFrame)
                     StepPhoto(-1);
@@ -103,7 +108,7 @@ namespace Intersection.UI
                 bool shift = keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed;
                 workPanel.FocusNext(shift);
             }
-            else if (!panelFocused)
+            else if (!panelFocused && !phoneCovered)
             {
                 // 화면을 열 때 특정 행을 미리 선택하지 않는다. 키보드 조작을 시작하면 그때 첫 항목에 포커스를 준다.
                 bool navigate = keyboard.upArrowKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame || tab;
@@ -166,7 +171,7 @@ namespace Intersection.UI
                 bool available = c.IsAvailable(session.Stage);
                 var item = Instantiate(caseItemPrefab, caseListRoot);
                 item.Bind(Initial(c.DisplayName), c.DisplayName,
-                    text.Get(available ? UIKeys.CaseStatusLocal : UIKeys.CaseStatusWaiting),
+                    text.Get(progression.StatusOf(c).shortKey),
                     c == session.CurrentCase, available, Theme.accentSoft, Color.clear,
                     () => SelectCase(device));
                 sidebarItems.Add(item);
@@ -197,21 +202,6 @@ namespace Intersection.UI
                 case AppKind.Photos: return PhotoQuery.DevicePhotos(config.database, device, session.Stage).Count;
                 default: return IsRecordApp(kind) ? RecordAppCount(kind, device) : (int?)null;
             }
-        }
-
-        void RenderTopBar()
-        {
-            var c = session.CurrentCase;
-            if (c == null)
-            {
-                topBar.Show(string.Empty, string.Empty, 0f);
-                return;
-            }
-            bool indexed = session.Stage >= c.localIndexedFrom;
-            topBar.Show(
-                text.Format(UIKeys.TopCaseStatus, ("case", c.DisplayName), ("status", text.Get(UIKeys.CaseStatusLocal))),
-                text.Get(indexed ? UIKeys.TopIndexDone : UIKeys.TopIndexRunning),
-                indexed ? 1f : 0f);
         }
 
         void RenderPhone()

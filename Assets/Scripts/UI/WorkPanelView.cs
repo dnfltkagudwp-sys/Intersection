@@ -46,6 +46,11 @@ namespace Intersection.UI
         [SerializeField] TMP_Text compareToggleLabel;
         [SerializeField] TMP_Text toolsNote;
 
+        [Header("의뢰 진행 작업 (의뢰 요청을 띄웠을 때만): 인벤토리 생성 등")]
+        [SerializeField] RectTransform jobsRoot;
+        [Tooltip("작업 한 줄 원형 (Button·Status 자식). 비활성으로 두고 복제해 쓴다.")]
+        [SerializeField] GameObject jobTemplate;
+
         [Header("기록 조작")]
         [SerializeField] GameObject actionsRoot;
         [SerializeField] Button pinButton;
@@ -332,6 +337,62 @@ namespace Intersection.UI
         /// 보조 행동. 각 행동은 label과 onClick이 있으면 버튼을, note가 있으면 그 이유·안내를 한 줄로 보여준다.
         /// 아무것도 없으면 줄 전체를 숨긴다.
         /// </summary>
+        public class JobItem
+        {
+            public string buttonText;
+            public string statusText;
+            /// <summary>null이면 지금 누를 수 없다(조건 전·진행 중·완료).</summary>
+            public Action onStart;
+        }
+
+        public struct JobStyle
+        {
+            public Color readyColor;
+            public Color readyTextColor;
+            public Color idleColor;
+            public Color idleTextColor;
+        }
+
+        readonly List<Button> jobButtons = new List<Button>();
+
+        /// <summary>
+        /// 의뢰 요청의 진행 작업. 버튼은 조건을 만족했을 때만 누를 수 있고, 아래에 업무 상태만 한 줄로 보여준다
+        /// (다음에 볼 앱을 지시하지 않는다). 빈 목록이면 구역을 숨긴다.
+        /// </summary>
+        public void SetJobs(IList<JobItem> jobs, JobStyle style)
+        {
+            foreach (Transform child in jobsRoot)
+            {
+                if (child.gameObject != jobTemplate)
+                    UIPool.Discard(child.gameObject);
+            }
+            jobButtons.Clear();
+            jobsRoot.gameObject.SetActive(jobs != null && jobs.Count > 0);
+            if (jobs == null)
+                return;
+            foreach (var job in jobs)
+            {
+                var row = Instantiate(jobTemplate, jobsRoot);
+                row.SetActive(true);
+                var button = row.GetComponentInChildren<Button>(true);
+                var label = button.GetComponentInChildren<TMP_Text>(true);
+                var status = row.transform.Find("Status").GetComponent<TMP_Text>();
+                label.text = job.buttonText;
+                bool ready = job.onStart != null;
+                Paint(button, label, ready ? style.readyColor : style.idleColor, ready ? style.readyTextColor : style.idleTextColor);
+                button.interactable = ready;
+                button.onClick.RemoveAllListeners();
+                if (ready)
+                {
+                    var start = job.onStart;
+                    button.onClick.AddListener(() => start());
+                }
+                status.text = job.statusText ?? string.Empty;
+                status.gameObject.SetActive(!string.IsNullOrEmpty(job.statusText));
+                jobButtons.Add(button);
+            }
+        }
+
         public void SetRecordTools(string sourceText, Action onSource, string sourceNote,
             string compareText, Action onCompare, string compareNote)
         {
@@ -670,6 +731,8 @@ namespace Intersection.UI
             {
                 Add(backLink);
                 Add(sourceButton, compareToggle);
+                foreach (var b in jobButtons)
+                    Add(b);
                 Add(pinButton);
                 Add(keepButton, deleteButton);
                 if (mode == Mode.Simple)

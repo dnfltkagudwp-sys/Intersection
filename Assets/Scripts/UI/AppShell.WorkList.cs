@@ -257,7 +257,9 @@ namespace Intersection.UI
                 compare = compare,
                 compareLabel = text.Get(compare == PinnedItemView.CompareState.InSlot ? UIKeys.ListCompareOn : UIKeys.ListCompareAdd),
                 onCompare = () => ToggleCompareSlot(target),
-                title = res.found ? res.title : text.Get(res.duplicate ? UIKeys.PanelMissingDuplicate : UIKeys.PanelMissing),
+                title = !res.found ? text.Get(res.duplicate ? UIKeys.PanelMissingDuplicate : UIKeys.PanelMissing)
+                    : RecordAccess.Check(target, config.database, session.Stage, text) == AccessState.Unavailable
+                        ? text.Get(UIKeys.PanelUnavailable) : res.title,
                 meta = WorkMeta(target, res),
                 badge = e.classification == Classification.Unclassified ? null : text.Get(UIKeys.ClassKey(e.classification)),
                 memoMark = string.IsNullOrEmpty(e.memo) ? null : text.Get(UIKeys.ListMemoMark),

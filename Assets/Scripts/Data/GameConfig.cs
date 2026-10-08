@@ -30,7 +30,7 @@ namespace Intersection.Data
         [Header("진행")]
         public ProgressStage startStage = ProgressStage.P0;
 
-        [Tooltip("에디터·개발 빌드에서만 적용. 진행 시스템(UI-07) 전까지 검수용으로 시작 단계를 바꾼다.")]
+        [Tooltip("에디터·개발 빌드에서만 적용. 새 진행 저장 파일을 만들 때의 시작 단계를 검수용으로 바꾼다(기본은 꺼 둔다). 진행 중인 저장 파일이 있으면 그 단계를 쓴다.")]
         public bool useDevStartStage;
         public ProgressStage devStartStage = ProgressStage.P1;
 
@@ -61,6 +61,9 @@ namespace Intersection.Data
         [Header("저장")]
         [Tooltip("업무 상태(열람·핀·분류·작업메모·튜토리얼) 저장 파일 이름. Application.persistentDataPath 아래에 만들어진다.")]
         public string workSaveFileName = "work_state.json";
+
+        [Tooltip("진행 상태(접근 단계·의뢰별 작업·업무 알림) 저장 파일 이름. 업무 상태와 별도 파일이다.")]
+        public string progressSaveFileName = "progress_state.json";
 
         [Header("참조")]
         public ContentDatabase database;

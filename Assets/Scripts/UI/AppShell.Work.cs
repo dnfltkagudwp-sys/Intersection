@@ -207,6 +207,7 @@ namespace Intersection.UI
                         text.Get(UIKeys.PanelBackToCurrent));
             }
             RenderRecordTools();
+            RenderJobs();
 
             var target = ActionTarget;
             workPanel.SetActions(target != null ? ActionsFor(target) : null);
@@ -313,14 +314,15 @@ namespace Intersection.UI
             reasonKey = null;
             var db = config.database;
             var stage = session.Stage;
-            var res = RecordResolver.Resolve(target, db, text);
+            // 접근 판정은 앱 목록·검색·비교와 같은 RecordAccess를 쓴다. 과거 저장 참조로 현재 단계를 우회하지 못한다.
+            var access = RecordAccess.Check(target, db, stage, text, out var res);
             device = res.device;
-            if (!res.found)
+            if (access == AccessState.Missing || access == AccessState.Duplicate)
             {
-                reasonKey = res.duplicate ? UIKeys.SourceDuplicate : UIKeys.SourceMissing;
+                reasonKey = access == AccessState.Duplicate ? UIKeys.SourceDuplicate : UIKeys.SourceMissing;
                 return false;
             }
-            if (!device.IsAvailable(stage))
+            if (access == AccessState.Unavailable)
             {
                 reasonKey = UIKeys.SourceUnavailable;
                 return false;
@@ -448,6 +450,13 @@ namespace Intersection.UI
                     text.Get(UIKeys.PanelMissingBody), new[] { Row(UIKeys.PanelRecordId, code, Theme.monoFont) });
                 return;
             }
+            if (RecordAccess.Check(target, config.database, session.Stage, text) == AccessState.Unavailable)
+            {
+                // 저장된 과거 참조라도 현재 단계에서 접근할 수 없는 기록은 제목·파일명·연락처·미리보기를 보여주지 않는다.
+                workPanel.Show(text.Get(UIKeys.PanelUnavailable), text.Get(UIKeys.PanelUnavailableBody),
+                    new[] { Row(UIKeys.PanelRecordId, code, Theme.monoFont) });
+                return;
+            }
 
             var rows = new List<WorkPanelView.Row>
             {
@@ -544,7 +553,7 @@ namespace Intersection.UI
         // ───────────── 키보드 ─────────────
 
         /// <summary>
-        /// Esc 우선순위: 비교 화면이면 비교 종료 → 메모 입력 중이면 입력값을 저장하고 포커스만 해제
+        /// Esc 우선순위: 비교 화면이면 비교 종료 → 알림 목록 닫기 → 검색 닫기 → 메모 입력 중이면 입력값을 저장하고 포커스만 해제
         /// → 전체 보기 상세면 전체 목록으로 → 전체 목록이면 간단한 패널로 → 패널에 다른 기록을 띄웠으면 현재 열람으로
         /// → 고르기 모드면 종료 → 휴대전화 뒤로. 한 번의 Esc는 한 단계만 처리하고 아래 단계로 넘기지 않는다.
         /// </summary>
@@ -552,6 +561,10 @@ namespace Intersection.UI
         {
             if (comparing)
                 ExitCompare();
+            else if (notificationPanel.IsOpen)
+                CloseNotifications();
+            else if (searchView.IsOpen)
+                CloseSearch();
             else if (workPanel.IsEditingMemo || memoWasFocused)
                 workPanel.EndMemoEdit();
             else if (FullDetailOpen)

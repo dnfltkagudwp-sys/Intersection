@@ -12,7 +12,7 @@ namespace Intersection.EditorTools
     /// <summary>
     /// 콘텐츠 참조 검증. 메뉴로 수동 실행하고, 빌드 전에도 자동으로 실행되어 오류가 있으면 빌드를 막는다.
     /// </summary>
-    public static class ContentValidator
+    public static partial class ContentValidator
     {
         public class Issue
         {
@@ -59,10 +59,11 @@ namespace Intersection.EditorTools
             var records = browser.Cast<DeviceRecord>().Concat(maps).Concat(files).Concat(settings).ToList();
             var requests = Find<WorkRequestData>();
             var tutorials = Find<TutorialData>();
+            var jobs = Find<ProgressJobData>();
 
             // 에셋 ID
             var allAssets = people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums)
-                .Concat(records).Concat(folders).Concat(requests).Concat(tutorials).ToList();
+                .Concat(records).Concat(folders).Concat(requests).Concat(tutorials).Concat(jobs).ToList();
             foreach (var a in allAssets.Where(a => string.IsNullOrEmpty(a.Id)))
                 Error($"ID가 비어 있습니다: {Path(a)}", a);
             foreach (var g in allAssets.Where(a => !string.IsNullOrEmpty(a.Id)).GroupBy(a => a.Id).Where(g => g.Count() > 1))
@@ -376,6 +377,10 @@ namespace Intersection.EditorTools
                         CheckTutorialTarget(s.target2, "target2", s, t, where, Error);
                 }
             }
+
+            // 진행 연동 (UI-07): 작업·효과·도달 가능성·출처와 접근 단계·검색 인덱스·진행 저장 파일
+            if (config != null && config.database != null)
+                CheckProgress(config, jobs, cases, threads, photos, records, folders, requests, Error, Warn, CheckKey);
 
             // 플레이어 저장 파일: 원본에서 찾을 수 없는 참조 (실행 중에는 누락 상태로 표시되며 다른 기록으로 대체되지 않는다)
             if (config != null && config.database != null)

@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3105beace738662489091e6b994c7d18, type: 3}
+  m_Name: Job_B_Inventory
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ProgressJobData
+  id: bce766d5711644239287f7829631276a
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  order: 0
+  request: {fileID: 11400000, guid: 58a514d92112f294f83a2c9a8c0eb192, type: 2}
+  unlocksSources: 0100000002000000i
+  actionKey: job.inventory.action
+  notReadyKey: job.inventory.notReady
+  runningKey: job.inventory.running
+  doneKey: job.inventory.done
+  shortRunningKey: job.inventory.shortRunning
+  shortDoneKey: job.inventory.shortDone
+  startConditions:
+  - kind: 1
+    tutorial: {fileID: 0}
+    request: {fileID: 11400000, guid: 58a514d92112f294f83a2c9a8c0eb192, type: 2}
+    job: {fileID: 0}
+    minCount: 1
+    source: 0
+  - kind: 2
+    tutorial: {fileID: 0}
+    request: {fileID: 0}
+    job: {fileID: 0}
+    minCount: 1
+    source: 0
+  onStart:
+  - id: 06a3c67612de4e93b5f3dfdb635cdcf0
+    kind: 1
+    stage: 0
+    job: {fileID: 11400000, guid: e2b186e65c4b1ad4b818294929309c58, type: 2}
+    templateKey: 
+    caseToken: {fileID: 0}
+  onComplete:
+  - id: 791edb9351a74939bb67d7d0ce1ec1eb
+    kind: 0
+    stage: 3
+    job: {fileID: 0}
+    templateKey: 
+    caseToken: {fileID: 0}
+  - id: e22e0902fd484a38ab9e103a3264ef72
+    kind: 2
+    stage: 0
+    job: {fileID: 0}
+    templateKey: notify.backupIndexed
+    caseToken: {fileID: 0}
+  completedExternally: 1
+  authorNote: "\uC2DC\uC81C\uD488 \uC784\uC2DC \uAE30\uC900: B \uC694\uCCAD \uC5F4\uB78C + B \uB85C\uCEEC \uAE30\uB85D 1\uAC74 \uC774\uC0C1 \uBCF4\uC874/\uC0AD\uC81C \uD6C4\uBCF4 \uBD84\uB958 \uD6C4 \uC2DC\uC791. \uC2DC\uC791\uD558\uBA74 A \uC5F0\uB3D9 \uC644\uB8CC. \uC644\uB8CC(P3)\uB294 \uC774\uD6C4 \uC815\uC2DD \uCF58\uD150\uCE20\uAC00 \uC5F0\uACB0."

@@ -843,6 +843,7 @@ namespace Intersection.EditorTools
             var panel = BuildWorkPanel(right, infoRow);
             var phone = BuildCenter(center, threadRow, bubbleRow, separator, section, out var deviceLabel);
             var compareView = BuildCompare(center, bubbleRow, separator, infoRow);
+            var searchView = BuildSearch(center);
             // 비교 화면이 열려 있는 동안 좌측·우측 조작을 막는다(종료 후 상태 그대로 복귀).
             var sidebarGroup = left.gameObject.AddComponent<CanvasGroup>();
             var workPanelGroup = right.gameObject.AddComponent<CanvasGroup>();
@@ -868,6 +869,9 @@ namespace Intersection.EditorTools
             Wire(shell, "compareView", compareView);
             Wire(shell, "sidebarGroup", sidebarGroup);
             Wire(shell, "workPanelGroup", workPanelGroup);
+            // 업무 알림 목록은 화면 맨 위에 그린다.
+            Wire(shell, "searchView", searchView);
+            Wire(shell, "notificationPanel", BuildNotifications(root, topH));
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -891,31 +895,45 @@ namespace Intersection.EditorTools
             Text(Place(Node("Session", bar), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-22, 0), new Vector2(110, 30)),
                 theme.regularFont, 13, theme.subText, TextAlignmentOptions.MidlineRight, "top.session");
 
-            // UI-07 전까지 전역 검색·알림은 비활성 상태로만 자리를 잡는다.
-            var disabled = Place(Node("NotYetAvailable", bar), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-150, 0), new Vector2(430, 38));
-            var group = disabled.gameObject.AddComponent<CanvasGroup>();
-            group.alpha = 0.45f;
-            group.interactable = false;
-            group.blocksRaycasts = false;
-            var search = Fill(Node("Search", disabled), 0, 0, 96, 0);
-            Rounded(search, theme.panelRaised, 8f);
-            Text(Fill(Node("Placeholder", search), 14, 0, 10, 0), theme.regularFont, 14, theme.subText, key: "top.searchPlaceholder");
-            var notify = Place(Node("Notifications", disabled), new Vector2(1, 0.5f), new Vector2(1, 0.5f), Vector2.zero, new Vector2(84, 38));
-            Rounded(notify, theme.panelRaised, 8f);
-            Text(Fill(Node("Label", notify)), theme.mediumFont, 14, theme.subText, TextAlignmentOptions.Center, "top.notifications");
+            // 전역 검색: 현재 접근·인덱싱된 자료만 찾는다. 입력하면 중앙에 검색 결과 화면이 열린다.
+            var search = Place(Node("Search", bar), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-246, 0), new Vector2(330, 38));
+            var searchGroup = search.gameObject.AddComponent<CanvasGroup>();
+            var searchField = BuildTopSearchField(search);
 
-            var index = Place(Node("IndexStatus", bar), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-600, 0), new Vector2(260, 40));
+            // 업무 알림: 읽지 않은 수 배지. 누르면 아래에 목록이 열린다.
+            var notify = Place(Node("Notifications", bar), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-150, 0), new Vector2(84, 38));
+            var notifyBg = Rounded(notify, theme.panelRaised, 8f);
+            var notifyButton = MakeButton(notify, notifyBg, Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            Text(Fill(Node("Label", notify)), theme.mediumFont, 14, theme.text, TextAlignmentOptions.Center, "top.notifications");
+            var badge = Place(Node("Badge", notify), new Vector2(1, 1), new Vector2(0.5f, 0.5f), new Vector2(-6, -6), new Vector2(22, 18));
+            Rounded(badge, theme.accent, 9f);
+            var badgeLabel = Text(Fill(Node("Label", badge)), theme.boldFont, 11, theme.panel, TextAlignmentOptions.Center);
+            badge.gameObject.SetActive(false);
+
+            // 현재 의뢰의 업무 상태와 진행 표시 (비율을 모르면 오가는 띠, 끝났으면 가득 찬 막대)
+            var index = Place(Node("IndexStatus", bar), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-600, 0), new Vector2(300, 40));
             var indexLabel = Text(TopBand(Node("Label", index), 2, 20), theme.regularFont, 13, theme.subText, TextAlignmentOptions.MidlineRight);
             var track = Place(Node("Track", index), new Vector2(1, 0), new Vector2(1, 0), new Vector2(0, 6), new Vector2(160, 4));
             Rounded(track, theme.border, 2f);
+            track.gameObject.AddComponent<RectMask2D>();
             var fill = Img(Fill(Node("Fill", track)), theme.accent, theme.roundedSprite);
             fill.type = Image.Type.Filled;
             fill.fillMethod = Image.FillMethod.Horizontal;
             fill.fillAmount = 0f;
+            var sweep = Place(Node("Sweep", track), new Vector2(0, 0.5f), new Vector2(0, 0.5f), Vector2.zero, new Vector2(48, 4));
+            Rounded(sweep, theme.accent, 2f);
+            sweep.gameObject.SetActive(false);
 
             Wire(view, "caseStatus", caseStatus);
             Wire(view, "indexStatus", indexLabel);
             Wire(view, "indexFill", fill);
+            Wire(view, "indeterminate", sweep);
+            Wire(view, "searchField", searchField);
+            Wire(view, "searchGroup", searchGroup);
+            Wire(view, "notificationsButton", notifyButton);
+            Wire(view, "notificationsBackground", notifyBg);
+            Wire(view, "badge", badge.gameObject);
+            Wire(view, "badgeLabel", badgeLabel);
             return view;
         }
 
@@ -979,6 +997,18 @@ namespace Intersection.EditorTools
             var compareToggle = ToolButton(toolButtons, "CompareToggle", out var compareToggleLabel);
             var toolsNote = Text(Node("Note", tools), theme.regularFont, 13, theme.subText, TextAlignmentOptions.TopLeft, null, true);
             tools.gameObject.SetActive(false);
+
+            // 의뢰 진행 작업 (의뢰 요청을 띄웠을 때만): 시작 버튼 + 업무 상태 한 줄. 작업 수만큼 원형을 복제한다.
+            var jobs = Node("Jobs", content);
+            Stack(jobs, 8).padding = new RectOffset(0, 0, 4, 0);
+            var jobTemplate = Node("JobTemplate", jobs);
+            Stack(jobTemplate, 4);
+            var jobButtonRt = Node("Button", jobTemplate);
+            jobButtonRt.gameObject.AddComponent<LayoutElement>().preferredHeight = 38;
+            ActionButton(jobButtonRt, out _, null, 14);
+            Text(Node("Status", jobTemplate), theme.regularFont, 13, theme.subText, TextAlignmentOptions.TopLeft, null, true);
+            jobTemplate.gameObject.SetActive(false);
+            jobs.gameObject.SetActive(false);
 
             // 기본 행동(넓은 핀 버튼) → 처리 후보 라벨 → 보존·삭제 토글
             var actions = Node("Actions", content);
@@ -1084,6 +1114,8 @@ namespace Intersection.EditorTools
             Wire(view, "compareToggle", compareToggle);
             Wire(view, "compareToggleLabel", compareToggleLabel);
             Wire(view, "toolsNote", toolsNote);
+            Wire(view, "jobsRoot", jobs);
+            Wire(view, "jobTemplate", jobTemplate.gameObject);
             Wire(view, "slotsLabel", slotsLabel);
             Wire(view, "slotsRow", slotsRow);
             Wire(view, "slotsNote", slotsNote);
@@ -1294,6 +1326,156 @@ namespace Intersection.EditorTools
             Img(rt, theme.accent, theme.selectionOutline, 8f).raycastTarget = false;
             rt.gameObject.SetActive(false);
             return rt.gameObject;
+        }
+
+        /// <summary>상단 전역 검색 입력창 (한 줄).</summary>
+        static TMP_InputField BuildTopSearchField(RectTransform rt)
+        {
+            var bg = Rounded(rt, theme.panelRaised, 8f);
+            bg.raycastTarget = true;
+            var area = Fill(Node("TextArea", rt), 14, 0, 12, 0);
+            area.gameObject.AddComponent<RectMask2D>();
+            var placeholder = Text(Fill(Node("Placeholder", area)), theme.regularFont, 14, theme.subText,
+                TextAlignmentOptions.MidlineLeft, "top.searchPlaceholder");
+            var input = Text(Fill(Node("Text", area)), theme.regularFont, 14, theme.text, TextAlignmentOptions.MidlineLeft);
+            input.richText = false;
+            var field = rt.gameObject.AddComponent<TMP_InputField>();
+            field.targetGraphic = bg;
+            field.textViewport = area;
+            field.textComponent = input;
+            field.placeholder = placeholder;
+            field.fontAsset = theme.regularFont;
+            field.pointSize = 14;
+            field.lineType = TMP_InputField.LineType.SingleLine;
+            field.characterLimit = 60;
+            field.richText = false;
+            field.restoreOriginalTextOnEscape = false;
+            field.customCaretColor = true;
+            field.caretColor = theme.accent;
+            field.selectionColor = new Color(theme.accent.r, theme.accent.g, theme.accent.b, 0.35f);
+            return field;
+        }
+
+        /// <summary>
+        /// 전역 검색 결과 화면. 휴대전화 자리(중앙)를 덮는 PC 업무 화면으로, 의뢰 · 앱별 구역과 결과 행을 독립 스크롤로 보여준다.
+        /// </summary>
+        static SearchView BuildSearch(RectTransform center)
+        {
+            var root = Fill(Node("Search", center));
+            Img(root, theme.stage).raycastTarget = true;
+            var view = root.gameObject.AddComponent<SearchView>();
+            var header = TopBand(Node("Header", root), 0, 60);
+            Line(header, "BottomLine", true, 0, false);
+            var titleGroup = Fill(Node("Title", header), 24, 0, 160, 0);
+            var titleLayout = titleGroup.gameObject.AddComponent<HorizontalLayoutGroup>();
+            titleLayout.spacing = 10;
+            titleLayout.childAlignment = TextAnchor.MiddleLeft;
+            titleLayout.childControlWidth = titleLayout.childControlHeight = true;
+            titleLayout.childForceExpandWidth = false;
+            titleLayout.childForceExpandHeight = true;
+            var heading = Text(Node("Label", titleGroup), theme.boldFont, 17, theme.text);
+            var count = Text(Node("Count", titleGroup), theme.monoFont, 13, theme.subText);
+            var close = Place(Node("Close", header), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-20, 0), new Vector2(110, 36));
+            var closeButton = MakeButton(close, Rounded(close, theme.panelRaised, 8f), Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            Text(Fill(Node("Label", close)), theme.mediumFont, 14, theme.text, TextAlignmentOptions.Center, UIKeys.SearchClose);
+
+            var listArea = Fill(Node("Results", root), 24, 72, 24, 20);
+            var scroll = MakeScroll(listArea, out var content, 6, new RectOffset(0, 0, 0, 12));
+            var empty = Text(TopBand(Node("Empty", root), 84, 22, 26, 26), theme.regularFont, 15, theme.subText);
+
+            Wire(view, "heading", heading);
+            Wire(view, "countLabel", count);
+            Wire(view, "closeButton", closeButton);
+            Wire(view, "scroll", scroll);
+            Wire(view, "listRoot", content);
+            Wire(view, "emptyLabel", empty);
+            Wire(view, "rowPrefab", BuildSearchRow());
+            Wire(view, "sectionPrefab", BuildSearchSection());
+            root.gameObject.SetActive(false);
+            return view;
+        }
+
+        static SearchResultRowView BuildSearchRow()
+        {
+            var root = Node("SearchResultRow", null);
+            root.sizeDelta = new Vector2(900, 76);
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 76;
+            var bg = Rounded(root, theme.panel, 8f);
+            var button = MakeButton(root, bg, Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            var view = root.gameObject.AddComponent<SearchResultRowView>();
+            var title = Text(TopBand(Node("Title", root), 10, 22, 16, 16), theme.boldFont, 15, theme.text);
+            title.richText = false;
+            var snippet = Text(TopBand(Node("Snippet", root), 33, 20, 16, 16), theme.regularFont, 14, theme.text);
+            snippet.richText = true;
+            var meta = Text(TopBand(Node("Meta", root), 54, 16, 16, 16), theme.regularFont, 12, theme.subText);
+            meta.richText = false;
+            Wire(view, "button", button);
+            Wire(view, "title", title);
+            Wire(view, "snippet", snippet);
+            Wire(view, "meta", meta);
+            return SavePrefab<SearchResultRowView>(root, "SearchResultRow");
+        }
+
+        static ListSectionView BuildSearchSection()
+        {
+            var root = Node("SearchSection", null);
+            root.sizeDelta = new Vector2(900, 34);
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = 34;
+            var view = root.gameObject.AddComponent<ListSectionView>();
+            var label = Text(Fill(Node("Label", root), 4, 10, 4, 0), theme.mediumFont, 13, theme.accent, TextAlignmentOptions.BottomLeft);
+            label.richText = false;
+            Wire(view, "label", label);
+            return SavePrefab<ListSectionView>(root, "SearchSection");
+        }
+
+        /// <summary>
+        /// 업무 알림 목록. 상단 `알림` 아래에 열리며, 바깥을 누르면 닫힌다. 알림을 눌러도 앱·기록을 열지 않는다.
+        /// </summary>
+        static NotificationPanelView BuildNotifications(RectTransform root, float topH)
+        {
+            var panelRoot = Fill(Node("NotificationPanel", root));
+            var view = panelRoot.gameObject.AddComponent<NotificationPanelView>();
+            var blockerImg = Img(panelRoot, Color.clear);
+            var blocker = MakeButton(panelRoot, blockerImg, Color.white, Color.white);
+            var card = Place(Node("Card", panelRoot), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-22, -(topH + 6)), new Vector2(440, 400));
+            Rounded(card, theme.panelRaised, 10f).raycastTarget = true;
+            Img(Fill(Node("Outline", card)), theme.border, theme.selectionOutline, 10f).raycastTarget = false;
+            var heading = Text(TopBand(Node("Title", card), 14, 24, 18, 140), theme.boldFont, 16, theme.text);
+            var markAll = Place(Node("MarkAll", card), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-14, -12), new Vector2(110, 28));
+            var markAllButton = MakeButton(markAll, Rounded(markAll, theme.accentSoft, 6f), Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            var markAllLabel = Text(Fill(Node("Label", markAll)), theme.mediumFont, 13, theme.accent, TextAlignmentOptions.Center);
+            var listArea = Fill(Node("List", card), 10, 52, 10, 10);
+            MakeScroll(listArea, out var content, 4, new RectOffset(0, 0, 0, 4));
+            var empty = Text(TopBand(Node("Empty", card), 58, 22, 18, 18), theme.regularFont, 14, theme.subText);
+
+            Wire(view, "card", card);
+            Wire(view, "heading", heading);
+            Wire(view, "markAllButton", markAllButton);
+            Wire(view, "markAllLabel", markAllLabel);
+            Wire(view, "blocker", blocker);
+            Wire(view, "listRoot", content);
+            Wire(view, "emptyLabel", empty);
+            Wire(view, "rowPrefab", BuildNotificationRow());
+            panelRoot.gameObject.SetActive(false);
+            return view;
+        }
+
+        static NotificationRowView BuildNotificationRow()
+        {
+            var root = Node("NotificationRow", null);
+            root.sizeDelta = new Vector2(420, 48);
+            root.gameObject.AddComponent<LayoutElement>().minHeight = 48;
+            var bg = Rounded(root, theme.panel, 8f);
+            var button = MakeButton(root, bg, Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            var view = root.gameObject.AddComponent<NotificationRowView>();
+            var dot = Place(Node("Unread", root), new Vector2(0, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(16, 0), new Vector2(8, 8));
+            Img(dot, theme.accent, theme.circleSprite);
+            var label = Text(Fill(Node("Label", root), 30, 6, 14, 6), theme.mediumFont, 14, theme.text, TextAlignmentOptions.MidlineLeft, null, true);
+            label.richText = false;
+            Wire(view, "button", button);
+            Wire(view, "unreadDot", dot.gameObject);
+            Wire(view, "label", label);
+            return SavePrefab<NotificationRowView>(root, "NotificationRow");
         }
 
         /// <summary>선택한 기록의 작업메모 (여러 줄 입력).</summary>

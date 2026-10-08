@@ -32,12 +32,13 @@ namespace Intersection.UI
         {
             if (target.kind == RecordKind.Request)
             {
-                var res = RecordResolver.Resolve(target, config.database, text);
-                if (!res.found)
-                    return res.duplicate ? UIKeys.CompareBlockedDuplicate : UIKeys.CompareBlockedMissing;
-                var q = config.database.requests.FirstOrDefault(x => x != null && x.Id == target.recordId && x.device == res.device);
-                return q == null || !res.device.IsAvailable(session.Stage) || session.Stage < q.availableFrom
-                    ? UIKeys.CompareBlockedUnavailable : null;
+                switch (RecordAccess.Check(target, config.database, session.Stage, text))
+                {
+                    case AccessState.Missing: return UIKeys.CompareBlockedMissing;
+                    case AccessState.Duplicate: return UIKeys.CompareBlockedDuplicate;
+                    case AccessState.Unavailable: return UIKeys.CompareBlockedUnavailable;
+                    default: return null;
+                }
             }
             if (PlanSource(target, out _, out _, out var reason))
                 return null;
@@ -167,9 +168,12 @@ namespace Intersection.UI
                 RefreshWorkPanel();
                 return;
             }
+            CloseSearch();
+            CloseNotifications();
             var a = compareSlots[0];
             var b = compareSlots[1];
             comparing = true;
+            topBar.SetSearchEnabled(false);
             SelectionBus.Set(false, null);
             EventSystem.current?.SetSelectedGameObject(null);
             SetSideInteractable(false);
@@ -186,6 +190,7 @@ namespace Intersection.UI
                 return;
             comparing = false;
             compareView.Close();
+            topBar.SetSearchEnabled(true);
             SetSideInteractable(true);
             RefreshWorkPanel();
         }

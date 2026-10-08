@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb57afd702477e04eb30161263fd26bf, type: 3}
+  m_Name: Request_B_ORD
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.WorkRequestData
+  id: 08966864b12940cdab968e4acf816322
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  title: "\uC720\uC871 \uC694\uCCAD"
+  body: "\uC0AC\uC0DD\uD65C \uBCF4\uD638\uB97C \uC704\uD574 \uAC1C\uC778 \uACC4\uC815\uACFC \uC628\uB77C\uC778 \uD754\uC801\uC744 \uC815\uB9AC\uD574 \uC8FC\uC138\uC694. \uAC00\uC871 \uC0AC\uC9C4\uC740 \uBCC4\uB3C4\uB85C \uD655\uC778\uD558\uACA0\uC2B5\uB2C8\uB2E4."
+  order: 0
+  availableFrom: 1
+  evidenceRef: 

@@ -22,5 +22,6 @@ namespace Intersection.Data
         public List<SettingRecord> settings = new List<SettingRecord>();
         public List<WorkRequestData> requests = new List<WorkRequestData>();
         public List<TutorialData> tutorials = new List<TutorialData>();
+        public List<ProgressJobData> jobs = new List<ProgressJobData>();
     }
 }
