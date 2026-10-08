@@ -950,13 +950,14 @@ namespace Intersection.EditorTools
 
             // 위: 머리말(현재 열람·선택한 기록·작업 기록) → 기록 정보 → 핀 → 처리 후보 → 작업메모 (넘치면 스크롤)
             var recordArea = Fill(Node("Record", right), pad, 72, pad, 22 + bottomH + 10);
-            MakeScroll(recordArea, out var content, 8, new RectOffset(0, 0, 0, 8));
+            // 돌아가기(`< 현재 화면` / `< 작업 기록`)는 패널 맨 위 왼쪽에 고정한다. 보일 때만 아래 스크롤 영역을 그만큼 내린다.
+            var backButton = PanelBackButton(recordArea, "Back", out var backLabel);
+            backLabel.gameObject.AddComponent<LocalizedText>().Key = UIKeys.PanelBackToCurrent;
+            var recordScroll = Fill(Node("Scroll", recordArea));
+            MakeScroll(recordScroll, out var content, 8, new RectOffset(0, 0, 0, 8));
             var headingRow = Node("HeadingRow", content);
             headingRow.gameObject.AddComponent<LayoutElement>().preferredHeight = 20;
-            var heading = Text(Fill(Node("Heading", headingRow), 0, 0, 120, 0), theme.mediumFont, 13, theme.subText);
-            var back = Place(Node("BackToCurrent", headingRow), new Vector2(1, 0.5f), new Vector2(1, 0.5f), Vector2.zero, new Vector2(116, 22));
-            var backButton = MakeButton(back, Img(back, Color.clear), Color.white, Color.white);
-            var backLabel = Text(Fill(Node("Label", back)), theme.mediumFont, 13, theme.accent, TextAlignmentOptions.MidlineRight, UIKeys.PanelBackToCurrent);
+            var heading = Text(Fill(Node("Heading", headingRow)), theme.mediumFont, 13, theme.subText);
             var title = Text(Node("RecordTitle", content), theme.boldFont, 19, theme.text, TextAlignmentOptions.TopLeft, null, true);
             var body = Text(Node("RecordBody", content), theme.regularFont, 14, theme.text, TextAlignmentOptions.TopLeft, null, true);
             var info = Node("Info", content);
@@ -1070,6 +1071,7 @@ namespace Intersection.EditorTools
             Wire(view, "fullViewButton", fullOpen);
             WireArray(view, "slotMetas", slotMetas);
             Wire(view, "backLinkLabel", backLabel);
+            Wire(view, "recordScroll", recordScroll);
             Wire(view, "heading", heading);
             Wire(view, "backLink", backButton);
             Wire(view, "recordTitle", title);
@@ -1125,8 +1127,10 @@ namespace Intersection.EditorTools
         {
             var full = Fill(Node("FullList", right), pad, 72, pad, 22 + bottomH + 10);
 
-            var titleRow = TopBand(Node("TitleRow", full), 0, 26);
-            var titleGroup = Fill(Node("Title", titleRow), 0, 0, 124, 0);
+            // 맨 위 왼쪽 `< 현재 화면` → 제목 · 개수 → 필터 → 의뢰 → 목록
+            var closeButton = PanelBackButton(full, "Close", out var closeLabel);
+            var titleRow = TopBand(Node("TitleRow", full), PanelBackHeight + 10, 26);
+            var titleGroup = Fill(Node("Title", titleRow));
             var titleLayout = titleGroup.gameObject.AddComponent<HorizontalLayoutGroup>();
             titleLayout.spacing = 8;
             titleLayout.childAlignment = TextAnchor.MiddleLeft;
@@ -1135,12 +1139,10 @@ namespace Intersection.EditorTools
             titleLayout.childForceExpandHeight = true;
             var title = Text(Node("Label", titleGroup), theme.boldFont, 17, theme.text);
             var count = Text(Node("Count", titleGroup), theme.monoFont, 13, theme.subText);
-            var close = Place(Node("Close", titleRow), new Vector2(1, 0.5f), new Vector2(1, 0.5f), Vector2.zero, new Vector2(116, 26));
-            var closeButton = MakeButton(close, Img(close, Color.clear), Color.white, Color.white);
-            var closeLabel = Text(Fill(Node("Label", close)), theme.mediumFont, 13, theme.accent, TextAlignmentOptions.MidlineRight);
+            const float top = PanelBackHeight + 10 + 26;
 
             // 상태 필터 한 줄 (전체·핀·보존·삭제·메모). 한 번에 하나만 켜진다.
-            var filters = TopBand(Node("Filters", full), 38, 32);
+            var filters = TopBand(Node("Filters", full), top + 12, 32);
             var filterRow = filters.gameObject.AddComponent<HorizontalLayoutGroup>();
             filterRow.spacing = 4;
             filterRow.childControlWidth = filterRow.childControlHeight = true;
@@ -1156,11 +1158,11 @@ namespace Intersection.EditorTools
             }
 
             // 의뢰 필터: `모든 의뢰` + 데이터의 의뢰 표시명
-            var caseFilter = BuildDropdown(TopBand(Node("CaseFilter", full), 76, 32));
+            var caseFilter = BuildDropdown(TopBand(Node("CaseFilter", full), top + 50, 32));
 
-            var listArea = Fill(Node("List", full), 0, 118, 0, 0);
+            var listArea = Fill(Node("List", full), 0, top + 92, 0, 0);
             var scroll = MakeScroll(listArea, out var listContent, 6, new RectOffset(0, 0, 0, 4));
-            var empty = Text(TopBand(Node("Empty", full), 122, 20, 2, 2), theme.regularFont, 14, theme.subText);
+            var empty = Text(TopBand(Node("Empty", full), top + 96, 20, 2, 2), theme.regularFont, 14, theme.subText);
 
             Wire(view, "fullTitle", title);
             Wire(view, "fullCount", count);
@@ -1248,6 +1250,20 @@ namespace Intersection.EditorTools
             var bg = Rounded(rt, theme.panelRaised, 8f);
             var button = MakeButton(rt, bg, Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
             label = Text(Fill(Node("Label", rt), 4, 0, 4, 0), font ?? theme.mediumFont, size, theme.text, TextAlignmentOptions.Center, key);
+            return button;
+        }
+
+        const float PanelBackHeight = 32;
+
+        /// <summary>
+        /// 우측 패널 맨 위 왼쪽의 돌아가기 버튼 (`< 현재 화면` / `< 작업 기록`). 휴대전화 앱의 뒤로처럼 늘 같은 자리·크기로 둔다.
+        /// 문구는 실행 중 상황에 맞춰 채운다.
+        /// </summary>
+        static Button PanelBackButton(RectTransform parent, string name, out TMP_Text label)
+        {
+            var rt = Place(Node(name, parent), new Vector2(0, 1), new Vector2(0, 1), Vector2.zero, new Vector2(132, PanelBackHeight));
+            var button = MakeButton(rt, Rounded(rt, theme.accentSoft, 8f), Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            label = Text(Fill(Node("Label", rt), 10, 0, 10, 0), theme.boldFont, 14, theme.accent, TextAlignmentOptions.Center);
             return button;
         }
 

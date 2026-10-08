@@ -31,6 +31,8 @@ namespace Intersection.UI
         [SerializeField] TMP_Text heading;
         [SerializeField] Button backLink;
         [SerializeField] TMP_Text backLinkLabel;
+        [Tooltip("기록 정보 스크롤 영역. 돌아가기 버튼이 보일 때 그 아래로 내린다.")]
+        [SerializeField] RectTransform recordScroll;
         [SerializeField] TMP_Text recordTitle;
         [SerializeField] TMP_Text recordBody;
         [SerializeField] RectTransform infoRoot;
@@ -284,11 +286,18 @@ namespace Intersection.UI
 
         // ───────────── 머리말·기록 정보 ─────────────
 
-        /// <summary>패널 머리말. onBack이 있으면 backText 링크(`< 현재 화면` / `< 작업 기록`)를 보여준다.</summary>
+        const float BackGap = 10f;
+
+        /// <summary>
+        /// 패널 머리말. onBack이 있으면 패널 맨 위 왼쪽에 backText 돌아가기 버튼(`< 현재 화면` / `< 작업 기록`)을 보여주고
+        /// 기록 정보는 그 아래에서 시작한다.
+        /// </summary>
         public void SetHeading(string text, Action onBack, string backText = null)
         {
             heading.text = text;
             backLink.gameObject.SetActive(onBack != null);
+            float top = onBack != null ? ((RectTransform)backLink.transform).rect.height + BackGap : 0f;
+            recordScroll.offsetMax = new Vector2(recordScroll.offsetMax.x, -top);
             backLink.onClick.RemoveAllListeners();
             if (onBack == null)
                 return;

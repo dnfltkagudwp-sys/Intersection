@@ -199,8 +199,9 @@ namespace Intersection.UI
                 DrawRecord(focusRecord);
                 string heading = text.Get(focus == PanelFocus.Picked ? UIKeys.PanelHeadingPicked
                     : focus == PanelFocus.Request ? UIKeys.PanelHeadingRequest : UIKeys.PanelHeadingWork);
+                // 전체 보기 상세는 돌아가기가 `< 작업 기록`이므로 머리말에는 기록 종류(사진·의뢰 요청 등)를 보여준다.
                 if (fullView)
-                    workPanel.SetHeading(heading, ReturnToFullList, text.Get(UIKeys.PanelBackToList));
+                    workPanel.SetHeading(text.Get(UIKeys.KindKey(focusRecord.kind)), ReturnToFullList, text.Get(UIKeys.PanelBackToList));
                 else
                     workPanel.SetHeading(heading, PanelShowsOther ? ReturnPanelToCurrent : (System.Action)null,
                         text.Get(UIKeys.PanelBackToCurrent));
