@@ -1,3 +1,4 @@
+using Intersection.Core;
 using Intersection.Data;
 using TMPro;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace Intersection.UI
         [SerializeField] TMP_Text body;
         [SerializeField] TMP_Text time;
         [SerializeField] TMP_Text sender;
+        [SerializeField] SelectableRecord selectable;
 
         const float SideMargin = 12f;
         const float TimeGap = 6f;
@@ -29,10 +31,12 @@ namespace Intersection.UI
             public string timeLabel;   // null이면 시각 숨김
             public string senderLabel; // null이면 발신자명 숨김 (단체방 수신만)
             public float topGap;
+            public RecordRef selection; // 개별 메시지·첨부·위치 공유
         }
 
         public void Bind(Model m, UITheme theme, float rowWidth)
         {
+            selectable.Bind(m.selection);
             bool hasSender = !string.IsNullOrEmpty(m.senderLabel);
             sender.gameObject.SetActive(hasSender);
             sender.text = hasSender ? m.senderLabel : string.Empty;

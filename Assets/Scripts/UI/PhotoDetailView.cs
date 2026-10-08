@@ -1,4 +1,5 @@
 using System;
+using Intersection.Core;
 using Intersection.Data;
 using TMPro;
 using UnityEngine;
@@ -23,6 +24,7 @@ namespace Intersection.UI
         [SerializeField] Button nextButton;
         [SerializeField] TMP_Text prevLabel;
         [SerializeField] TMP_Text nextLabel;
+        [SerializeField] SelectableRecord selectable;
 
         public void Show(PhotoData photo, string backText, string date, string time, bool hasPrev, bool hasNext,
             UITheme theme, Action onBack, Action onPrev, Action onNext)
@@ -33,6 +35,7 @@ namespace Intersection.UI
             prevLabel.text = theme.backGlyph;
             nextLabel.text = theme.chevronGlyph;
             PhotoVisual.Apply(photo, image, glyph, theme, false, fitter);
+            selectable.Bind(RecordRef.ForPhoto(photo));
 
             Wire(backButton, onBack, true);
             Wire(prevButton, onPrev, hasPrev);

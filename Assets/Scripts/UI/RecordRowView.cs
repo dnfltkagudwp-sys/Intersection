@@ -16,12 +16,14 @@ namespace Intersection.UI
         [SerializeField] TMP_Text trailing;
         [SerializeField] TMP_Text chevron;
         [SerializeField] RectTransform textBlock;
+        [SerializeField] SelectableRecord selectable;
 
         const float TextLeftWithIcon = 58f;
         const float TextLeftNoIcon = 18f;
 
         public void Bind(PhoneListView.Item item, UITheme theme)
         {
+            selectable.Bind(item.selection);
             bool hasIcon = item.icon != null;
             icon.gameObject.SetActive(hasIcon);
             icon.sprite = item.icon;

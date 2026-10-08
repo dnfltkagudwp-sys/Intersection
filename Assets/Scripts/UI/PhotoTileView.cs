@@ -1,4 +1,5 @@
 using System;
+using Intersection.Core;
 using Intersection.Data;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,9 +12,11 @@ namespace Intersection.UI
         [SerializeField] Button button;
         [SerializeField] RawImage image;
         [SerializeField] Image glyph;
+        [SerializeField] SelectableRecord selectable;
 
         public void Bind(PhotoData photo, UITheme theme, Action onClick)
         {
+            selectable.Bind(RecordRef.ForPhoto(photo));
             PhotoVisual.Apply(photo, image, glyph, theme, true);
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => onClick());

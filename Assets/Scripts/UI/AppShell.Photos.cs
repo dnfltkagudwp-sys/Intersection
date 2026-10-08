@@ -37,6 +37,7 @@ namespace Intersection.UI
             }
 
             var photo = photos[index];
+            store.MarkViewed(RecordRef.ForPhoto(photo));
             phone.Show(PhoneView.Screen.PhotoDetail);
             phone.PhotoDetail.Show(photo, album.title, time.DateLabel(photo.takenAt), time.Time(photo.takenAt),
                 index > 0, index < photos.Count - 1, Theme, Back, () => StepPhoto(-1), () => StepPhoto(1));
@@ -59,6 +60,8 @@ namespace Intersection.UI
 
         void OpenPhoto(PhotoData photo)
         {
+            if (TrySelectInstead(RecordRef.ForPhoto(photo)))
+                return;
             var nav = session.Nav(session.CurrentCase);
             SaveScroll();
             nav.openPhotoId = photo.Id;
@@ -99,7 +102,7 @@ namespace Intersection.UI
             }
         }
 
-        void ShowPhotoCollectionPanel(string title, CaseData device, int count)
+        void ShowPhotoCollectionPanel(string title, CaseData device, int count) => Present(() =>
         {
             workPanel.Show(title, new[]
             {
@@ -108,10 +111,10 @@ namespace Intersection.UI
                 Row(UIKeys.PanelPhotoCount,
                     text.Format(UIKeys.PanelPhotoCountValue, ("count", count.ToString(time.Culture))), Theme.regularFont),
             });
-        }
+        }, null);
 
         /// <summary>파일명·기록 코드·촬영 시각·출처는 휴대전화가 아니라 업무 패널에만 표시한다. 증거 ID는 표시하지 않는다.</summary>
-        void ShowPhotoPanel(CaseData device, PhotoData photo)
+        void ShowPhotoPanel(CaseData device, PhotoData photo) => Present(() =>
         {
             workPanel.Show(photo.fileName, new List<WorkPanelView.Row>
             {
@@ -121,6 +124,6 @@ namespace Intersection.UI
                 Row(UIKeys.PanelTakenAt, time.SinceDeathWithTime(photo.takenAt), Theme.regularFont),
                 Row(UIKeys.PanelIntegrity, string.IsNullOrEmpty(photo.integrityKey) ? null : text.Get(photo.integrityKey), Theme.regularFont),
             });
-        }
+        }, RecordRef.ForPhoto(photo));
     }
 }

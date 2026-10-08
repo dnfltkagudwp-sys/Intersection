@@ -68,7 +68,7 @@ MonoBehaviour:
   - key: phone.originalBadge
     value: "\uC6D0\uBCF8 \uD654\uBA74"
   - key: toolbar.selectRecord
-    value: "\uAE30\uB85D \uC120\uD0DD"
+    value: "\uAE30\uB85D \uACE0\uB974\uAE30"
   - key: app.messages
     value: "\uBA54\uC2DC\uC9C0"
   - key: app.photos
@@ -123,16 +123,10 @@ MonoBehaviour:
     value: "\uB300\uD654\uBC29"
   - key: panel.threadCountValue
     value: "{count}\uAC1C"
-  - key: panel.pinned
-    value: "\uD540\uD55C \uAE30\uB85D"
-  - key: panel.pinnedEmpty
-    value: "\uD540\uD55C \uAE30\uB85D \uC5C6\uC74C"
   - key: panel.memo
     value: "\uC791\uC5C5\uBA54\uBAA8"
   - key: panel.memoPlaceholder
     value: "\uAE30\uB85D\uC5D0 \uB300\uD55C \uBA54\uBAA8"
-  - key: panel.clearSelection
-    value: "\uC120\uD0DD \uD574\uC81C"
   - key: panel.compare
     value: "\uBE44\uAD50"
   - key: source.local
@@ -283,3 +277,139 @@ MonoBehaviour:
     value: "\uC124\uC815 \uAE30\uB85D"
   - key: record.prefix.setting
     value: SET
+  - key: toolbar.selectEnd
+    value: "\uACE0\uB974\uAE30 \uC644\uB8CC"
+  - key: panel.action.pin
+    value: "\uC791\uC5C5\uBA54\uBAA8\uC5D0 \uD540"
+  - key: panel.action.unpin
+    value: "\uD540 \uD574\uC81C"
+  - key: panel.action.keep
+    value: "\uBCF4\uC874"
+  - key: panel.action.delete
+    value: "\uC0AD\uC81C"
+  - key: panel.row.viewed
+    value: "\uC5F4\uB78C"
+  - key: panel.viewed.yes
+    value: "\uC5F4\uB78C\uD568"
+  - key: panel.viewed.no
+    value: "\uBBF8\uC5F4\uB78C"
+  - key: class.unclassified
+    value: "\uBBF8\uBD84\uB958"
+  - key: class.keep
+    value: "\uBCF4\uC874"
+  - key: class.delete
+    value: "\uC0AD\uC81C"
+  - key: panel.missing
+    value: "\uC6D0\uBCF8\uC744 \uCC3E\uC744 \uC218 \uC5C6\uB294 \uAE30\uB85D"
+  - key: panel.missingDuplicate
+    value: "\uC6D0\uBCF8 ID\uAC00 \uC911\uBCF5\uB41C \uAE30\uB85D"
+  - key: panel.missingBody
+    value: "\uC800\uC7A5\uB41C ID\uC640 \uC77C\uCE58\uD558\uB294 \uC6D0\uBCF8\uC774 \uC5C6\uC5B4 \uB2E4\uB978 \uAE30\uB85D\uC73C\uB85C \uC5F0\uACB0\uD558\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. \uC6D0\uBCF8\uC774 \uBCF5\uAD6C\uB418\uBA74 \uB2E4\uC2DC \uC5F0\uACB0\uB429\uB2C8\uB2E4."
+  - key: panel.pinnedMeta
+    value: "{owner} \xB7 {code}"
+  - key: selection.messageContext
+    value: "{name}\uC640/\uACFC\uC758 \uB300\uD654"
+  - key: side.requests
+    value: "\uC758\uB8B0 \uC694\uCCAD"
+  - key: record.prefix.request
+    value: REQ
+  - key: tutorial.status.done
+    value: "\uC644\uB8CC"
+  - key: tutorial.status.active
+    value: "\uC9C4\uD589 \uC911"
+  - key: tutorial.status.waiting
+    value: "\uB300\uAE30"
+  - key: tutorial.line
+    value: "{task} \xB7 {index}/{total} \xB7 {step}"
+  - key: toolbar.pickHint
+    value: "\uACE0\uB97C \uAE30\uB85D\uC744 \uB204\uB974\uC138\uC694"
+  - key: toolbar.picked
+    value: "{kind} \uC120\uD0DD\uB428"
+  - key: panel.heading.picked
+    value: "\uC120\uD0DD\uD55C \uAE30\uB85D"
+  - key: panel.heading.work
+    value: "\uC791\uC5C5 \uAE30\uB85D"
+  - key: panel.heading.request
+    value: "\uC758\uB8B0 \uC694\uCCAD"
+  - key: panel.backToCurrent
+    value: "< \uD604\uC7AC \uD654\uBA74"
+  - key: panel.classLabel
+    value: "\uCC98\uB9AC \uD6C4\uBCF4"
+  - key: panel.workList
+    value: "\uC791\uC5C5 \uAE30\uB85D \xB7 {count}"
+  - key: panel.workEmpty
+    value: "\uD540\xB7\uBD84\uB958\xB7\uBA54\uBAA8\uD55C \uAE30\uB85D \uC5C6\uC74C"
+  - key: panel.workCollapse
+    value: "\uC811\uAE30"
+  - key: panel.workExpand
+    value: "\uD3BC\uCE58\uAE30"
+  - key: kind.thread
+    value: "\uB300\uD654\uBC29"
+  - key: kind.message
+    value: "\uBA54\uC2DC\uC9C0"
+  - key: kind.attachment
+    value: "\uCCA8\uBD80 \uC0AC\uC9C4"
+  - key: kind.locationShare
+    value: "\uC704\uCE58 \uACF5\uC720"
+  - key: kind.photo
+    value: "\uC0AC\uC9C4"
+  - key: kind.browser
+    value: "\uBE0C\uB77C\uC6B0\uC800 \uAE30\uB85D"
+  - key: kind.map
+    value: "\uC704\uCE58 \uAE30\uB85D"
+  - key: kind.file
+    value: "\uD30C\uC77C"
+  - key: kind.setting
+    value: "\uC124\uC815 \uAE30\uB85D"
+  - key: kind.request
+    value: "\uC758\uB8B0 \uC694\uCCAD"
+  - key: panel.openSource
+    value: "\uC6D0\uBCF8 \uC5F4\uAE30"
+  - key: panel.openSourceMessage
+    value: "\uC6D0\uBCF8 \uBA54\uC2DC\uC9C0 \uC5F4\uAE30"
+  - key: panel.sourceMissing
+    value: "\uC6D0\uBCF8\uC744 \uCC3E\uC744 \uC218 \uC5C6\uC5B4 \uC5F4 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
+  - key: panel.sourceDuplicate
+    value: "\uC6D0\uBCF8 ID\uAC00 \uC911\uBCF5\uB418\uC5B4 \uC5F4 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
+  - key: panel.sourceUnavailable
+    value: "\uD604\uC7AC \uC811\uADFC\uD560 \uC218 \uC5C6\uB294 \uC6D0\uBCF8\uC785\uB2C8\uB2E4"
+  - key: panel.compareAdd
+    value: "\uBE44\uAD50\uC5D0 \uCD94\uAC00"
+  - key: panel.compareRemove
+    value: "\uBE44\uAD50\uC5D0\uC11C \uBE7C\uAE30"
+  - key: panel.compareFull
+    value: "\uBE44\uAD50\uD560 \uAE30\uB85D \uD558\uB098\uB97C \uBA3C\uC800 \uBE7C \uC8FC\uC138\uC694"
+  - key: panel.compareMissing
+    value: "\uC6D0\uBCF8\uC744 \uCC3E\uC744 \uC218 \uC5C6\uC5B4 \uC5F4\uAC70\uB098 \uBE44\uAD50\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
+  - key: panel.compareDuplicate
+    value: "\uC6D0\uBCF8 ID\uAC00 \uC911\uBCF5\uB418\uC5B4 \uC5F4\uAC70\uB098 \uBE44\uAD50\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
+  - key: panel.compareUnavailable
+    value: "\uD604\uC7AC \uC811\uADFC\uD560 \uC218 \uC5C6\uB294 \uC6D0\uBCF8\uC774\uB77C \uC5F4\uAC70\uB098 \uBE44\uAD50\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
+  - key: panel.compareSlots
+    value: "\uBE44\uAD50\uD560 \uAE30\uB85D {count}/{total}"
+  - key: panel.compareSlotEmpty
+    value: "\uBE44\uC5B4 \uC788\uC74C"
+  - key: panel.compareSlotRemove
+    value: "\xD7"
+  - key: compare.title
+    value: "\uAE30\uB85D \uBE44\uAD50"
+  - key: compare.close
+    value: "\uBE44\uAD50 \uC885\uB8CC"
+  - key: compare.row.kind
+    value: "\uAE30\uB85D \uC885\uB958"
+  - key: compare.kindFormat
+    value: "{kind} \xB7 {app}"
+  - key: compare.app.work
+    value: "\uC5C5\uBB34 \uAE30\uB85D"
+  - key: panel.compareSlotsOneMore
+    value: "\uBE44\uAD50\uD560 \uAE30\uB85D {count}/{total} \xB7 \uD558\uB098 \uB354 \uACE0\uB974\uC138\uC694"
+  - key: panel.compareSlotsReady
+    value: "\uBE44\uAD50\uD560 \uAE30\uB85D {count}/{total} \xB7 \uBE44\uAD50\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4"
+  - key: panel.compareSlotsFullNote
+    value: "\uB2E4\uB978 \uAE30\uB85D\uC744 \uB123\uC73C\uB824\uBA74 \uBE44\uAD50\uD560 \uAE30\uB85D \uD558\uB098\uB97C \uBA3C\uC800 \uBE7C \uC8FC\uC138\uC694"
+  - key: list.compareAdd
+    value: "+ \uBE44\uAD50"
+  - key: list.compareOn
+    value: "\uBE44\uAD50 \uC911"
+  - key: tutorial.doneLine
+    value: "{task} \uC5C5\uBB34 \uC644\uB8CC"

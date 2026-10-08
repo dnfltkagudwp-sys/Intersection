@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb57afd702477e04eb30161263fd26bf, type: 3}
+  m_Name: Request_A_T01
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.WorkRequestData
+  id: 24fbf992fb4647079768d28e0d008d8d
+  device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+  title: "\uC720\uC871 \uC694\uCCAD"
+  body: "\uAC00\uC871\uC774 \uD568\uAED8 \uCC0D\uD78C \uC0AC\uC9C4\uC740 \uB0A8\uACA8 \uC8FC\uC138\uC694. \uB098\uBA38\uC9C0 \uAC1C\uC778 \uAE30\uB85D\uC740 \uAC80\uD1A0 \uD6C4 \uC815\uB9AC \uBD80\uD0C1\uB4DC\uB9BD\uB2C8\uB2E4."
+  order: 0
+  availableFrom: 0
+  evidenceRef: T01

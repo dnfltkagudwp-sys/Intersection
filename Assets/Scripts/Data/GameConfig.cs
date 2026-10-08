@@ -49,10 +49,18 @@ namespace Intersection.Data
         [Tooltip("이 시간(분) 이상 간격이 벌어지면 대화 안에 날짜 구분선을 넣는다")]
         public int separatorGapMinutes = 60;
 
+        [Header("비교")]
+        [Tooltip("비교 화면에서 개별 메시지·첨부·위치 공유를 보여줄 때 앞뒤로 함께 보여줄 메시지 수")]
+        [Min(0)] public int compareMessageContext = 2;
+
         [Header("상태바 시계")]
         public StatusClockMode statusClock = StatusClockMode.System;
         [Range(0, 23)] public int fixedClockHour = 9;
         [Range(0, 59)] public int fixedClockMinute = 41;
+
+        [Header("저장")]
+        [Tooltip("업무 상태(열람·핀·분류·작업메모·튜토리얼) 저장 파일 이름. Application.persistentDataPath 아래에 만들어진다.")]
+        public string workSaveFileName = "work_state.json";
 
         [Header("참조")]
         public ContentDatabase database;

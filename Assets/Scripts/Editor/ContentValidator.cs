@@ -57,10 +57,12 @@ namespace Intersection.EditorTools
             var folders = Find<FolderData>();
             var settings = Find<SettingRecord>();
             var records = browser.Cast<DeviceRecord>().Concat(maps).Concat(files).Concat(settings).ToList();
+            var requests = Find<WorkRequestData>();
+            var tutorials = Find<TutorialData>();
 
             // 에셋 ID
             var allAssets = people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums)
-                .Concat(records).Concat(folders).ToList();
+                .Concat(records).Concat(folders).Concat(requests).Concat(tutorials).ToList();
             foreach (var a in allAssets.Where(a => string.IsNullOrEmpty(a.Id)))
                 Error($"ID가 비어 있습니다: {Path(a)}", a);
             foreach (var g in allAssets.Where(a => !string.IsNullOrEmpty(a.Id)).GroupBy(a => a.Id).Where(g => g.Count() > 1))
@@ -348,6 +350,37 @@ namespace Intersection.EditorTools
                 }
             }
 
+            // 의뢰 요청
+            foreach (var q in requests)
+            {
+                if (q.device == null)
+                    Error($"요청의 의뢰가 비어 있습니다: {Path(q)}", q);
+                if (string.IsNullOrWhiteSpace(q.title) || string.IsNullOrWhiteSpace(q.body))
+                    Error($"요청 제목 또는 본문이 비어 있습니다: {Path(q)}", q);
+            }
+
+            // 업무 튜토리얼: 대상이 삭제되거나 지원하지 않는 기록이면 오류
+            var stepIds = new Dictionary<string, string>();
+            foreach (var t in tutorials)
+            {
+                string where = Path(t);
+                if (t.request == null)
+                    Error($"튜토리얼의 시작 요청이 비어 있습니다(삭제된 대상): {where}", t);
+                foreach (var s in t.steps)
+                {
+                    if (s == null)
+                        continue;
+                    CheckInnerId(s.Id, "튜토리얼 단계", where, t, stepIds, Error);
+                    CheckTutorialTarget(s.target, "target", s, t, where, Error);
+                    if (s.condition == TutorialCondition.Compared)
+                        CheckTutorialTarget(s.target2, "target2", s, t, where, Error);
+                }
+            }
+
+            // 플레이어 저장 파일: 원본에서 찾을 수 없는 참조 (실행 중에는 누락 상태로 표시되며 다른 기록으로 대체되지 않는다)
+            if (config != null && config.database != null)
+                CheckSaveFile(config, Warn);
+
             if (config != null && config.database != null)
             {
                 var db = config.database;
@@ -378,6 +411,61 @@ namespace Intersection.EditorTools
                 error($"{kind} ID {id}가 중복됩니다: {where} / {other}", ctx);
             else
                 seen[id] = where;
+        }
+
+        static void CheckTutorialTarget(ContentAsset target, string field, TutorialStep step, TutorialData t, string where,
+            System.Action<string, Object> error)
+        {
+            if (target == null)
+            {
+                error($"튜토리얼 단계 '{step.label}'의 {field}가 비어 있습니다(삭제된 대상): {where}", t);
+                return;
+            }
+            var record = RecordRef.ForAsset(target);
+            if (record == null)
+                error($"튜토리얼 단계 '{step.label}'의 {field}는 사진·기록·요청 에셋이어야 합니다: {where}", t);
+            else if (t.request != null && t.request.device != null && record.deviceId != t.request.device.Id)
+                error($"튜토리얼 단계 '{step.label}'의 {field}가 요청과 다른 의뢰의 기록입니다: {where}", t);
+        }
+
+        /// <summary>에디터에서 만든 플레이어 저장 파일의 참조를 원본 데이터와 대조한다.</summary>
+        static void CheckSaveFile(GameConfig config, System.Action<string, Object> warn)
+        {
+            string path = System.IO.Path.Combine(Application.persistentDataPath, config.workSaveFileName);
+            if (!System.IO.File.Exists(path))
+                return;
+            var store = new WorkStore(path);
+            var text = new UIText(config.strings);
+            foreach (var e in store.All)
+            {
+                var res = RecordResolver.Resolve(e.target, config.database, text);
+                if (!res.found)
+                    warn($"저장 파일의 {e.target.kind} 참조를 원본에서 찾을 수 없습니다{(res.duplicate ? "(ID 중복)" : "")}: {e.target.Key} — 실행 시 누락 상태로 표시됩니다. ({path})", null);
+            }
+
+            // 비교 이력: 끊긴 참조, 키와 참조 불일치, 자기 자신과의 비교, 같은 쌍(순서 무관) 중복
+            var seen = new HashSet<string>();
+            foreach (var c in store.Comparisons)
+            {
+                foreach (var (key, r) in new[] { (c.keyA, c.a), (c.keyB, c.b) })
+                {
+                    if (r == null || string.IsNullOrEmpty(r.recordId))
+                    {
+                        warn($"비교 이력에 원본 참조가 없습니다: {key} ({path})", null);
+                        continue;
+                    }
+                    if (r.Key != key)
+                        warn($"비교 이력의 키와 참조가 다릅니다: {key} ≠ {r.Key} ({path})", null);
+                    var res = RecordResolver.Resolve(r, config.database, text);
+                    if (!res.found)
+                        warn($"비교 이력의 {r.kind} 참조를 원본에서 찾을 수 없습니다{(res.duplicate ? "(ID 중복)" : "")}: {r.Key} ({path})", null);
+                }
+                if (c.keyA == c.keyB)
+                    warn($"비교 이력에 같은 기록끼리의 비교가 있습니다: {c.keyA} ({path})", null);
+                string pair = string.CompareOrdinal(c.keyA, c.keyB) <= 0 ? c.keyA + "|" + c.keyB : c.keyB + "|" + c.keyA;
+                if (!seen.Add(pair))
+                    warn($"비교 이력에 같은 쌍이 중복되어 있습니다: {c.keyA} / {c.keyB} ({path})", null);
+            }
         }
 
         static string Path(Object o) => AssetDatabase.GetAssetPath(o);

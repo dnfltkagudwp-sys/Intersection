@@ -1,4 +1,5 @@
 using System;
+using Intersection.Core;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,10 +16,12 @@ namespace Intersection.UI
         [SerializeField] TMP_Text chevron;
         [SerializeField] GameObject unreadDot;
         [SerializeField] Image mutedIcon;
+        [SerializeField] SelectableRecord selectable;
 
         public void Bind(string titleText, string previewText, string dateText, string chevronGlyph,
-            bool unread, bool muted, Sprite mutedSprite, Action onClick)
+            bool unread, bool muted, Sprite mutedSprite, RecordRef selection, Action onClick)
         {
+            selectable.Bind(selection);
             title.text = titleText;
             preview.text = previewText;
             date.text = dateText;

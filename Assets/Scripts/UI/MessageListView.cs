@@ -91,6 +91,9 @@ namespace Intersection.UI
                 message == null && entry.state.unreadCount > 0,
                 entry.state.muted,
                 theme.mutedIcon,
+                message == null
+                    ? RecordRef.ForThread(entry.device, entry.thread)
+                    : RecordRef.ForMessage(entry.device, entry.thread, message),
                 () => onOpen(entry, message));
             items.Add(row.gameObject);
         }

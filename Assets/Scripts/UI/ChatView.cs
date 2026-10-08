@@ -18,18 +18,23 @@ namespace Intersection.UI
         [SerializeField] RectTransform content;
         [SerializeField] BubbleRowView bubblePrefab;
         [SerializeField] DateSeparatorView separatorPrefab;
+        [SerializeField] SelectableRecord headerSelectable;
 
         readonly List<GameObject> items = new List<GameObject>();
         readonly Dictionary<string, RectTransform> rowsByMessage = new Dictionary<string, RectTransform>();
 
         public float ScrollPosition => scroll.verticalNormalizedPosition;
 
+        /// <param name="contextAround">0 이상이면 focusMessageId 앞뒤로 이 개수만큼만 보여준다(비교 화면의 최소 대화 맥락).</param>
         public void Show(ThreadData thread, CaseData device, string displayName, string backText,
-            GameConfig config, UIText text, PhoneTime time, Action onBack, float? scrollPosition, string focusMessageId)
+            GameConfig config, UIText text, PhoneTime time, Action onBack, float? scrollPosition, string focusMessageId,
+            int contextAround = -1)
         {
             rowsByMessage.Clear();
             var theme = config.theme;
             title.text = displayName;
+            // 머리말(상대 이름 영역)을 고르면 대화방 전체가 선택된다.
+            headerSelectable.Bind(RecordRef.ForThread(device, thread));
             backLabel.text = theme.backGlyph + " " + backText;
             backButton.onClick.RemoveAllListeners();
             backButton.onClick.AddListener(() => onBack());
@@ -41,6 +46,13 @@ namespace Intersection.UI
             Canvas.ForceUpdateCanvases();
             float rowWidth = content.rect.width;
             var messages = DeviceQuery.Ordered(thread);
+            int focusIndex = focusMessageId != null ? messages.FindIndex(m => m.Id == focusMessageId) : -1;
+            if (contextAround >= 0 && focusIndex >= 0)
+            {
+                int from = Mathf.Max(0, focusIndex - contextAround);
+                int to = Mathf.Min(messages.Count - 1, focusIndex + contextAround);
+                messages = messages.GetRange(from, to - from + 1);
+            }
             MessageData prev = null;
             for (int i = 0; i < messages.Count; i++)
             {
@@ -70,6 +82,7 @@ namespace Intersection.UI
                     timeLabel = nextContinues ? null : time.Time(m.time),
                     senderLabel = thread.IsGroup && !outgoing && !sameAsPrev ? DeviceQuery.ContactName(m.sender, device) : null,
                     topGap = newSection ? 0f : sameAsPrev ? theme.bubbleGroupGap : theme.bubbleSenderGap,
+                    selection = RecordRef.ForMessage(device, thread, m),
                 }, theme, rowWidth);
                 items.Add(row.gameObject);
                 rowsByMessage[m.Id] = (RectTransform)row.transform;

@@ -7,6 +7,7 @@ namespace Intersection.Core
     /// <summary>한 기기에서 보이는 대화 목록의 한 행. 모든 값은 원본 데이터에서 계산된다.</summary>
     public class ThreadEntry
     {
+        public CaseData device;
         public ThreadData thread;
         public DeviceThreadState state;
         public MessageData last;
@@ -33,6 +34,7 @@ namespace Intersection.Core
                     continue;
                 result.Add(new ThreadEntry
                 {
+                    device = device,
                     thread = thread,
                     state = state,
                     last = last,

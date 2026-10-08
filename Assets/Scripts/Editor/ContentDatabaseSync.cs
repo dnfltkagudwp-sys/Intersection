@@ -54,8 +54,10 @@ namespace Intersection.EditorTools
             var files = Load<FileRecord>();
             var folders = Load<FolderData>();
             var settings = Load<SettingRecord>();
+            var requests = Load<WorkRequestData>();
+            var tutorials = Load<TutorialData>();
             FixDuplicateAssetIds(people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums)
-                .Concat(browser).Concat(maps).Concat(files).Concat(folders).Concat(settings));
+                .Concat(browser).Concat(maps).Concat(files).Concat(folders).Concat(settings).Concat(requests).Concat(tutorials));
             FixDuplicateInnerIds(threads);
 
             foreach (var db in Load<ContentDatabase>())
@@ -63,8 +65,11 @@ namespace Intersection.EditorTools
                 if (db.people.SequenceEqual(people) && db.cases.SequenceEqual(cases) && db.threads.SequenceEqual(threads)
                     && db.photos.SequenceEqual(photos) && db.albums.SequenceEqual(albums)
                     && db.browser.SequenceEqual(browser) && db.maps.SequenceEqual(maps) && db.files.SequenceEqual(files)
-                    && db.folders.SequenceEqual(folders) && db.settings.SequenceEqual(settings))
+                    && db.folders.SequenceEqual(folders) && db.settings.SequenceEqual(settings)
+                    && db.requests.SequenceEqual(requests) && db.tutorials.SequenceEqual(tutorials))
                     continue;
+                db.requests = requests;
+                db.tutorials = tutorials;
                 db.people = people;
                 db.cases = cases;
                 db.threads = threads;

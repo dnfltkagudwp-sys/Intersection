@@ -29,6 +29,11 @@ MonoBehaviour:
   folderGlyph: {fileID: 21300000, guid: 564e1137b2edc2640aafe47ecb8c9741, type: 3}
   documentGlyph: {fileID: 21300000, guid: af8e9877168a9eb4aaa594d96b11347e, type: 3}
   mapPlaceholder: {fileID: 21300000, guid: 9a523c896514e314fa4c076d795d24c8, type: 3}
+  selectionOutline: {fileID: 21300000, guid: 99c7fdbfa821de94da350a12ed32e2a8, type: 3}
+  selectionCheck: {fileID: 21300000, guid: 8c190dfb0100b934fa06ee3a4340e766, type: 3}
+  selectionColor: {r: 0.039215688, g: 0.5176471, b: 1, a: 1}
+  pinMarkColor: {r: 1, g: 0.8392157, b: 0.039215688, a: 1}
+  compareDimAlpha: 0.45
   background: {r: 0.07058824, g: 0.08627451, b: 0.105882354, a: 1}
   panel: {r: 0.09019608, g: 0.10980392, b: 0.13333334, a: 1}
   panelRaised: {r: 0.11764706, g: 0.14509805, b: 0.1764706, a: 1}

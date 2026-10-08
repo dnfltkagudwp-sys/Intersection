@@ -43,6 +43,7 @@ namespace Intersection.UI
                 label.Apply(text);
             session.CurrentCase = Cases().FirstOrDefault(c => c.IsAvailable(session.Stage));
             phone.MessageList.QueryChanged += OnQueryChanged;
+            InitWork();
         }
 
         void Start()
@@ -56,9 +57,21 @@ namespace Intersection.UI
             var keyboard = Keyboard.current;
             if (keyboard == null)
                 return;
+            // 비교 화면에서는 Esc(비교 종료)만 받는다. 휴대전화·업무 단축키와 키보드 이동은 막는다.
+            if (comparing)
+            {
+                if (keyboard.escapeKey.wasPressedThisFrame)
+                    HandleEscape();
+                memoWasFocused = false;
+                return;
+            }
+            bool typing = IsTyping();
             if (keyboard.escapeKey.wasPressedThisFrame)
-                Back();
-            if (phone.Current == PhoneView.Screen.PhotoDetail)
+                HandleEscape();
+            else if (!typing && keyboard.sKey.wasPressedThisFrame)
+                SetSelecting(!selecting);
+            HandleWorkKeys(keyboard);
+            if (!typing && phone.Current == PhoneView.Screen.PhotoDetail)
             {
                 if (keyboard.leftArrowKey.wasPressedThisFrame)
                     StepPhoto(-1);
@@ -75,6 +88,8 @@ namespace Intersection.UI
                 if (first != null)
                     first.Select();
             }
+            // 입력창이 같은 프레임에 먼저 Esc를 처리해 포커스가 풀렸어도 메모 Esc로 인식하도록 기억한다.
+            memoWasFocused = workPanel.IsEditingMemo;
         }
 
         IEnumerable<CaseData> Cases() =>
@@ -83,8 +98,31 @@ namespace Intersection.UI
         void Refresh()
         {
             RenderSidebar();
+            RenderRequests();
             RenderTopBar();
             RenderCenter();
+        }
+
+        /// <summary>
+        /// 휴대전화 화면과 우측 패널을 그린다. 휴대전화 화면이 바뀌면 패널은 현재 열람으로 돌아간다
+        /// (기록 고르기 모드에서 고른 기록만 모드가 끝날 때까지 유지).
+        /// </summary>
+        void RenderCenter()
+        {
+            if (!(focus == PanelFocus.Picked && selecting))
+            {
+                focus = PanelFocus.Current;
+                focusRecord = null;
+            }
+            currentDraw = null;
+            currentRecord = null;
+            // `원본 열기` 직후 한 번만 그 기록을 현재 열람으로 유지한다. 다른 화면으로 이동하면 사라진다.
+            sourceFocus = pendingSource;
+            pendingSource = null;
+            // 튜토리얼 완료 안내는 휴대전화 화면을 이동할 때까지 한 번만 보여준다.
+            tutorialDoneLine = null;
+            RenderPhone();
+            RefreshWorkPanel();
         }
 
         void RenderSidebar()
@@ -147,7 +185,7 @@ namespace Intersection.UI
                 indexed ? 1f : 0f);
         }
 
-        void RenderCenter()
+        void RenderPhone()
         {
             var device = session.CurrentCase;
             deviceLabel.text = device != null
@@ -221,7 +259,7 @@ namespace Intersection.UI
             RenderList(device, nav, DeviceQuery.Threads(config.database, device, session.Stage));
         }
 
-        void ShowListPanel(CaseData device, List<ThreadEntry> entries)
+        void ShowListPanel(CaseData device, List<ThreadEntry> entries) => Present(() =>
         {
             workPanel.Show(text.Get(UIKeys.PanelTitleMessageList), new[]
             {
@@ -231,9 +269,9 @@ namespace Intersection.UI
                     text.Format(UIKeys.PanelThreadCountValue, ("count", entries.Count.ToString(time.Culture))),
                     Theme.regularFont),
             });
-        }
+        }, null);
 
-        void ShowThreadPanel(CaseData device, ThreadEntry entry)
+        void ShowThreadPanel(CaseData device, ThreadEntry entry) => Present(() =>
         {
             var ordered = DeviceQuery.Ordered(entry.thread);
             workPanel.Show(text.Format(UIKeys.PanelTitleThread, ("name", entry.displayName)), new[]
@@ -245,7 +283,7 @@ namespace Intersection.UI
                 Row(UIKeys.PanelPeriod, time.SinceDeathRange(ordered[0].time, ordered[ordered.Count - 1].time), Theme.regularFont),
                 Row(UIKeys.PanelIntegrity, string.IsNullOrEmpty(entry.state.integrityKey) ? null : text.Get(entry.state.integrityKey), Theme.regularFont),
             });
-        }
+        }, RecordRef.ForThread(device, entry.thread));
 
         static string OwnerName(CaseData device) => device.owner != null ? device.owner.fullName : device.DisplayName;
 
@@ -266,6 +304,7 @@ namespace Intersection.UI
             if (device == session.CurrentCase || !device.IsAvailable(session.Stage))
                 return;
             SaveScroll();
+            EndSelectingForNavigation();
             session.CurrentCase = device;
             Refresh();
         }
@@ -274,6 +313,7 @@ namespace Intersection.UI
         {
             var nav = session.Nav(session.CurrentCase);
             SaveScroll();
+            EndSelectingForNavigation();
             // 좌측 앱 버튼은 해당 앱의 최상위 화면을 연다.
             nav.app = kind;
             if (kind == AppKind.Messages)
@@ -298,6 +338,12 @@ namespace Intersection.UI
         /// <summary>대화방을 연다. 검색 결과의 메시지에서 열었으면 그 메시지 위치로 이동한다.</summary>
         void OpenThread(ThreadEntry entry, MessageData message)
         {
+            // 고르기 모드에서는 목록 행이 대화방 전체(또는 검색 결과의 개별 메시지)를 고른다.
+            if (TrySelectInstead(message == null
+                    ? RecordRef.ForThread(entry.device, entry.thread)
+                    : RecordRef.ForMessage(entry.device, entry.thread, message)))
+                return;
+            store.MarkViewed(RecordRef.ForThread(entry.device, entry.thread));
             var nav = session.Nav(session.CurrentCase);
             SaveScroll();
             nav.openThreadId = entry.thread.Id;

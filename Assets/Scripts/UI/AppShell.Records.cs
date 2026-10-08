@@ -37,11 +37,90 @@ namespace Intersection.UI
                 SavedScroll(nav, nav.ListScrollKey(nav.app)));
         }
 
-        void ShowRecordDetail(string title, string backText, string headline, PhoneDetailView.Hero hero,
-            List<(string, string)> fields)
+        /// <summary>상세 화면 한 장의 내용. 휴대전화 상세와 비교 화면이 같은 표현을 쓴다.</summary>
+        class DetailModel
         {
+            public string title;
+            public string headline;
+            public PhoneDetailView.Hero hero;
+            public List<(string, string)> fields;
+        }
+
+        /// <summary>상세 화면을 보여주고 그 기록을 열람한 것으로 기록한다.</summary>
+        void ShowRecordDetail(DetailModel d, string backText, RecordRef selection)
+        {
+            store.MarkViewed(selection);
             phone.Show(PhoneView.Screen.RecordDetail);
-            phone.RecordDetail.Show(title, backText, headline, hero, fields, Theme, Back);
+            phone.RecordDetail.Show(d.title, backText, d.headline, d.hero, d.fields, Theme, Back, selection);
+        }
+
+        DetailModel BrowserDetail(BrowserRecord r) => new DetailModel
+        {
+            title = BrowserKind(r),
+            headline = r.title,
+            hero = new PhoneDetailView.Hero { glyph = Theme.pageGlyph, message = text.Get(UIKeys.BrowserPageUnavailable) },
+            fields = new List<(string, string)>
+            {
+                (text.Get(UIKeys.FieldKind), BrowserKind(r)),
+                (text.Get(UIKeys.FieldDateTime), PhoneDateTime(r.time)),
+            },
+        };
+
+        DetailModel MapDetail(MapRecord r)
+        {
+            var fields = new List<(string, string)>();
+            if (r.kind == MapRecordKind.Route)
+            {
+                fields.Add((text.Get(UIKeys.MapsFieldFrom), r.routeFrom));
+                fields.Add((text.Get(UIKeys.MapsFieldTo), r.routeTo));
+                fields.Add((text.Get(UIKeys.MapsFieldVia), r.routeNote));
+            }
+            else if (!string.IsNullOrEmpty(r.placeLabel))
+                fields.Add((text.Get(UIKeys.MapsFieldPlace), r.placeLabel));
+            fields.Add((text.Get(UIKeys.FieldDateTime), MapTimeText(r)));
+            return new DetailModel { title = MapSectionTitle(r.kind), headline = MapTitle(r), hero = MapHero, fields = fields };
+        }
+
+        PhoneDetailView.Hero MapHero => new PhoneDetailView.Hero { background = Theme.mapPlaceholder, glyph = Theme.pinGlyph };
+
+        DetailModel FileDetail(FileRecord f)
+        {
+            string locationLabel = text.Get(UIKeys.FilesLocationKey(f.source));
+            return new DetailModel
+            {
+                title = f.FileName,
+                headline = f.FileName,
+                hero = new PhoneDetailView.Hero
+                {
+                    texture = f.preview,
+                    glyph = IsImageFile(f.FileName) ? Theme.photoGlyph : Theme.documentGlyph,
+                    message = text.Get(UIKeys.FilesPreviewUnavailable),
+                },
+                fields = new List<(string, string)>
+                {
+                    (text.Get(UIKeys.FilesFieldName), f.FileName),
+                    (text.Get(UIKeys.FilesFieldModified), PhoneDateTime(f.time)),
+                    (text.Get(UIKeys.FilesFieldWhere), f.FolderPath.Length == 0 ? locationLabel : locationLabel + "/" + f.FolderPath),
+                },
+            };
+        }
+
+        DetailModel SettingDetail(SettingRecord s, CaseData device)
+        {
+            string item = RecordQuery.SettingItemLabel(s, device);
+            return new DetailModel
+            {
+                title = s.categoryLabel,
+                headline = item,
+                hero = null,
+                fields = new List<(string, string)>
+                {
+                    (text.Get(UIKeys.SettingsFieldItem), item),
+                    (text.Get(UIKeys.SettingsFieldBefore), s.valueBefore),
+                    (text.Get(UIKeys.SettingsFieldAfter), s.valueAfter),
+                    (text.Get(UIKeys.FieldDateTime), PhoneDateTime(s.time)),
+                },
+            };
         }
 
         /// <summary>날짜가 바뀔 때마다 구역 제목(오늘·어제·요일·날짜)을 넣는다.</summary>
@@ -66,7 +145,7 @@ namespace Intersection.UI
 
         // ───────────── 업무 패널 ─────────────
 
-        void ShowCollectionPanel(string titleKey, CaseData device, int count)
+        void ShowCollectionPanel(string titleKey, CaseData device, int count) => Present(() =>
         {
             workPanel.Show(text.Get(titleKey), new[]
             {
@@ -74,11 +153,11 @@ namespace Intersection.UI
                 Row(UIKeys.PanelRecordCount,
                     text.Format(UIKeys.PanelRecordCountValue, ("count", count.ToString(time.Culture))), Theme.regularFont),
             });
-        }
+        }, null);
 
-        /// <summary>기록 한 건의 업무 패널. 증거 ID와 작가 메모는 표시하지 않는다.</summary>
+        /// <summary>기록 한 건의 업무 패널. 증거 ID와 작가 메모는 표시하지 않는다. record는 핀·분류·메모 대상.</summary>
         void ShowRecordPanel(string title, string prefixKey, string recordId, CaseData device,
-            string source, string timeLabelKey, string timeValue, string integrityKey)
+            string source, string timeLabelKey, string timeValue, string integrityKey, RecordRef record) => Present(() =>
         {
             workPanel.Show(title, new List<WorkPanelView.Row>
             {
@@ -88,11 +167,11 @@ namespace Intersection.UI
                 Row(timeLabelKey, timeValue, Theme.regularFont),
                 Row(UIKeys.PanelIntegrity, string.IsNullOrEmpty(integrityKey) ? null : text.Get(integrityKey), Theme.regularFont),
             });
-        }
+        }, record);
 
         void ShowRecordPanel(DeviceRecord r, string title, string prefixKey, CaseData device) =>
             ShowRecordPanel(title, prefixKey, r.Id, device, SourceText(r.source, null),
-                UIKeys.PanelRecordTime, time.SinceDeathWithTime(r.time), r.integrityKey);
+                UIKeys.PanelRecordTime, time.SinceDeathWithTime(r.time), r.integrityKey, RecordRef.ForRecord(r));
 
         // ───────────── 브라우저 ─────────────
 
@@ -105,13 +184,7 @@ namespace Intersection.UI
 
             if (open != null)
             {
-                ShowRecordDetail(BrowserKind(open), appTitle, open.title,
-                    new PhoneDetailView.Hero { glyph = Theme.pageGlyph, message = text.Get(UIKeys.BrowserPageUnavailable) },
-                    new List<(string, string)>
-                    {
-                        (text.Get(UIKeys.FieldKind), BrowserKind(open)),
-                        (text.Get(UIKeys.FieldDateTime), PhoneDateTime(open.time)),
-                    });
+                ShowRecordDetail(BrowserDetail(open), appTitle, RecordRef.ForRecord(open));
                 ShowRecordPanel(open, open.title, UIKeys.RecordPrefixWeb, device);
                 return;
             }
@@ -123,7 +196,8 @@ namespace Intersection.UI
                 subtitle = BrowserKind(r),
                 trailing = time.Time(r.time),
                 icon = r.kind == BrowserRecordKind.Search ? Theme.searchGlyph : Theme.pageGlyph,
-                onClick = () => OpenRecordDetail(AppKind.Browser, r.Id),
+                selection = RecordRef.ForRecord(r),
+                onClick = () => OpenRecordDetail(AppKind.Browser, RecordRef.ForRecord(r)),
             });
             ShowRecordList(nav, appTitle, null, items, null);
             ShowCollectionPanel(UIKeys.PanelTitleBrowser, device, records.Count);
@@ -144,40 +218,35 @@ namespace Intersection.UI
             if (open == null && openPin == null)
                 nav.SetOpenRecord(AppKind.Maps, null);
             string appTitle = text.Get(UIKeys.MapsTitle);
-            var mapHero = new PhoneDetailView.Hero { background = Theme.mapPlaceholder, glyph = Theme.pinGlyph };
 
             if (open != null)
             {
-                var fields = new List<(string, string)>();
-                if (open.kind == MapRecordKind.Route)
-                {
-                    fields.Add((text.Get(UIKeys.MapsFieldFrom), open.routeFrom));
-                    fields.Add((text.Get(UIKeys.MapsFieldTo), open.routeTo));
-                    fields.Add((text.Get(UIKeys.MapsFieldVia), open.routeNote));
-                }
-                else if (!string.IsNullOrEmpty(open.placeLabel))
-                    fields.Add((text.Get(UIKeys.MapsFieldPlace), open.placeLabel));
-                fields.Add((text.Get(UIKeys.FieldDateTime), MapTimeText(open)));
-                ShowRecordDetail(MapSectionTitle(open.kind), appTitle, MapTitle(open), mapHero, fields);
+                ShowRecordDetail(MapDetail(open), appTitle, RecordRef.ForRecord(open));
 
                 bool period = open.kind == MapRecordKind.LocationHistory;
                 ShowRecordPanel(MapTitle(open), UIKeys.RecordPrefixMap, open.Id, device, SourceText(open.source, null),
                     period ? UIKeys.PanelPeriod : UIKeys.PanelRecordTime,
                     period ? time.SinceDeathTimeRange(open.time, open.endTime) : time.SinceDeathWithTime(open.time),
-                    open.integrityKey);
+                    open.integrityKey, RecordRef.ForRecord(open));
                 return;
             }
             if (openPin != null)
             {
-                ShowRecordDetail(text.Get(UIKeys.MapsSectionShared), appTitle, PlaceLabel(openPin.message.attachmentLabel), mapHero,
-                    new List<(string, string)>
+                ShowRecordDetail(new DetailModel
+                {
+                    title = text.Get(UIKeys.MapsSectionShared),
+                    headline = PlaceLabel(openPin.message.attachmentLabel),
+                    hero = MapHero,
+                    fields = new List<(string, string)>
                     {
                         (text.Get(UIKeys.MapsFieldShared), SharedLabel(openPin, device)),
                         (text.Get(UIKeys.FieldDateTime), PhoneDateTime(openPin.message.time)),
-                    });
+                    },
+                }, appTitle, RecordRef.ForMessage(openPin.entry.device, openPin.entry.thread, openPin.message));
                 ShowRecordPanel(PlaceLabel(openPin.message.attachmentLabel), UIKeys.RecordPrefixMap, openPin.message.Id, device,
                     SourceText(openPin.entry.state.source, openPin.entry.state.serviceKey),
-                    UIKeys.PanelRecordTime, time.SinceDeathWithTime(openPin.message.time), openPin.entry.state.integrityKey);
+                    UIKeys.PanelRecordTime, time.SinceDeathWithTime(openPin.message.time), openPin.entry.state.integrityKey,
+                    RecordRef.ForMessage(openPin.entry.device, openPin.entry.thread, openPin.message));
                 return;
             }
 
@@ -196,7 +265,8 @@ namespace Intersection.UI
                         subtitle = r.kind == MapRecordKind.Route ? r.routeNote : null,
                         trailing = r.kind == MapRecordKind.LocationHistory ? MapTimeText(r) : time.ListLabel(r.time),
                         icon = icon,
-                        onClick = () => OpenRecordDetail(AppKind.Maps, r.Id),
+                        selection = RecordRef.ForRecord(r),
+                        onClick = () => OpenRecordDetail(AppKind.Maps, RecordRef.ForRecord(r)),
                     });
                 }
             }
@@ -213,7 +283,8 @@ namespace Intersection.UI
                         subtitle = SharedLabel(p, device),
                         trailing = time.ListLabel(p.message.time),
                         icon = Theme.pinGlyph,
-                        onClick = () => OpenRecordDetail(AppKind.Maps, p.message.Id),
+                        selection = RecordRef.ForMessage(p.entry.device, p.entry.thread, p.message),
+                        onClick = () => OpenRecordDetail(AppKind.Maps, RecordRef.ForMessage(p.entry.device, p.entry.thread, p.message)),
                     });
                 }
             }
@@ -286,19 +357,7 @@ namespace Intersection.UI
 
             if (open != null)
             {
-                ShowRecordDetail(open.FileName, folderTitle, open.FileName,
-                    new PhoneDetailView.Hero
-                    {
-                        texture = open.preview,
-                        glyph = IsImageFile(open.FileName) ? Theme.photoGlyph : Theme.documentGlyph,
-                        message = text.Get(UIKeys.FilesPreviewUnavailable),
-                    },
-                    new List<(string, string)>
-                    {
-                        (text.Get(UIKeys.FilesFieldName), open.FileName),
-                        (text.Get(UIKeys.FilesFieldModified), PhoneDateTime(open.time)),
-                        (text.Get(UIKeys.FilesFieldWhere), open.FolderPath.Length == 0 ? locationLabel : locationLabel + "/" + open.FolderPath),
-                    });
+                ShowRecordDetail(FileDetail(open), folderTitle, RecordRef.ForRecord(open));
                 ShowRecordPanel(open, open.FileName, UIKeys.RecordPrefixFile, device);
                 return;
             }
@@ -325,7 +384,8 @@ namespace Intersection.UI
                     title = f.FileName,
                     subtitle = PhoneDateTime(f.time),
                     icon = IsImageFile(f.FileName) ? Theme.photoGlyph : Theme.documentGlyph,
-                    onClick = () => OpenRecordDetail(AppKind.Files, f.Id),
+                    selection = RecordRef.ForRecord(f),
+                    onClick = () => OpenRecordDetail(AppKind.Files, RecordRef.ForRecord(f)),
                 });
             }
             ShowRecordList(nav, folderTitle, backText, items, Back);
@@ -370,15 +430,9 @@ namespace Intersection.UI
 
             if (open != null)
             {
-                string item = RecordQuery.SettingItemLabel(open, device);
-                ShowRecordDetail(open.categoryLabel, appTitle, item, null, new List<(string, string)>
-                {
-                    (text.Get(UIKeys.SettingsFieldItem), item),
-                    (text.Get(UIKeys.SettingsFieldBefore), open.valueBefore),
-                    (text.Get(UIKeys.SettingsFieldAfter), open.valueAfter),
-                    (text.Get(UIKeys.FieldDateTime), PhoneDateTime(open.time)),
-                });
-                ShowRecordPanel(open, item, UIKeys.RecordPrefixSetting, device);
+                var detail = SettingDetail(open, device);
+                ShowRecordDetail(detail, appTitle, RecordRef.ForRecord(open));
+                ShowRecordPanel(open, detail.headline, UIKeys.RecordPrefixSetting, device);
                 return;
             }
 
@@ -394,7 +448,8 @@ namespace Intersection.UI
                         title = RecordQuery.SettingItemLabel(s, device),
                         subtitle = s.categoryLabel,
                         trailing = s.valueAfter,
-                        onClick = () => OpenRecordDetail(AppKind.Settings, s.Id),
+                        selection = RecordRef.ForRecord(s),
+                        onClick = () => OpenRecordDetail(AppKind.Settings, RecordRef.ForRecord(s)),
                     });
                 }
             }
@@ -408,7 +463,8 @@ namespace Intersection.UI
                         title = RecordQuery.SettingItemLabel(s, device),
                         subtitle = text.Format(UIKeys.SettingsChangeFormat, ("before", s.valueBefore), ("after", s.valueAfter)),
                         trailing = time.ListLabel(s.time),
-                        onClick = () => OpenRecordDetail(AppKind.Settings, s.Id),
+                        selection = RecordRef.ForRecord(s),
+                        onClick = () => OpenRecordDetail(AppKind.Settings, RecordRef.ForRecord(s)),
                     });
                 }
             }
@@ -418,11 +474,14 @@ namespace Intersection.UI
 
         // ───────────── 탐색 ─────────────
 
-        void OpenRecordDetail(AppKind app, string id)
+        /// <summary>고르기 모드면 그 기록을 고르고, 아니면 상세 화면을 연다. 열린 기록은 불변 ID로 기억한다.</summary>
+        void OpenRecordDetail(AppKind app, RecordRef record)
         {
+            if (TrySelectInstead(record))
+                return;
             var nav = session.Nav(session.CurrentCase);
             SaveScroll();
-            nav.SetOpenRecord(app, id);
+            nav.SetOpenRecord(app, record.recordId);
             RenderCenter();
         }
 

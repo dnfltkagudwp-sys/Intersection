@@ -118,6 +118,96 @@ namespace Intersection.Core
         public const string PanelTitleSettings = "panel.title.settings";
         public const string RecordPrefixSetting = "record.prefix.setting";
 
+        // UI-05 기록 고르기·핀·처리 후보·작업 기록
+        public const string ToolbarSelectStart = "toolbar.selectRecord";
+        public const string ToolbarSelectEnd = "toolbar.selectEnd";
+        public const string ToolbarPickHint = "toolbar.pickHint";
+        public const string ToolbarPicked = "toolbar.picked";
+        public const string PanelHeadingCurrent = "panel.current";
+        public const string PanelHeadingPicked = "panel.heading.picked";
+        public const string PanelHeadingWork = "panel.heading.work";
+        public const string PanelHeadingRequest = "panel.heading.request";
+        public const string ActionPin = "panel.action.pin";
+        public const string ActionUnpin = "panel.action.unpin";
+        public const string PanelViewed = "panel.row.viewed";
+        public const string ViewedYes = "panel.viewed.yes";
+        public const string ViewedNo = "panel.viewed.no";
+        public const string ClassUnclassified = "class.unclassified";
+        public const string ClassKeep = "class.keep";
+        public const string ClassDelete = "class.delete";
+        public const string PanelMissing = "panel.missing";
+        public const string PanelMissingDuplicate = "panel.missingDuplicate";
+        public const string PanelMissingBody = "panel.missingBody";
+        public const string WorkItemMeta = "panel.pinnedMeta";
+        public const string PanelWorkListHeader = "panel.workList";
+        public const string PanelWorkEmpty = "panel.workEmpty";
+        public const string PanelWorkCollapse = "panel.workCollapse";
+        public const string PanelWorkExpand = "panel.workExpand";
+        public const string SelectionMessageContext = "selection.messageContext";
+        public const string ActionOpenSource = "panel.openSource";
+        public const string ActionOpenSourceMessage = "panel.openSourceMessage";
+        public const string SourceMissing = "panel.sourceMissing";
+        public const string SourceDuplicate = "panel.sourceDuplicate";
+        public const string SourceUnavailable = "panel.sourceUnavailable";
+
+        // UI-06 비교
+        public const string ActionCompareAdd = "panel.compareAdd";
+        public const string ActionCompareRemove = "panel.compareRemove";
+        public const string CompareFull = "panel.compareFull";
+        public const string CompareBlockedMissing = "panel.compareMissing";
+        public const string CompareBlockedDuplicate = "panel.compareDuplicate";
+        public const string CompareBlockedUnavailable = "panel.compareUnavailable";
+        public const string CompareSlotsHeader = "panel.compareSlots";
+        public const string CompareSlotsOneMore = "panel.compareSlotsOneMore";
+        public const string CompareSlotsReady = "panel.compareSlotsReady";
+        public const string CompareSlotsFullNote = "panel.compareSlotsFullNote";
+        public const string ListCompareAdd = "list.compareAdd";
+        public const string ListCompareOn = "list.compareOn";
+        public const string TutorialDoneLine = "tutorial.doneLine";
+        public const string CompareSlotEmpty = "panel.compareSlotEmpty";
+        public const string CompareSlotRemove = "panel.compareSlotRemove";
+        public const string CompareRowKind = "compare.row.kind";
+        public const string CompareKindFormat = "compare.kindFormat";
+        public const string CompareAppWork = "compare.app.work";
+
+        // 툴바 "○○ 선택됨"에 쓰는 기록 종류 이름
+        public const string KindThread = "kind.thread";
+        public const string KindMessage = "kind.message";
+        public const string KindAttachment = "kind.attachment";
+        public const string KindLocationShare = "kind.locationShare";
+        public const string KindPhoto = "kind.photo";
+        public const string KindBrowser = "kind.browser";
+        public const string KindMap = "kind.map";
+        public const string KindFile = "kind.file";
+        public const string KindSetting = "kind.setting";
+        public const string KindRequest = "kind.request";
+
+        public static string KindKey(RecordKind kind)
+        {
+            switch (kind)
+            {
+                case RecordKind.Thread: return KindThread;
+                case RecordKind.Attachment: return KindAttachment;
+                case RecordKind.LocationShare: return KindLocationShare;
+                case RecordKind.Photo: return KindPhoto;
+                case RecordKind.Browser: return KindBrowser;
+                case RecordKind.Map: return KindMap;
+                case RecordKind.File: return KindFile;
+                case RecordKind.Setting: return KindSetting;
+                case RecordKind.Request: return KindRequest;
+                default: return KindMessage;
+            }
+        }
+        public const string SideRequests = "side.requests";
+        public const string RecordPrefixRequest = "record.prefix.request";
+        public const string TutorialDone = "tutorial.status.done";
+        public const string TutorialActive = "tutorial.status.active";
+        public const string TutorialWaiting = "tutorial.status.waiting";
+        public const string TutorialLine = "tutorial.line";
+
+        public static string ClassKey(Classification c) =>
+            c == Classification.Keep ? ClassKeep : c == Classification.Delete ? ClassDelete : ClassUnclassified;
+
         public static string FilesLocationKey(Intersection.Data.RecordSource source)
         {
             switch (source)
@@ -170,6 +260,19 @@ namespace Intersection.Core
             FilesPreviewUnavailable, FilesFieldName, FilesFieldModified, FilesFieldWhere, PanelTitleFiles, RecordPrefixFile,
             SettingsTitle, SettingsSectionCurrent, SettingsSectionHistory, SettingsChangeFormat, SettingsFieldItem,
             SettingsFieldBefore, SettingsFieldAfter, PanelTitleSettings, RecordPrefixSetting,
+            ToolbarSelectStart, ToolbarSelectEnd, ToolbarPickHint, ToolbarPicked,
+            PanelHeadingCurrent, PanelHeadingPicked, PanelHeadingWork, PanelHeadingRequest, ActionPin, ActionUnpin,
+            PanelViewed, ViewedYes, ViewedNo, ClassUnclassified, ClassKeep, ClassDelete,
+            PanelMissing, PanelMissingDuplicate, PanelMissingBody, WorkItemMeta,
+            PanelWorkListHeader, PanelWorkEmpty, PanelWorkCollapse, PanelWorkExpand, SelectionMessageContext, SideRequests,
+            ActionOpenSource, ActionOpenSourceMessage, SourceMissing, SourceDuplicate, SourceUnavailable,
+            ActionCompareAdd, ActionCompareRemove, CompareFull, CompareBlockedMissing, CompareBlockedDuplicate,
+            CompareBlockedUnavailable, CompareSlotsHeader, CompareSlotsOneMore, CompareSlotsReady, CompareSlotsFullNote,
+            ListCompareAdd, ListCompareOn, TutorialDoneLine, CompareSlotEmpty, CompareSlotRemove, CompareRowKind,
+            CompareKindFormat, CompareAppWork,
+            KindThread, KindMessage, KindAttachment, KindLocationShare, KindPhoto, KindBrowser, KindMap, KindFile,
+            KindSetting, KindRequest,
+            RecordPrefixRequest, TutorialDone, TutorialActive, TutorialWaiting, TutorialLine,
             PanelTitleMessageList, PanelTitleThread, PanelRecordId, RecordCodeFormat, RecordPrefixThread, PanelOwner, PanelSource, PanelSourceFormat,
             PanelPeriod, PanelIntegrity, PanelThreadCount, PanelThreadCountValue,
             SourceLocal, SourceCloud, SourceLinked, SourceRecovered,

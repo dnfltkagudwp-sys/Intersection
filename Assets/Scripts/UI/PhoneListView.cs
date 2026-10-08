@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Intersection.Core;
 using Intersection.Data;
 using TMPro;
 using UnityEngine;
@@ -21,6 +22,8 @@ namespace Intersection.UI
             public string trailing;
             public Sprite icon;
             public Action onClick;
+            /// <summary>선택 모드에서 이 행이 가리키는 기록. null이면 선택 대상이 아니다 (폴더·위치 등).</summary>
+            public RecordRef selection;
 
             public static Item Section(string label) => new Item { isSection = true, title = label };
         }

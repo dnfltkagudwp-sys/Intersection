@@ -31,6 +31,16 @@ namespace Intersection.Data
         [Tooltip("실제 지도 이미지가 없을 때 쓰는 중립 지도 자리 표시 (현실 지형 없음)")]
         public Sprite mapPlaceholder;
 
+        [Header("선택 모드 (평상시에는 표시하지 않는다)")]
+        [Tooltip("선택 가능한 항목의 얇은 테두리 (9-slice)")]
+        public Sprite selectionOutline;
+        public Sprite selectionCheck;
+        public Color selectionColor = Hex("0A84FF");
+        public Color pinMarkColor = Hex("FFD60A");
+
+        [Tooltip("비교 화면이 열려 있는 동안 조작을 막은 좌측·우측 패널의 불투명도")]
+        [Range(0.2f, 1f)] public float compareDimAlpha = 0.45f;
+
         [Header("Work program")]
         public Color background = Hex("12161B");
         public Color panel = Hex("171C22");

@@ -20,9 +20,11 @@ MonoBehaviour:
   useDevStartStage: 1
   devStartStage: 1
   separatorGapMinutes: 60
+  compareMessageContext: 2
   statusClock: 0
   fixedClockHour: 9
   fixedClockMinute: 41
+  workSaveFileName: work_state.json
   database: {fileID: 11400000, guid: ef0f9d2758815d947b4921f14106f2b2, type: 2}
   strings: {fileID: 11400000, guid: e16885164257c8e4f95303bd5ea2b792, type: 2}
   theme: {fileID: 11400000, guid: 380a8ce4b92417d41a8878f421dd501e, type: 2}

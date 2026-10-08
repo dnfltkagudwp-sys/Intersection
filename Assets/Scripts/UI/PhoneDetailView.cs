@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Intersection.Core;
 using Intersection.Data;
 using TMPro;
 using UnityEngine;
@@ -35,12 +36,15 @@ namespace Intersection.UI
         [SerializeField] TMP_Text headline;
         [SerializeField] RectTransform fieldRoot;
         [SerializeField] InfoRowView fieldPrefab;
+        [SerializeField] SelectableRecord selectable;
 
         readonly List<GameObject> fields = new List<GameObject>();
 
+        /// <param name="selection">열린 기록(페이지·장소·파일·설정 변경) 자체. 선택 모드에서 화면 전체로 선택한다.</param>
         public void Show(string title, string backText, string headlineText, Hero hero,
-            List<(string label, string value)> fieldValues, UITheme theme, Action onBack)
+            List<(string label, string value)> fieldValues, UITheme theme, Action onBack, RecordRef selection)
         {
+            selectable.Bind(selection);
             headerTitle.text = title;
             backLabel.text = theme.backGlyph + " " + backText;
             backButton.onClick.RemoveAllListeners();
