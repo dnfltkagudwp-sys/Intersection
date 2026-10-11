@@ -65,12 +65,14 @@ namespace Intersection.UI
 
         /// <summary>
         /// 의뢰 요청을 띄웠을 때 그 요청에 속한 작업(인벤토리 생성 등). 조건 전에는 업무 상태만 보여주고 다음 행동을 지시하지 않는다.
+        /// 좌측 의뢰 요청·작업 기록(빠른 목록·전체 보기 상세)·검색 어디서 열었든 같은 작업을 보여준다.
         /// 시작 뒤에는 같은 버튼을 다시 누를 수 없다.
         /// </summary>
         void RenderJobs()
         {
             var items = new List<WorkPanelView.JobItem>();
-            if (focus == PanelFocus.Request && focusRecord != null)
+            if ((focus == PanelFocus.Request || focus == PanelFocus.WorkRecord) && focusRecord != null
+                && focusRecord.kind == RecordKind.Request)
             {
                 var request = config.database.requests.FirstOrDefault(q => q != null && q.Id == focusRecord.recordId);
                 foreach (var job in request == null ? Enumerable.Empty<ProgressJobData>() : progression.JobsForRequest(request))

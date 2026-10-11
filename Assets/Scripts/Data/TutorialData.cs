@@ -1,83 +1,28 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Intersection.Data
 {
-    public enum TutorialCondition
-    {
-        [Tooltip("target을 작업메모에 핀하면 완료")]
-        Pinned,
-        [Tooltip("target과 target2를 나란히 비교하면 완료 (UI-06 비교 화면에서 처리)")]
-        Compared,
-        [Tooltip("target을 보존 후보로 지정하면 완료")]
-        ClassifiedKeep,
-        [Tooltip("target을 삭제 후보로 지정하면 완료")]
-        ClassifiedDelete,
-    }
-
-    [Serializable]
-    public class TutorialStep
-    {
-        [SerializeField, Tooltip("불변 단계 ID. 자동 발급되며 손으로 수정하지 않는다.")]
-        string id;
-
-        [Tooltip("업무 패널에 보이는 단계 이름")]
-        public string label;
-
-        public TutorialCondition condition;
-
-        [Tooltip("대상 기록 (요청·사진·기록 에셋). 에셋 참조라 이름·순서가 바뀌어도 연결이 유지된다.")]
-        public ContentAsset target;
-
-        [Tooltip("비교 단계의 두 번째 대상")]
-        public ContentAsset target2;
-
-        public string Id => id;
-
-        public bool EnsureId()
-        {
-            if (!string.IsNullOrEmpty(id))
-                return false;
-            id = ContentAsset.NewId();
-            return true;
-        }
-
-        public void RegenerateId() => id = ContentAsset.NewId();
-    }
-
     /// <summary>
-    /// 업무 튜토리얼. 단계는 앞 단계가 끝나야 진행되며, 완료 여부는 저장 파일에 단계 ID로 기록된다.
+    /// 초반 업무 안내. 단계·체크리스트·완료율 없이, 요청을 읽은 뒤 대상 기록을 아직 보존하지 않았으면 짧은 안내 한 줄만 보여준다.
+    /// 판정은 순서와 무관하게 현재 상태(요청 열람 + 대상의 현재 분류)로 한다. 요청 패널에는 대상의 현재 분류를 한 줄로 보여준다.
+    /// 진행 작업의 시작 조건은 이 에셋이 아니라 작업 데이터(ProgressJobData)의 조건으로 따로 정한다.
     /// </summary>
-    [CreateAssetMenu(menuName = "Intersection/Tutorial", fileName = "Tutorial")]
+    [CreateAssetMenu(menuName = "Intersection/Work Guide", fileName = "Guide")]
     public class TutorialData : ContentAsset
     {
-        [Tooltip("업무 패널에 보이는 업무 이름")]
-        public string title;
-
-        [Tooltip("튜토리얼이 시작되는 요청")]
+        [Tooltip("안내가 속한 의뢰 요청. 이 요청을 열람한 뒤에만 안내 줄을 보여준다.")]
         public WorkRequestData request;
 
-        public List<TutorialStep> steps = new List<TutorialStep>();
+        [Tooltip("보존할 대상 기록 (사진·기록 에셋). 에셋 참조라 이름·순서가 바뀌어도 연결이 유지된다.")]
+        public ContentAsset target;
 
-        public override bool EnsureIds()
-        {
-            bool changed = base.EnsureIds();
-            var seen = new HashSet<string>();
-            foreach (var s in steps)
-            {
-                if (s == null)
-                    continue;
-                changed |= s.EnsureId();
-                if (!seen.Add(s.Id))
-                {
-                    // 인스펙터에서 단계를 복제하면 ID가 함께 복사된다. 뒤의 복제본에만 새 ID를 준다.
-                    s.RegenerateId();
-                    seen.Add(s.Id);
-                    changed = true;
-                }
-            }
-            return changed;
-        }
+        [Tooltip("요청 패널 상태 줄에 쓰는 대상 이름 (예: 가족사진)")]
+        public string targetLabel;
+
+        [Tooltip("요청을 읽었고 대상이 아직 보존 상태가 아닐 때 하단에 보여주는 안내 한 줄")]
+        public string hint;
+
+        [Tooltip("이 단계부터는 안내 줄을 다시 띄우지 않는다 (재분류해도 돌아오지 않음). 요청 패널 상태 줄은 계속 현재 분류를 보여준다.")]
+        public ProgressStage hintUntil = ProgressStage.P1;
     }
 }

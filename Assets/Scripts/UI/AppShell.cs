@@ -153,8 +153,6 @@ namespace Intersection.UI
             // `원본 열기` 직후 한 번만 그 기록을 현재 열람으로 유지한다. 다른 화면으로 이동하면 사라진다.
             sourceFocus = pendingSource;
             pendingSource = null;
-            // 튜토리얼 완료 안내는 휴대전화 화면을 이동할 때까지 한 번만 보여준다.
-            tutorialDoneLine = null;
             RenderPhone();
             RefreshWorkPanel();
         }

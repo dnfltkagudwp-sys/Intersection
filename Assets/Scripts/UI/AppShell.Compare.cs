@@ -8,9 +8,10 @@ using UnityEngine.EventSystems;
 namespace Intersection.UI
 {
     /// <summary>
-    /// 비교 모드 (UI-06). 핀한 기록 두 개를 비교 슬롯에 넣고, 중앙을 덮는 PC 업무 화면에 같은 크기로 나란히 본다.
+    /// 비교 모드 (UI-06). 기록 두 개를 비교 칸에 넣고, 중앙을 덮는 PC 업무 화면에 같은 크기로 나란히 본다.
+    /// 비교는 핀과 무관하다: 지금 보는 원본·작업 기록 어디서든 바로 넣을 수 있고, 핀을 풀어도 칸에서 빠지지 않는다.
     /// 슬롯은 임시 UI 상태라 저장하지 않고, 비교 화면을 실제로 연 쌍만 비교 이력(불변 RecordRef.Key)으로 남긴다.
-    /// 두 기록의 관계·일치 여부는 판정하지 않는다.
+    /// 두 기록의 관계·일치 여부는 판정하지 않고, 자동 교체·추천도 하지 않는다.
     /// </summary>
     public partial class AppShell
     {
@@ -27,7 +28,7 @@ namespace Intersection.UI
 
         // ───────────── 비교 대상 고르기 ─────────────
 
-        /// <summary>핀한 기록만 비교할 수 있다. 원본 누락·중복·현재 접근 불가면 막는 이유 키, 비교할 수 있으면 null.</summary>
+        /// <summary>원본 누락·중복·현재 접근 불가면 막는 이유 키, 비교할 수 있으면 null.</summary>
         string CompareBlockReason(RecordRef target)
         {
             if (target.kind == RecordKind.Request)
@@ -47,25 +48,23 @@ namespace Intersection.UI
                 : UIKeys.CompareBlockedUnavailable;
         }
 
-        /// <summary>핀이 풀렸거나 접근할 수 없게 된 기록은 슬롯에서 뺀다(저장된 과거 핀으로 접근 범위를 우회하지 못하게).</summary>
+        /// <summary>접근할 수 없게 됐거나 원본을 찾지 못하는 기록은 슬롯에서 뺀다(핀 여부와 무관).</summary>
         void PruneCompareSlots()
         {
             for (int i = 0; i < compareSlots.Length; i++)
             {
                 var s = compareSlots[i];
-                if (s != null && (!store.IsPinned(s.Key) || CompareBlockReason(s) != null))
+                if (s != null && CompareBlockReason(s) != null)
                     compareSlots[i] = null;
             }
         }
 
-        /// <summary>작업 기록 패널의 `비교에 추가`/`비교에서 빼기`. 핀하지 않은 기록이면 표시하지 않는다.</summary>
+        /// <summary>패널에 보이는 기록의 `비교에 추가`/`비교에서 빼기`. 핀하지 않은 기록도 바로 넣을 수 있다.</summary>
         void CompareTool(RecordRef target, out string label, out System.Action action, out string note)
         {
             label = null;
             action = null;
             note = null;
-            if (!store.IsPinned(target.Key))
-                return;
             int slot = SlotOf(target.Key);
             if (slot >= 0)
             {
@@ -100,7 +99,7 @@ namespace Intersection.UI
                 RefreshWorkPanel();
                 return;
             }
-            if (!store.IsPinned(target.Key) || CompareBlockReason(target) != null || compareSlots.All(s => s != null))
+            if (CompareBlockReason(target) != null || compareSlots.All(s => s != null))
                 return;
             AddToCompare(target);
         }
@@ -142,13 +141,9 @@ namespace Intersection.UI
                 });
             }
             int filled = compareSlots.Count(s => s != null);
-            bool full = filled == compareSlots.Length;
-            // 0개: 기본 / 1개: 하나 더 고르세요 / 2개: 비교할 수 있습니다 (비교 화면은 사용자가 `비교`를 눌러야 열린다)
-            string headerKey = full ? UIKeys.CompareSlotsReady : filled > 0 ? UIKeys.CompareSlotsOneMore : UIKeys.CompareSlotsHeader;
-            workPanel.ShowCompareSlots(
-                text.Format(headerKey, ("count", filled.ToString(time.Culture)),
-                    ("total", compareSlots.Length.ToString(time.Culture))),
-                full ? text.Get(UIKeys.CompareSlotsFullNote) : null,
+            // 제목은 `비교할 자료`뿐이다(개수·비율을 표시하지 않음). 두 칸이 모두 비면 영역 전체를 숨겨 공간을 돌려준다.
+            // 비교 화면은 두 칸이 찼을 때 사용자가 `비교`를 눌러야 열린다.
+            workPanel.ShowCompareSlots(filled > 0, text.Get(UIKeys.CompareSlotsHeader), null,
                 items, text.Get(UIKeys.CompareSlotEmpty), text.Get(UIKeys.CompareSlotRemove),
                 filled == compareSlots.Length ? EnterCompare : (System.Action)null,
                 Theme.panelRaised, Theme.subText, Theme.text);

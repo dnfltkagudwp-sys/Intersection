@@ -4,25 +4,29 @@ using UnityEngine;
 
 namespace Intersection.Data
 {
+    /// <summary>시작 조건 종류. 에셋에 정수로 저장되므로 값의 순서를 바꾸지 않고 새 종류는 끝에 붙인다.</summary>
     public enum ProgressConditionKind
     {
-        [Tooltip("tutorial의 모든 단계가 완료됨")]
-        TutorialCompleted,
-        [Tooltip("request를 업무 패널에서 열람함")]
+        [Tooltip("더 이상 쓰지 않음 (예전 단계형 튜토리얼 완료). 검증 도구가 오류로 잡는다.")]
+        Retired,
+        [Tooltip("request를 업무 패널에서 열람함 (좌측 의뢰 요청·작업 기록·검색 어디서 열었든)")]
         RequestViewed,
         [Tooltip("이 작업 의뢰의 원본 기록 중 source 출처 기록을 minCount건 이상 보존 또는 삭제 후보로 분류함 (현재 접근 가능한 기록만 셈)")]
         ClassifiedRecords,
         [Tooltip("job 작업이 완료됨")]
         JobCompleted,
+        [Tooltip("record 기록의 지금 분류가 보존 (분류 횟수나 과거 이력이 아니라 현재 상태)")]
+        RecordKept,
     }
 
     [Serializable]
     public class ProgressCondition
     {
         public ProgressConditionKind kind;
-        public TutorialData tutorial;
         public WorkRequestData request;
         public ProgressJobData job;
+        [Tooltip("RecordKept: 대상 기록 (사진·기록 에셋)")]
+        public ContentAsset record;
         [Min(1)] public int minCount = 1;
         public RecordSource source = RecordSource.Local;
     }

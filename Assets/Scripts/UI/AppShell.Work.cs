@@ -10,7 +10,7 @@ using UnityEngine.UI;
 namespace Intersection.UI
 {
     /// <summary>
-    /// 핀·분류·작업메모·기록 고르기·업무 튜토리얼 (UI-05).
+    /// 핀·분류·작업메모·기록 고르기·초반 업무 안내 (UI-05, 안내는 단계 없는 한 줄로 간소화).
     /// 우측 패널은 기본적으로 휴대전화에 열린 기록(현재 열람)을 보여주며 바로 핀·분류·메모할 수 있다.
     /// 기록 고르기 모드는 개별 메시지처럼 화면 안의 더 작은 단위를 고를 때만 쓴다.
     /// 휴대전화 화면에는 고르기 모드에서만 얇은 테두리·체크·핀 표시가 보인다.
@@ -47,9 +47,6 @@ namespace Intersection.UI
         RecordRef sourceFocus;
         RecordRef pendingSource;
         bool memoWasFocused;
-        /// <summary>모든 단계가 끝난 튜토리얼(시작 시 이미 끝난 것 포함). 완료 안내는 이번 실행에서 새로 끝났을 때만 한 번 띄운다.</summary>
-        readonly HashSet<string> finishedTutorials = new HashSet<string>();
-        string tutorialDoneLine;
         readonly List<SidebarItemView> requestItems = new List<SidebarItemView>();
 
         /// <summary>검수·테스트용 업무 상태 저장소.</summary>
@@ -61,12 +58,6 @@ namespace Intersection.UI
         void InitWork()
         {
             store = new WorkStore(Path.Combine(Application.persistentDataPath, config.workSaveFileName));
-            foreach (var tutorial in config.database.tutorials.Where(t => t != null))
-            {
-                var progress = TutorialProgress.Evaluate(tutorial, store);
-                if (progress.Count > 0 && progress.All(p => p.status == StepStatus.Done))
-                    finishedTutorials.Add(tutorial.Id);
-            }
             SelectionBus.Reset();
             SelectionBus.IsPinned = store.IsPinned;
             SelectionBus.SelectRequested = Pick;
@@ -119,11 +110,17 @@ namespace Intersection.UI
             RefreshWorkPanel();
         }
 
-        /// <summary>작업 기록에서 연 기록을 패널에만 띄운다. 휴대전화 화면·현재 기기는 바꾸지 않는다.</summary>
+        /// <summary>
+        /// 작업 기록에서 연 기록을 패널에만 띄운다. 휴대전화 화면·현재 기기는 바꾸지 않는다.
+        /// 의뢰 요청은 좌측에서 열 때와 같은 내용(상태 줄·진행 작업)을 보여주고, 열람도 같은 기준으로 기록한다.
+        /// </summary>
         void OpenWorkRecord(RecordRef target)
         {
             if (selecting)
                 SetSelecting(false);
+            if (target.kind == RecordKind.Request
+                && RecordAccess.Check(target, config.database, session.Stage, text) == AccessState.Accessible)
+                store.MarkViewed(target);
             // 휴대전화에 열린 기록과 같아도 작업 기록으로 띄운다(원본 열기·비교에 추가 같은 보조 행동은 여기서만 제공).
             focus = PanelFocus.WorkRecord;
             focusRecord = target;
@@ -213,7 +210,7 @@ namespace Intersection.UI
             workPanel.SetActions(target != null ? ActionsFor(target) : null);
             RenderWorkList();
             RenderCompareSlots();
-            RenderTutorialLine();
+            RenderGuideLine();
             RenderWorkToolbar();
             SyncSelection();
             workPanel.ApplyNavigation();
@@ -223,6 +220,8 @@ namespace Intersection.UI
         WorkPanelView.Actions ActionsFor(RecordRef target) => new WorkPanelView.Actions
         {
             pinned = store.IsPinned(target.Key),
+            // 의뢰 요청은 업무 문서라 개인 자료용 보존·삭제 후보를 두지 않는다.
+            showClassification = target.kind != RecordKind.Request,
             classification = store.ClassOf(target.Key),
             memo = store.MemoOf(target.Key),
             pinText = text.Get(UIKeys.ActionPin),
@@ -239,6 +238,8 @@ namespace Intersection.UI
             {
                 store.SetMemo(target, memo);
                 RenderWorkList();
+                // 메모만 있는 기록도 작업 기록이라 툴바 개수를 목록과 함께 맞춘다.
+                RenderWorkToolbar();
             },
         };
 
@@ -256,27 +257,27 @@ namespace Intersection.UI
 
         void SetClass(RecordRef target, Classification c)
         {
+            if (target.kind == RecordKind.Request)
+                return;
             store.SetClassification(target, c);
-            // 분류 튜토리얼 단계는 진행 중일 때 한 분류 행동으로만 완료된다.
-            foreach (var tutorial in config.database.tutorials.Where(t => t != null))
-                TutorialProgress.OnClassified(tutorial, store, target, c);
             AfterWorkChange();
         }
 
         // ───────────── 원본 열기 ─────────────
 
         /// <summary>
-        /// 작업 기록(또는 의뢰 요청)을 패널에 띄웠을 때의 보조 행동: `원본 열기`와 `비교에 추가`/`비교에서 빼기`.
-        /// 의뢰 요청은 휴대전화 자료가 아니라 원본 열기를 숨긴다. 열거나 비교할 수 없으면 이유를 한 번만 보여준다.
+        /// 패널에 보이는 기록의 보조 행동: `비교에 추가`/`비교에서 빼기`(핀과 무관, 지금 보는 원본에서 바로)와,
+        /// 작업 기록으로 띄웠을 때만 `원본 열기`. 의뢰 요청은 휴대전화 자료가 아니라 원본 열기를 숨긴다.
+        /// 열거나 비교할 수 없으면 이유를 한 번만 보여준다.
         /// </summary>
         void RenderRecordTools()
         {
-            if ((focus != PanelFocus.WorkRecord && focus != PanelFocus.Request) || focusRecord == null)
+            var target = ActionTarget;
+            if (target == null)
             {
                 workPanel.SetRecordTools(null, null, null, null, null, null);
                 return;
             }
-            var target = focusRecord;
             string sourceText = null, sourceNote = null;
             System.Action onSource = null;
             if (focus == PanelFocus.WorkRecord && target.kind != RecordKind.Request)
@@ -458,23 +459,22 @@ namespace Intersection.UI
                 return;
             }
 
-            var rows = new List<WorkPanelView.Row>
-            {
-                Row(UIKeys.PanelRecordId, code, Theme.monoFont),
-                Row(UIKeys.PanelOwner, OwnerName(res.device), Theme.regularFont),
-            };
+            // 의뢰 요청은 본문 바로 아래에 업무 상태(대상의 현재 분류)를 먼저 보여준다.
+            var rows = new List<WorkPanelView.Row>();
+            if (target.kind == RecordKind.Request)
+                rows.AddRange(GuideRows(target));
+            rows.Add(Row(UIKeys.PanelRecordId, code, Theme.monoFont));
+            rows.Add(Row(UIKeys.PanelOwner, OwnerName(res.device), Theme.regularFont));
             if (target.kind != RecordKind.Request)
                 rows.Add(Row(UIKeys.PanelSource, SourceText(res.source, res.serviceKey), Theme.regularFont));
             if (res.hasTime)
                 rows.Add(TimeRow(target, res));
             rows.Add(Row(UIKeys.PanelIntegrity, string.IsNullOrEmpty(res.integrityKey) ? null : text.Get(res.integrityKey), Theme.regularFont));
             rows.Add(Row(UIKeys.PanelViewed, text.Get(entry != null && entry.viewed ? UIKeys.ViewedYes : UIKeys.ViewedNo), Theme.regularFont));
-            if (target.kind == RecordKind.Request)
-                rows.AddRange(TutorialRows(target));
             workPanel.Show(res.title, res.body, rows);
         }
 
-        // ───────────── 의뢰 요청·튜토리얼 ─────────────
+        // ───────────── 의뢰 요청·초반 업무 안내 ─────────────
 
         IEnumerable<WorkRequestData> Requests(CaseData device) =>
             config.database.requests
@@ -511,43 +511,46 @@ namespace Intersection.UI
             RefreshWorkPanel();
         }
 
-        IEnumerable<WorkPanelView.Row> TutorialRows(RecordRef request)
+        IEnumerable<TutorialData> Guides() => config.database.tutorials.Where(t => t != null && t.request != null);
+
+        /// <summary>
+        /// 요청 패널의 업무 상태 한 줄: 대상 이름 · 지금 분류(미분류 / 보존 지정됨 / 삭제 후보). 단계·완료율·체크리스트는 없다.
+        /// 단계와 무관하게 늘 현재 분류를 그대로 보여준다.
+        /// </summary>
+        IEnumerable<WorkPanelView.Row> GuideRows(RecordRef request)
         {
-            foreach (var tutorial in config.database.tutorials.Where(t => t != null && t.request != null
-                         && RecordRef.ForRequest(t.request).Key == request.Key))
+            foreach (var guide in Guides().Where(g => RecordRef.ForRequest(g.request).Key == request.Key))
             {
-                foreach (var (step, status) in TutorialProgress.Evaluate(tutorial, store))
-                    yield return new WorkPanelView.Row { label = step.label, value = StatusText(status), font = Theme.regularFont };
+                var target = RecordRef.ForAsset(guide.target);
+                if (target == null)
+                    continue;
+                yield return new WorkPanelView.Row
+                {
+                    label = guide.targetLabel,
+                    value = text.Get(UIKeys.GuideStateKey(store.ClassOf(target.Key))),
+                    font = Theme.regularFont,
+                };
             }
         }
 
-        string StatusText(StepStatus s) =>
-            text.Get(s == StepStatus.Done ? UIKeys.TutorialDone : s == StepStatus.Active ? UIKeys.TutorialActive : UIKeys.TutorialWaiting);
-
         /// <summary>
-        /// 진행 중인 업무 튜토리얼 한 줄: 과제 · 단계 번호/전체 · 지금 할 행동.
-        /// 이번 실행 중에 모든 단계가 끝나면 `{과제} 업무 완료`를 한 번 보여주고, 휴대전화 화면을 이동하면 숨긴다.
+        /// 하단 안내 한 줄. 요청을 읽은 뒤, 대상이 아직 보존이 아니고 안내 종료 단계(hintUntil) 전일 때만 데이터의 안내 문구를 보여준다.
+        /// 요청을 읽기 전에는 조작을 먼저 지시하지 않고, 보존하거나 다음 단계로 넘어가면 숨긴다(이후 재분류해도 돌아오지 않음).
         /// </summary>
-        void RenderTutorialLine()
+        void RenderGuideLine()
         {
             string line = null;
-            foreach (var tutorial in config.database.tutorials.Where(t => t != null && t.request != null
-                         && session.Stage >= t.request.availableFrom))
+            foreach (var guide in Guides())
             {
-                var progress = TutorialProgress.Evaluate(tutorial, store);
-                int index = progress.FindIndex(p => p.status == StepStatus.Active);
-                if (index < 0)
-                {
-                    if (progress.Count > 0 && finishedTutorials.Add(tutorial.Id))
-                        tutorialDoneLine = text.Format(UIKeys.TutorialDoneLine, ("task", tutorial.title));
+                var target = RecordRef.ForAsset(guide.target);
+                if (target == null || session.Stage < guide.request.availableFrom || session.Stage >= guide.hintUntil)
                     continue;
-                }
-                line = text.Format(UIKeys.TutorialLine, ("task", tutorial.title),
-                    ("index", (index + 1).ToString(time.Culture)), ("total", progress.Count.ToString(time.Culture)),
-                    ("step", progress[index].step.label));
+                if (!store.IsViewed(RecordRef.ForRequest(guide.request).Key) || store.ClassOf(target.Key) == Classification.Keep)
+                    continue;
+                line = guide.hint;
                 break;
             }
-            workPanel.ShowTutorial(line ?? tutorialDoneLine);
+            workPanel.ShowTutorial(line);
         }
 
         // ───────────── 키보드 ─────────────

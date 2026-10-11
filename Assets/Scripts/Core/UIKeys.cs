@@ -158,12 +158,8 @@ namespace Intersection.Core
         public const string CompareBlockedDuplicate = "panel.compareDuplicate";
         public const string CompareBlockedUnavailable = "panel.compareUnavailable";
         public const string CompareSlotsHeader = "panel.compareSlots";
-        public const string CompareSlotsOneMore = "panel.compareSlotsOneMore";
-        public const string CompareSlotsReady = "panel.compareSlotsReady";
-        public const string CompareSlotsFullNote = "panel.compareSlotsFullNote";
         public const string ListCompareAdd = "list.compareAdd";
         public const string ListCompareOn = "list.compareOn";
-        public const string TutorialDoneLine = "tutorial.doneLine";
         public const string CompareSlotEmpty = "panel.compareSlotEmpty";
         public const string CompareSlotRemove = "panel.compareSlotRemove";
         public const string CompareRowKind = "compare.row.kind";
@@ -237,13 +233,16 @@ namespace Intersection.Core
         }
         public const string SideRequests = "side.requests";
         public const string RecordPrefixRequest = "record.prefix.request";
-        public const string TutorialDone = "tutorial.status.done";
-        public const string TutorialActive = "tutorial.status.active";
-        public const string TutorialWaiting = "tutorial.status.waiting";
-        public const string TutorialLine = "tutorial.line";
+        // 초반 업무 안내: 요청 패널의 대상 현재 분류 (예: 가족사진 · 보존 지정됨)
+        public const string GuideStateUnclassified = "guide.state.unclassified";
+        public const string GuideStateKeep = "guide.state.keep";
+        public const string GuideStateDelete = "guide.state.delete";
 
         public static string ClassKey(Classification c) =>
             c == Classification.Keep ? ClassKeep : c == Classification.Delete ? ClassDelete : ClassUnclassified;
+
+        public static string GuideStateKey(Classification c) =>
+            c == Classification.Keep ? GuideStateKeep : c == Classification.Delete ? GuideStateDelete : GuideStateUnclassified;
 
         public static string FilesLocationKey(Intersection.Data.RecordSource source)
         {
@@ -304,8 +303,8 @@ namespace Intersection.Core
             PanelWorkListHeader, PanelWorkEmpty, PanelWorkCollapse, PanelWorkExpand, SelectionMessageContext, SideRequests,
             ActionOpenSource, ActionOpenSourceMessage, SourceMissing, SourceDuplicate, SourceUnavailable,
             ActionCompareAdd, ActionCompareRemove, CompareFull, CompareBlockedMissing, CompareBlockedDuplicate,
-            CompareBlockedUnavailable, CompareSlotsHeader, CompareSlotsOneMore, CompareSlotsReady, CompareSlotsFullNote,
-            ListCompareAdd, ListCompareOn, TutorialDoneLine, CompareSlotEmpty, CompareSlotRemove, CompareRowKind,
+            CompareBlockedUnavailable, CompareSlotsHeader,
+            ListCompareAdd, ListCompareOn, CompareSlotEmpty, CompareSlotRemove, CompareRowKind,
             CompareKindFormat, CompareAppWork,
             PanelFullViewOpen, PanelBackToCurrent, PanelBackToList, FullViewTitle, FullViewCount, FullViewCountFiltered,
             FullViewNoMatch, FilterAll, FilterPinned, FilterKeep, FilterDelete, FilterMemo, FilterAllCases, ListMemoMark,
@@ -314,7 +313,7 @@ namespace Intersection.Core
             SearchClose, NotificationsTitle, NotificationsMarkAll, NotificationsEmpty, PanelUnavailable, PanelUnavailableBody,
             KindThread, KindMessage, KindAttachment, KindLocationShare, KindPhoto, KindBrowser, KindMap, KindFile,
             KindSetting, KindRequest,
-            RecordPrefixRequest, TutorialDone, TutorialActive, TutorialWaiting, TutorialLine,
+            RecordPrefixRequest, GuideStateUnclassified, GuideStateKeep, GuideStateDelete,
             PanelTitleMessageList, PanelTitleThread, PanelRecordId, RecordCodeFormat, RecordPrefixThread, PanelOwner, PanelSource, PanelSourceFormat,
             PanelPeriod, PanelIntegrity, PanelThreadCount, PanelThreadCountValue,
             SourceLocal, SourceCloud, SourceLinked, SourceRecovered,

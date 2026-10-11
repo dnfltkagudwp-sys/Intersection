@@ -100,7 +100,10 @@ namespace Intersection.UI
         static bool IsWorked(WorkEntry e) =>
             e.pinned || e.classification != Classification.Unclassified || !string.IsNullOrEmpty(e.memo);
 
-        /// <summary>상단 툴바 `작업 기록 {count}`: 필터와 무관한 전체 작업 기록 수, 전체 보기 중이면 켜진 상태.</summary>
+        /// <summary>
+        /// 상단 툴바 `작업 기록 {count}건`: 필터와 무관한 전체 작업 기록 수(빠른 목록 머리말·전체 보기의 전체 수와 같은 IsWorked 기준),
+        /// 전체 보기 중이면 켜진 상태.
+        /// </summary>
         void RenderWorkToolbar()
         {
             workRecordsLabel.text = text.Format(UIKeys.ToolbarWorkRecords,
@@ -242,15 +245,13 @@ namespace Intersection.UI
         WorkPanelView.WorkItem WorkItem(WorkEntry e, ResolvedRecord res, string selectedKey)
         {
             var target = e.target;
-            // `+ 비교`: 핀한 기록만. 칸에 있으면 `비교 중`(다시 누르면 뺌), 칸이 차 있으면 비활성. 자동 교체는 하지 않는다.
+            // `+ 비교`: 핀과 무관. 칸에 있으면 `비교 중`(다시 누르면 뺌), 칸이 차 있으면 비활성, 열 수 없는 원본이면 숨김.
+            // 자동 교체는 하지 않는다.
             var compare = PinnedItemView.CompareState.Hidden;
-            if (e.pinned)
-            {
-                if (SlotOf(target.Key) >= 0)
-                    compare = PinnedItemView.CompareState.InSlot;
-                else if (CompareBlockReason(target) == null)
-                    compare = compareSlots.All(s => s != null) ? PinnedItemView.CompareState.Disabled : PinnedItemView.CompareState.Add;
-            }
+            if (SlotOf(target.Key) >= 0)
+                compare = PinnedItemView.CompareState.InSlot;
+            else if (CompareBlockReason(target) == null)
+                compare = compareSlots.All(s => s != null) ? PinnedItemView.CompareState.Disabled : PinnedItemView.CompareState.Add;
             return new WorkPanelView.WorkItem
             {
                 key = target.Key,

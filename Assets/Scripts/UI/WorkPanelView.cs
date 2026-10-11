@@ -61,6 +61,8 @@ namespace Intersection.UI
         [SerializeField] TMP_Text deleteLabel;
         [SerializeField] GameObject keepOn;
         [SerializeField] GameObject deleteOn;
+        [Tooltip("처리 후보 라벨·보존/삭제 줄. 의뢰 요청처럼 분류하지 않는 기록이면 숨긴다.")]
+        [SerializeField] GameObject[] classParts;
         [SerializeField] GameObject memoRoot;
         [SerializeField] TMP_InputField memoField;
 
@@ -117,6 +119,10 @@ namespace Intersection.UI
         [SerializeField] float itemSpacing = 6f;
         [Tooltip("작업 기록 빠른 목록이 우측 패널 높이에서 차지할 수 있는 최대 비율")]
         [SerializeField, Range(0.2f, 0.6f)] float maxListShare = 0.3f;
+        [Tooltip("기록 정보 영역(본문·진행 작업·처리 버튼·메모, 넘치면 스크롤)이 항상 확보할 최소 높이. 빠른 목록이 이보다 크게 밀어내지 않는다.")]
+        [SerializeField] float minRecordHeight = 300f;
+        [Tooltip("패널 위쪽에서 기록 정보 영역이 시작하는 위치 (빌더 값과 같게)")]
+        [SerializeField] float recordTop = 72f;
 
         const string CollapsedPref = "workPanel.listCollapsed";
 
@@ -145,6 +151,8 @@ namespace Intersection.UI
         public class Actions
         {
             public bool pinned;
+            /// <summary>false면 처리 후보(보존·삭제)를 숨긴다 (의뢰 요청 등).</summary>
+            public bool showClassification = true;
             public Classification classification;
             public string memo;
             public string pinText;
@@ -416,13 +424,22 @@ namespace Intersection.UI
             button.onClick.AddListener(() => onClick());
         }
 
-        /// <summary>비교할 기록 두 슬롯과 비교 버튼. 두 슬롯이 모두 찼을 때만 비교할 수 있다.</summary>
-        public void ShowCompareSlots(string header, string note, IList<SlotItem> slots, string emptyText, string removeText, Action onCompare,
-            Color filledColor, Color emptyTextColor, Color textColor)
+        bool slotsVisible;
+
+        /// <summary>
+        /// 비교할 자료 두 칸과 비교 버튼. 두 칸이 모두 찼을 때만 비교할 수 있다.
+        /// visible이 false면(두 칸 모두 비어 있음) 제목·칸·버튼을 모두 숨겨 위쪽 기록 영역에 공간을 돌려준다.
+        /// </summary>
+        public void ShowCompareSlots(bool visible, string header, string note, IList<SlotItem> slots, string emptyText, string removeText,
+            Action onCompare, Color filledColor, Color emptyTextColor, Color textColor)
         {
+            slotsVisible = visible;
+            slotsLabel.gameObject.SetActive(visible);
+            slotsRow.gameObject.SetActive(visible);
+            compareRect.gameObject.SetActive(visible);
             slotsLabel.text = header;
             slotsNote.text = note ?? string.Empty;
-            slotsNote.gameObject.SetActive(!string.IsNullOrEmpty(note));
+            slotsNote.gameObject.SetActive(visible && !string.IsNullOrEmpty(note));
             for (int i = 0; i < slotButtons.Length; i++)
             {
                 var slot = i < slots.Count ? slots[i] : null;
@@ -467,6 +484,8 @@ namespace Intersection.UI
         {
             actionsRoot.SetActive(actions != null);
             memoRoot.SetActive(actions != null);
+            foreach (var part in classParts)
+                part.SetActive(actions != null && actions.showClassification);
             memoChanged = null;
             if (actions != null)
             {
@@ -616,13 +635,16 @@ namespace Intersection.UI
 
         /// <summary>
         /// 아래 영역 높이를 내용에 맞춘다. 간단한 패널: 기록이 없으면 한 줄 안내, 접으면 머리말만,
-        /// 펼치면 필요한 만큼 늘리되 패널 높이의 maxListShare를 넘지 않게 해 위쪽 기록·조작 영역을 지킨다.
-        /// 전체 보기: 빠른 목록 없이 업무 진행 한 줄 · 비교 칸 · 비교 버튼만 아래에 고정한다.
+        /// 펼치면 필요한 만큼 늘리되 패널 높이의 maxListShare를 넘지 않고, 위쪽 기록 영역에 minRecordHeight를 남긴다
+        /// (진행 작업 줄이 늘어도 처리 버튼·핀·메모가 목록에 눌리지 않게, 넘치는 부분은 기록 영역 스크롤로 본다).
+        /// 비교 칸은 하나라도 찼을 때만 자리를 차지한다.
+        /// 전체 보기: 빠른 목록 없이 안내 한 줄 · 비교 칸 · 비교 버튼만 아래에 고정한다.
         /// </summary>
         void LayoutBottom()
         {
             float panelHeight = ((RectTransform)transform).rect.height;
             bool simple = mode == Mode.Simple;
+            float slotsPart = slotsVisible ? 12f + SlotsHeight + NoteHeight + 12f + compareRect.rect.height : 0f;
             float y = 12f;
             if (tutorialLine.gameObject.activeSelf)
             {
@@ -649,24 +671,30 @@ namespace Intersection.UI
                 else if (open)
                 {
                     float content = itemCount * itemHeight + (itemCount - 1) * itemSpacing + 4f;
-                    float fixedPart = y + 12f + SlotsHeight + NoteHeight + 12f + compareRect.rect.height;
-                    float max = Mathf.Max(itemHeight * 2 + itemSpacing, panelHeight * maxListShare - fixedPart);
+                    float fixedPart = y + slotsPart;
+                    float byShare = panelHeight * maxListShare - fixedPart;
+                    float byRecord = panelHeight - recordTop - bottomMargin - recordGap - minRecordHeight - fixedPart;
+                    // 기록 영역을 지키되, 목록은 최소 한 줄은 보이게 한다.
+                    float max = Mathf.Max(itemHeight, Mathf.Min(byShare, byRecord));
                     float height = Mathf.Min(content, max);
                     Band(listViewport, y, height);
                     y += height;
                 }
-                y += 12f;
+                y += slotsVisible ? 12f : 0f;
             }
-            // 비교할 기록 슬롯 (라벨 + 두 칸)
-            Band((RectTransform)slotsLabel.transform, y, 18f);
-            Band(slotsRow, y + 24f, SlotHeight);
-            y += SlotsHeight;
-            if (slotsNote.gameObject.activeSelf)
+            if (slotsVisible)
             {
-                Band((RectTransform)slotsNote.transform, y + 4f, 16f);
-                y += NoteHeight;
+                // 비교할 자료 (제목 + 두 칸) → 비교 버튼
+                Band((RectTransform)slotsLabel.transform, y, 18f);
+                Band(slotsRow, y + 24f, SlotHeight);
+                y += SlotsHeight;
+                if (slotsNote.gameObject.activeSelf)
+                {
+                    Band((RectTransform)slotsNote.transform, y + 4f, 16f);
+                    y += NoteHeight;
+                }
+                y += 12f + compareRect.rect.height;
             }
-            y += 12f + compareRect.rect.height;
 
             bottomArea.sizeDelta = new Vector2(bottomArea.sizeDelta.x, y);
             float top = bottomMargin + y + recordGap;

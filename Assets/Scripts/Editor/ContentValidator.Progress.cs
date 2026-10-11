@@ -58,9 +58,11 @@ namespace Intersection.EditorTools
                     }
                     switch (c.kind)
                     {
-                        case ProgressConditionKind.TutorialCompleted:
-                            if (c.tutorial == null)
-                                error($"시작 조건의 튜토리얼이 비어 있습니다(삭제된 대상): {where}", job);
+                        case ProgressConditionKind.Retired:
+                            error($"더 이상 쓰지 않는 시작 조건(예전 단계형 튜토리얼 완료)이 남아 있습니다. RequestViewed·RecordKept 등으로 바꾸세요: {where}", job);
+                            break;
+                        case ProgressConditionKind.RecordKept:
+                            CheckRecordTarget(c.record, "시작 조건(RecordKept)의 record", job.device, where, job, error);
                             break;
                         case ProgressConditionKind.RequestViewed:
                             if (c.request == null)

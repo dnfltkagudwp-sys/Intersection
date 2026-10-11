@@ -360,22 +360,19 @@ namespace Intersection.EditorTools
                     Error($"요청 제목 또는 본문이 비어 있습니다: {Path(q)}", q);
             }
 
-            // 업무 튜토리얼: 대상이 삭제되거나 지원하지 않는 기록이면 오류
-            var stepIds = new Dictionary<string, string>();
+            // 초반 업무 안내: 요청·대상이 삭제되거나 지원하지 않는 기록이면 오류, 화면 문구가 비면 오류
             foreach (var t in tutorials)
             {
                 string where = Path(t);
                 if (t.request == null)
-                    Error($"튜토리얼의 시작 요청이 비어 있습니다(삭제된 대상): {where}", t);
-                foreach (var s in t.steps)
-                {
-                    if (s == null)
-                        continue;
-                    CheckInnerId(s.Id, "튜토리얼 단계", where, t, stepIds, Error);
-                    CheckTutorialTarget(s.target, "target", s, t, where, Error);
-                    if (s.condition == TutorialCondition.Compared)
-                        CheckTutorialTarget(s.target2, "target2", s, t, where, Error);
-                }
+                    Error($"업무 안내의 요청이 비어 있습니다(삭제된 대상): {where}", t);
+                CheckRecordTarget(t.target, "업무 안내의 target", t.request != null ? t.request.device : null, where, t, Error);
+                if (string.IsNullOrWhiteSpace(t.targetLabel))
+                    Error($"업무 안내의 대상 이름(targetLabel)이 비어 있습니다: {where}", t);
+                if (string.IsNullOrWhiteSpace(t.hint))
+                    Error($"업무 안내 문구(hint)가 비어 있습니다: {where}", t);
+                if (t.request != null && t.hintUntil <= t.request.availableFrom)
+                    Error($"업무 안내 종료 단계({t.hintUntil})가 요청 접근 단계({t.request.availableFrom})보다 늦어야 합니다: {where}", t);
             }
 
             // 진행 연동 (UI-07): 작업·효과·도달 가능성·출처와 접근 단계·검색 인덱스·진행 저장 파일
@@ -418,19 +415,20 @@ namespace Intersection.EditorTools
                 seen[id] = where;
         }
 
-        static void CheckTutorialTarget(ContentAsset target, string field, TutorialStep step, TutorialData t, string where,
+        /// <summary>안내·진행 조건이 가리키는 기록: 비어 있지 않고, 분류할 수 있는 사진·기록 에셋이며, 지정한 의뢰의 기록인지.</summary>
+        static void CheckRecordTarget(ContentAsset target, string what, CaseData device, string where, Object ctx,
             System.Action<string, Object> error)
         {
             if (target == null)
             {
-                error($"튜토리얼 단계 '{step.label}'의 {field}가 비어 있습니다(삭제된 대상): {where}", t);
+                error($"{what}이 비어 있습니다(삭제된 대상): {where}", ctx);
                 return;
             }
             var record = RecordRef.ForAsset(target);
-            if (record == null)
-                error($"튜토리얼 단계 '{step.label}'의 {field}는 사진·기록·요청 에셋이어야 합니다: {where}", t);
-            else if (t.request != null && t.request.device != null && record.deviceId != t.request.device.Id)
-                error($"튜토리얼 단계 '{step.label}'의 {field}가 요청과 다른 의뢰의 기록입니다: {where}", t);
+            if (record == null || record.kind == RecordKind.Request)
+                error($"{what}은 사진·기록 에셋이어야 합니다(의뢰 요청은 분류하지 않음): {where}", ctx);
+            else if (device != null && record.deviceId != device.Id)
+                error($"{what}이 다른 의뢰의 기록입니다: {where}", ctx);
         }
 
         /// <summary>에디터에서 만든 플레이어 저장 파일의 참조를 원본 데이터와 대조한다.</summary>

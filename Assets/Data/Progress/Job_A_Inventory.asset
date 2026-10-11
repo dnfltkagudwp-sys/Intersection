@@ -24,10 +24,16 @@ MonoBehaviour:
   shortRunningKey: job.inventory.shortRunning
   shortDoneKey: job.inventory.shortDone
   startConditions:
-  - kind: 0
-    tutorial: {fileID: 11400000, guid: a96429b5f81780a4abcaae535b90bdbd, type: 2}
+  - kind: 1
+    request: {fileID: 11400000, guid: eb75ffbb5bc3dca4198eb7c1e99cd474, type: 2}
+    job: {fileID: 0}
+    record: {fileID: 0}
+    minCount: 1
+    source: 0
+  - kind: 4
     request: {fileID: 0}
     job: {fileID: 0}
+    record: {fileID: 11400000, guid: 80050049d4d1ada4bb6589db291a19a6, type: 2}
     minCount: 1
     source: 0
   onStart:
@@ -51,4 +57,4 @@ MonoBehaviour:
     templateKey: notify.linkedDone
     caseToken: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
   completedExternally: 0
-  authorNote: "\uC2DC\uC81C\uD488 \uC784\uC2DC \uAE30\uC900: T01/T02 \uD29C\uD1A0\uB9AC\uC5BC \uC644\uB8CC \uD6C4 \uC2DC\uC791 \uAC00\uB2A5. \uC2DC\uC791\uD558\uBA74 B \uC758\uB8B0 \uC811\uADFC(P1). B \uC778\uBCA4\uD1A0\uB9AC \uC2DC\uC791 \uC2DC \uC644\uB8CC\uB418\uC5B4 P2."
+  authorNote: "\uC2DC\uC81C\uD488 \uC784\uC2DC \uAE30\uC900: \uC720\uC871 \uC694\uCCAD(T01) \uC5F4\uB78C + \uAC00\uC871\uC0AC\uC9C4(T02)\uC758 \uD604\uC7AC \uBD84\uB958\uAC00 \uBCF4\uC874\uC774\uBA74 \uC2DC\uC791 \uAC00\uB2A5 (\uC21C\uC11C \uBB34\uAD00). \uC2DC\uC791\uD558\uBA74 B \uC758\uB8B0 \uC811\uADFC(P1). B \uC778\uBCA4\uD1A0\uB9AC \uC2DC\uC791 \uC2DC \uC644\uB8CC\uB418\uC5B4 P2."

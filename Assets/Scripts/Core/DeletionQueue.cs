@@ -23,7 +23,8 @@ namespace Intersection.Core
     {
         public static List<DeletionQueueEntry> Compute(WorkStore work, ContentDatabase db, ProgressStage stage, UIText text) =>
             work.All
-                .Where(e => e.classification == Classification.Delete && e.target != null)
+                // 의뢰 요청은 업무 문서라 삭제 대기에 넣지 않는다(구버전 저장에 분류가 남아 있어도).
+                .Where(e => e.classification == Classification.Delete && e.target != null && e.target.kind != RecordKind.Request)
                 .OrderBy(e => e.target.Key, System.StringComparer.Ordinal)
                 .Select(e =>
                 {

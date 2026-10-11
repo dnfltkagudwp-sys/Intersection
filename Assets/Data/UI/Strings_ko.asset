@@ -313,14 +313,12 @@ MonoBehaviour:
     value: "\uC758\uB8B0 \uC694\uCCAD"
   - key: record.prefix.request
     value: REQ
-  - key: tutorial.status.done
-    value: "\uC644\uB8CC"
-  - key: tutorial.status.active
-    value: "\uC9C4\uD589 \uC911"
-  - key: tutorial.status.waiting
-    value: "\uB300\uAE30"
-  - key: tutorial.line
-    value: "{task} \xB7 {index}/{total} \xB7 {step}"
+  - key: guide.state.unclassified
+    value: "\uBBF8\uBD84\uB958"
+  - key: guide.state.keep
+    value: "\uBCF4\uC874 \uC9C0\uC815\uB428"
+  - key: guide.state.delete
+    value: "\uC0AD\uC81C \uD6C4\uBCF4"
   - key: toolbar.pickHint
     value: "\uACE0\uB97C \uAE30\uB85D\uC744 \uB204\uB974\uC138\uC694"
   - key: toolbar.picked
@@ -336,7 +334,7 @@ MonoBehaviour:
   - key: panel.classLabel
     value: "\uCC98\uB9AC \uD6C4\uBCF4"
   - key: panel.workList
-    value: "\uC791\uC5C5 \uAE30\uB85D \xB7 {count}"
+    value: "\uC791\uC5C5 \uAE30\uB85D {count}\uAC74"
   - key: panel.workEmpty
     value: "\uD540\xB7\uBD84\uB958\xB7\uBA54\uBAA8\uD55C \uAE30\uB85D \uC5C6\uC74C"
   - key: panel.workCollapse
@@ -378,7 +376,7 @@ MonoBehaviour:
   - key: panel.compareRemove
     value: "\uBE44\uAD50\uC5D0\uC11C \uBE7C\uAE30"
   - key: panel.compareFull
-    value: "\uBE44\uAD50\uD560 \uAE30\uB85D \uD558\uB098\uB97C \uBA3C\uC800 \uBE7C \uC8FC\uC138\uC694"
+    value: "\uBE44\uAD50\uD560 \uC790\uB8CC \uD558\uB098\uB97C \uBA3C\uC800 \uBE7C \uC8FC\uC138\uC694"
   - key: panel.compareMissing
     value: "\uC6D0\uBCF8\uC744 \uCC3E\uC744 \uC218 \uC5C6\uC5B4 \uC5F4\uAC70\uB098 \uBE44\uAD50\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
   - key: panel.compareDuplicate
@@ -386,7 +384,7 @@ MonoBehaviour:
   - key: panel.compareUnavailable
     value: "\uD604\uC7AC \uC811\uADFC\uD560 \uC218 \uC5C6\uB294 \uC6D0\uBCF8\uC774\uB77C \uC5F4\uAC70\uB098 \uBE44\uAD50\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
   - key: panel.compareSlots
-    value: "\uBE44\uAD50\uD560 \uAE30\uB85D {count}/{total}"
+    value: "\uBE44\uAD50\uD560 \uC790\uB8CC"
   - key: panel.compareSlotEmpty
     value: "\uBE44\uC5B4 \uC788\uC74C"
   - key: panel.compareSlotRemove
@@ -401,18 +399,10 @@ MonoBehaviour:
     value: "{kind} \xB7 {app}"
   - key: compare.app.work
     value: "\uC5C5\uBB34 \uAE30\uB85D"
-  - key: panel.compareSlotsOneMore
-    value: "\uBE44\uAD50\uD560 \uAE30\uB85D {count}/{total} \xB7 \uD558\uB098 \uB354 \uACE0\uB974\uC138\uC694"
-  - key: panel.compareSlotsReady
-    value: "\uBE44\uAD50\uD560 \uAE30\uB85D {count}/{total} \xB7 \uBE44\uAD50\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4"
-  - key: panel.compareSlotsFullNote
-    value: "\uB2E4\uB978 \uAE30\uB85D\uC744 \uB123\uC73C\uB824\uBA74 \uBE44\uAD50\uD560 \uAE30\uB85D \uD558\uB098\uB97C \uBA3C\uC800 \uBE7C \uC8FC\uC138\uC694"
   - key: list.compareAdd
     value: "+ \uBE44\uAD50"
   - key: list.compareOn
     value: "\uBE44\uAD50 \uC911"
-  - key: tutorial.doneLine
-    value: "{task} \uC5C5\uBB34 \uC644\uB8CC"
   - key: panel.fullViewOpen
     value: "전체 보기"
   - key: panel.backToList
@@ -420,9 +410,9 @@ MonoBehaviour:
   - key: fullView.title
     value: "작업 기록"
   - key: fullView.count
-    value: '{total}'
+    value: "{total}건"
   - key: fullView.countFiltered
-    value: '{shown} / {total}'
+    value: "전체 {total}건 중 {shown}건 표시"
   - key: fullView.noMatch
     value: "조건에 맞는 작업 기록 없음"
   - key: fullView.filter.all
@@ -442,7 +432,7 @@ MonoBehaviour:
   - key: dropdown.arrow
     value: "▼"
   - key: toolbar.workRecords
-    value: "작업 기록 {count}"
+    value: "작업 기록 {count}건"
   - key: status.localReady
     value: "로컬 데이터 확인 가능"
   - key: globalSearch.title

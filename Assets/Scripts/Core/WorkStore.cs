@@ -73,6 +73,7 @@ namespace Intersection.Core
     {
         readonly string path;
         readonly Dictionary<string, WorkEntry> entries = new Dictionary<string, WorkEntry>();
+        /// <summary>예전 단계형 튜토리얼의 완료 단계 ID. 판정에는 쓰지 않고, 기존 저장 파일 내용을 잃지 않도록 그대로 읽고 다시 쓴다.</summary>
         readonly HashSet<string> completedSteps = new HashSet<string>();
         readonly List<ComparisonEntry> comparisons = new List<ComparisonEntry>();
         long nextPinOrder = 1;
@@ -145,15 +146,7 @@ namespace Intersection.Core
             Commit();
         }
 
-        // ───────────── 튜토리얼·비교 ─────────────
-
-        public bool IsStepCompleted(string stepId) => completedSteps.Contains(stepId);
-
-        public void CompleteStep(string stepId)
-        {
-            if (completedSteps.Add(stepId))
-                Commit();
-        }
+        // ───────────── 비교 ─────────────
 
         public bool WasCompared(string keyA, string keyB) => comparisons.Any(c => c.IsPair(keyA, keyB));
 
@@ -218,6 +211,9 @@ namespace Intersection.Core
                     // 해석할 수 없는 종류도 버리지 않고 보관한다(누락 상태로 표시되고 다시 저장된다).
                     if (!e.target.IsKnownKind)
                         Debug.LogWarning($"[WorkStore] 알 수 없는 기록 종류의 저장 항목을 누락 상태로 보관합니다: {e.target.Key}");
+                    // 의뢰 요청은 분류하지 않는다. 구버전 저장의 요청 분류만 미분류로 정리하고 핀·메모·열람은 유지한다.
+                    else if (e.target.kind == RecordKind.Request)
+                        e.classification = Classification.Unclassified;
                     entries[e.target.Key] = e;
                 }
                 foreach (var s in data.completedTutorialSteps ?? new List<string>())

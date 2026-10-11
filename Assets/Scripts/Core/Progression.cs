@@ -76,12 +76,13 @@ namespace Intersection.Core
         {
             switch (c.kind)
             {
-                case ProgressConditionKind.TutorialCompleted:
+                case ProgressConditionKind.RecordKept:
                 {
-                    if (c.tutorial == null)
-                        return false;
-                    var steps = TutorialProgress.Evaluate(c.tutorial, work);
-                    return steps.Count > 0 && steps.All(s => s.status == StepStatus.Done);
+                    // 지금 분류만 본다. 한 번 보존했다가 해제했으면 조건을 만족하지 않는다(이미 시작한 작업은 되돌리지 않음).
+                    // 원본이 지금 접근 가능하고 하나로 정해질 때만 인정한다(앱 목록·검색과 같은 RecordAccess 판정).
+                    var target = RecordRef.ForAsset(c.record);
+                    return target != null && work.ClassOf(target.Key) == Classification.Keep
+                           && RecordAccess.Check(target, db, Stage, text) == AccessState.Accessible;
                 }
                 case ProgressConditionKind.RequestViewed:
                     return c.request != null && work.IsViewed(RecordRef.ForRequest(c.request).Key);

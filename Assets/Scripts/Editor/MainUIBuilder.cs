@@ -966,7 +966,8 @@ namespace Intersection.EditorTools
             // 아래 영역 높이는 실행 중 WorkPanelView가 작업 기록 개수·접힘 상태에 맞춰 정한다. 여기 값은 초기값.
             const float bottomH = 160;
 
-            // 위: 머리말(현재 열람·선택한 기록·작업 기록) → 기록 정보 → 핀 → 처리 후보 → 작업메모 (넘치면 스크롤)
+            // 위: 머리말(현재 열람·선택한 기록·작업 기록) → 기록 정보(요청이면 업무 상태 줄 먼저) → 진행 작업(요청만)
+            // → 보조 행동(비교에 추가·원본 열기) → 핀 → 처리 후보(요청 제외) → 작업메모 (넘치면 스크롤)
             var recordArea = Fill(Node("Record", right), pad, 72, pad, 22 + bottomH + 10);
             // 돌아가기(`< 현재 화면` / `< 작업 기록`)는 패널 맨 위 왼쪽에 고정한다. 보일 때만 아래 스크롤 영역을 그만큼 내린다.
             var backButton = PanelBackButton(recordArea, "Back", out var backLabel);
@@ -981,8 +982,20 @@ namespace Intersection.EditorTools
             var info = Node("Info", content);
             Stack(info, 0);
 
-            // 보조 행동: 작업 기록을 띄웠을 때만 `원본 열기` (열 수 없으면 이유 한 줄)
-            // 보조 행동: 원본 열기 · 비교에 추가/빼기 (작업 기록을 띄웠을 때만), 아래에 이유·안내 한 줄
+            // 의뢰 진행 작업 (의뢰 요청을 띄웠을 때만, 어느 경로로 열었든): 시작 버튼 + 업무 상태 한 줄. 작업 수만큼 원형을 복제한다.
+            // 요청 본문·업무 상태 바로 아래에 두어 핀·메모 같은 보조 기능보다 먼저 보이게 한다.
+            var jobs = Node("Jobs", content);
+            Stack(jobs, 8).padding = new RectOffset(0, 0, 4, 0);
+            var jobTemplate = Node("JobTemplate", jobs);
+            Stack(jobTemplate, 4);
+            var jobButtonRt = Node("Button", jobTemplate);
+            jobButtonRt.gameObject.AddComponent<LayoutElement>().preferredHeight = 38;
+            ActionButton(jobButtonRt, out _, null, 14);
+            Text(Node("Status", jobTemplate), theme.regularFont, 13, theme.subText, TextAlignmentOptions.TopLeft, null, true);
+            jobTemplate.gameObject.SetActive(false);
+            jobs.gameObject.SetActive(false);
+
+            // 보조 행동: 비교에 추가/빼기(패널에 보이는 기록, 핀과 무관) · 원본 열기(작업 기록을 띄웠을 때만), 아래에 이유·안내 한 줄
             var tools = Node("RecordTools", content);
             Stack(tools, 4);
             var toolButtons = Node("Buttons", tools);
@@ -998,26 +1011,14 @@ namespace Intersection.EditorTools
             var toolsNote = Text(Node("Note", tools), theme.regularFont, 13, theme.subText, TextAlignmentOptions.TopLeft, null, true);
             tools.gameObject.SetActive(false);
 
-            // 의뢰 진행 작업 (의뢰 요청을 띄웠을 때만): 시작 버튼 + 업무 상태 한 줄. 작업 수만큼 원형을 복제한다.
-            var jobs = Node("Jobs", content);
-            Stack(jobs, 8).padding = new RectOffset(0, 0, 4, 0);
-            var jobTemplate = Node("JobTemplate", jobs);
-            Stack(jobTemplate, 4);
-            var jobButtonRt = Node("Button", jobTemplate);
-            jobButtonRt.gameObject.AddComponent<LayoutElement>().preferredHeight = 38;
-            ActionButton(jobButtonRt, out _, null, 14);
-            Text(Node("Status", jobTemplate), theme.regularFont, 13, theme.subText, TextAlignmentOptions.TopLeft, null, true);
-            jobTemplate.gameObject.SetActive(false);
-            jobs.gameObject.SetActive(false);
-
-            // 기본 행동(넓은 핀 버튼) → 처리 후보 라벨 → 보존·삭제 토글
+            // 핀(넓은 버튼) → 처리 후보 라벨 → 보존·삭제 토글 (의뢰 요청이면 처리 후보 두 줄을 숨긴다)
             var actions = Node("Actions", content);
             Stack(actions, 8).padding = new RectOffset(0, 0, 6, 0);
             var pinRt = Node("Pin", actions);
             pinRt.gameObject.AddComponent<LayoutElement>().preferredHeight = 42;
             var pin = ActionButton(pinRt, out var pinLabel, null, 15, theme.boldFont);
-            Text(Node("ClassLabel", actions), theme.mediumFont, 13, theme.subText, key: "panel.classLabel")
-                .gameObject.AddComponent<LayoutElement>().preferredHeight = 18;
+            var classLabel = Text(Node("ClassLabel", actions), theme.mediumFont, 13, theme.subText, key: "panel.classLabel");
+            classLabel.gameObject.AddComponent<LayoutElement>().preferredHeight = 18;
             var classRow = Node("ClassRow", actions);
             classRow.gameObject.AddComponent<LayoutElement>().preferredHeight = 34;
             var toggles = classRow.gameObject.AddComponent<HorizontalLayoutGroup>();
@@ -1036,7 +1037,7 @@ namespace Intersection.EditorTools
             memoRt.gameObject.AddComponent<LayoutElement>().preferredHeight = 84;
             var memo = BuildMemoField(memoRt);
 
-            // 아래: 업무 진행 한 줄 · 작업 기록(접기/펼치기) · 비교(UI-06 전까지 비활성)
+            // 아래: 초반 업무 안내 한 줄(조건일 때만) · 작업 기록(접기/펼치기) · 비교할 자료(한 칸이라도 찼을 때만)
             var bottom = BottomBand(Node("WorkMemo", right), 22, bottomH, pad, pad);
             Line(bottom, "TopLine", true, 0, true);
             var tutorialRt = TopBand(Node("Tutorial", bottom), 12, 20);
@@ -1053,7 +1054,7 @@ namespace Intersection.EditorTools
             MakeScroll(listArea, out var listContent, 6, new RectOffset(0, 0, 0, 4));
             var listEmpty = Text(TopBand(Node("WorkListEmpty", bottom), 68, 20, 2, 2), theme.regularFont, 14, theme.subText);
 
-            // 비교할 기록 두 칸 (임시 선택). 위치는 실행 중 WorkPanelView가 정한다.
+            // 비교할 자료 두 칸 (임시 선택, 비어 있으면 숨김). 위치는 실행 중 WorkPanelView가 정한다.
             var slotsLabel = Text(TopBand(Node("CompareSlotsLabel", bottom), 200, 18), theme.mediumFont, 13, theme.subText);
             var slotsRow = TopBand(Node("CompareSlots", bottom), 224, 30);
             var slotsNote = Text(TopBand(Node("CompareSlotsNote", bottom), 258, 16, 2, 2), theme.regularFont, 12, theme.subText);
@@ -1133,6 +1134,7 @@ namespace Intersection.EditorTools
             Wire(view, "deleteLabel", deleteLabel);
             Wire(view, "keepOn", keepOn);
             Wire(view, "deleteOn", deleteOn);
+            WireArray(view, "classParts", new Object[] { classLabel.gameObject, classRow.gameObject });
             Wire(view, "memoRoot", memoRoot.gameObject);
             Wire(view, "memoField", memo);
             Wire(view, "recordArea", recordArea);
