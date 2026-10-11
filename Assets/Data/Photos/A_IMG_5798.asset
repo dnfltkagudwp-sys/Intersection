@@ -26,6 +26,6 @@ MonoBehaviour:
   availableFrom: 0
   evidenceRef: T02
   mediaAssetId: 
-  image: {fileID: 0}
+  image: {fileID: 2800000, guid: 771662430af3cde44b749fdf517ed2f0, type: 3}
   integrityKey: integrity.original
   authorNote: "T02 \uAC00\uC871 \uC2DD\uC0AC \uC0AC\uC9C4 (\uC720\uC871 \uBCF4\uC874 \uC694\uCCAD \uB300\uC0C1)"
