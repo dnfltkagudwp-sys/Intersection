@@ -23,5 +23,6 @@ namespace Intersection.Data
         public List<WorkRequestData> requests = new List<WorkRequestData>();
         public List<TutorialData> tutorials = new List<TutorialData>();
         public List<ProgressJobData> jobs = new List<ProgressJobData>();
+        public List<ReviewBatchData> reviews = new List<ReviewBatchData>();
     }
 }

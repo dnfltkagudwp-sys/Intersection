@@ -28,18 +28,21 @@ MonoBehaviour:
     request: {fileID: 11400000, guid: eb75ffbb5bc3dca4198eb7c1e99cd474, type: 2}
     job: {fileID: 0}
     record: {fileID: 0}
+    batch: {fileID: 0}
     minCount: 1
     source: 0
   - kind: 5
     request: {fileID: 0}
     job: {fileID: 0}
     record: {fileID: 11400000, guid: 80050049d4d1ada4bb6589db291a19a6, type: 2}
+    batch: {fileID: 0}
     minCount: 1
     source: 0
   - kind: 4
     request: {fileID: 0}
     job: {fileID: 0}
     record: {fileID: 11400000, guid: 80050049d4d1ada4bb6589db291a19a6, type: 2}
+    batch: {fileID: 0}
     minCount: 1
     source: 0
   onStart:
@@ -62,5 +65,11 @@ MonoBehaviour:
     job: {fileID: 0}
     templateKey: notify.linkedDone
     caseToken: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+  - id: b8b6a1cca3d348919be61bd92afd5eac
+    kind: 3
+    stage: 0
+    job: {fileID: 0}
+    templateKey: notify.linkedDone
+    caseToken: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
   completedExternally: 0
-  authorNote: "\uC815\uC2DD \uAE30\uC900(GameDesign \uC5C5\uBB34 \uC9C4\uD589 \uC870\uAC74 P0): T01 \uC720\uC871 \uC694\uCCAD \uC5F4\uB78C + T02 \uAC00\uC871\uC0AC\uC9C4\uC744 \uD55C \uC7A5 \uBCF4\uAE30\uB85C \uC2E4\uC81C \uC5F4\uB78C + T02\uC758 \uD604\uC7AC \uBD84\uB958\uAC00 \uBCF4\uC874 \uD6C4\uBCF4. \uC138 \uC870\uAC74 \uC21C\uC11C \uBB34\uAD00. \uC2DC\uC791\uD558\uBA74 B \uC758\uB8B0 \uC811\uADFC(P1). \uC2DC\uC791 \uB4A4 T02 \uBD84\uB958\uB97C \uBC14\uAFD4\uB3C4 \uB418\uB3CC\uB9AC\uC9C0 \uC54A\uC74C. B \uC778\uBCA4\uD1A0\uB9AC \uC2DC\uC791 \uC2DC \uC644\uB8CC\uB418\uC5B4 P2\uC640 \uC5F0\uB3D9 \uC644\uB8CC \uC54C\uB9BC."
+  authorNote: "\uC815\uC2DD \uAE30\uC900(GameDesign \uC5C5\uBB34 \uC9C4\uD589 \uC870\uAC74 P0): T01 \uC720\uC871 \uC694\uCCAD \uC5F4\uB78C + T02 \uAC00\uC871\uC0AC\uC9C4\uC744 \uD55C \uC7A5 \uBCF4\uAE30\uB85C \uC2E4\uC81C \uC5F4\uB78C + T02\uC758 \uD604\uC7AC \uBD84\uB958\uAC00 \uBCF4\uC874 \uD6C4\uBCF4. \uC138 \uC870\uAC74 \uC21C\uC11C \uBB34\uAD00. \uC2DC\uC791\uD558\uBA74 B \uC758\uB8B0 \uC811\uADFC(P1). \uC2DC\uC791 \uB4A4 T02 \uBD84\uB958\uB97C \uBC14\uAFD4\uB3C4 \uB418\uB3CC\uB9AC\uC9C0 \uC54A\uC74C. B \uC778\uBCA4\uD1A0\uB9AC \uC2DC\uC791 \uC2DC \uC644\uB8CC\uB418\uC5B4 P2\uC640 \uC5F0\uB3D9 \uC644\uB8CC \uC54C\uB9BC\xB7\uC5F0\uB3D9 \uACB0\uACFC \uC694\uC57D(\uD55C \uBC88 \uC790\uB3D9 \uD45C\uC2DC, \uC0C1\uB2E8 \uC644\uB8CC \uC0C1\uD0DC\uB85C \uB2E4\uC2DC \uC5F4\uAE30)."

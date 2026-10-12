@@ -875,6 +875,9 @@ namespace Intersection.EditorTools
             // 업무 알림 목록은 화면 맨 위에 그린다.
             Wire(shell, "searchView", searchView);
             Wire(shell, "notificationPanel", BuildNotifications(root, topH));
+            // 연동 결과 요약은 검색처럼 중앙을 덮는 PC 화면, 검토 팝오버는 상단 업무 상태 컨트롤 바로 아래에 화면 맨 위로 그린다.
+            Wire(shell, "summaryView", BuildSyncSummary(center));
+            Wire(shell, "reviewPopover", BuildReviewPopover(root, topH));
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -913,10 +916,15 @@ namespace Intersection.EditorTools
             var badgeLabel = Text(Fill(Node("Label", badge)), theme.boldFont, 11, theme.panel, TextAlignmentOptions.Center);
             badge.gameObject.SetActive(false);
 
-            // 현재 의뢰의 업무 상태와 진행 표시 (비율을 모르면 오가는 띠, 끝났으면 가득 찬 막대)
-            var index = Place(Node("IndexStatus", bar), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-600, 0), new Vector2(300, 40));
-            var indexLabel = Text(TopBand(Node("Label", index), 2, 20), theme.regularFont, 13, theme.subText, TextAlignmentOptions.MidlineRight);
-            var track = Place(Node("Track", index), new Vector2(1, 0), new Vector2(1, 0), new Vector2(0, 6), new Vector2(160, 4));
+            // 현재 의뢰의 업무 상태 컨트롤과 진행 표시 (비율을 알면 그 비율, 모르면 오가는 띠, 끝났으면 가득 찬 막대).
+            // 누를 수 있는 상태(요청 확인·검토 진행·연동 시작·연동 결과)면 버튼이 되며, 너비는 실행 중 문구에 맞춰 오른쪽 기준으로 정한다.
+            var index = Place(Node("IndexStatus", bar), new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-600, 0), new Vector2(300, 44));
+            var statusRt = Place(Node("Button", index), new Vector2(1, 0.5f), new Vector2(1, 0.5f), Vector2.zero, new Vector2(300, 44));
+            var statusBg = Rounded(statusRt, Color.clear, 8f);
+            statusBg.raycastTarget = true;
+            var statusButton = MakeButton(statusRt, statusBg, Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            var indexLabel = Text(TopBand(Node("Label", statusRt), 6, 20, 12, 12), theme.regularFont, 13, theme.subText, TextAlignmentOptions.MidlineRight);
+            var track = Place(Node("Track", statusRt), new Vector2(1, 0), new Vector2(1, 0), new Vector2(-12, 9), new Vector2(160, 4));
             Rounded(track, theme.border, 2f);
             track.gameObject.AddComponent<RectMask2D>();
             var fill = Img(Fill(Node("Fill", track)), theme.accent, theme.roundedSprite);
@@ -931,6 +939,10 @@ namespace Intersection.EditorTools
             Wire(view, "indexStatus", indexLabel);
             Wire(view, "indexFill", fill);
             Wire(view, "indeterminate", sweep);
+            Wire(view, "statusButton", statusButton);
+            Wire(view, "statusBackground", statusBg);
+            Wire(view, "statusRect", statusRt);
+            Wire(view, "statusTrack", track);
             Wire(view, "searchField", searchField);
             Wire(view, "searchGroup", searchGroup);
             Wire(view, "notificationsButton", notifyButton);
@@ -969,7 +981,7 @@ namespace Intersection.EditorTools
             // 아래 영역 높이는 실행 중 WorkPanelView가 작업 기록 개수·접힘 상태에 맞춰 정한다. 여기 값은 초기값.
             const float bottomH = 160;
 
-            // 위: 머리말(현재 열람·선택한 기록·작업 기록) → 기록 정보(요청이면 업무 상태 줄 먼저) → 진행 작업(요청만)
+            // 위: 머리말(현재 열람·선택한 기록·작업 기록) → 기록 정보(요청이면 업무 상태 줄 먼저)
             // → 보조 행동(비교에 추가·원본 열기) → 핀 → 처리 후보(요청 제외) → 작업메모 (넘치면 스크롤)
             var recordArea = Fill(Node("Record", right), pad, 72, pad, 22 + bottomH + 10);
             // 돌아가기(`< 현재 화면` / `< 작업 기록`)는 패널 맨 위 왼쪽에 고정한다. 보일 때만 아래 스크롤 영역을 그만큼 내린다.
@@ -984,19 +996,6 @@ namespace Intersection.EditorTools
             var body = Text(Node("RecordBody", content), theme.regularFont, 14, theme.text, TextAlignmentOptions.TopLeft, null, true);
             var info = Node("Info", content);
             Stack(info, 0);
-
-            // 의뢰 진행 작업 (의뢰 요청을 띄웠을 때만, 어느 경로로 열었든): 시작 버튼 + 업무 상태 한 줄. 작업 수만큼 원형을 복제한다.
-            // 요청 본문·업무 상태 바로 아래에 두어 핀·메모 같은 보조 기능보다 먼저 보이게 한다.
-            var jobs = Node("Jobs", content);
-            Stack(jobs, 8).padding = new RectOffset(0, 0, 4, 0);
-            var jobTemplate = Node("JobTemplate", jobs);
-            Stack(jobTemplate, 4);
-            var jobButtonRt = Node("Button", jobTemplate);
-            jobButtonRt.gameObject.AddComponent<LayoutElement>().preferredHeight = 38;
-            ActionButton(jobButtonRt, out _, null, 14);
-            Text(Node("Status", jobTemplate), theme.regularFont, 13, theme.subText, TextAlignmentOptions.TopLeft, null, true);
-            jobTemplate.gameObject.SetActive(false);
-            jobs.gameObject.SetActive(false);
 
             // 보조 행동: 비교에 추가/빼기(패널에 보이는 기록, 핀과 무관) · 원본 열기(작업 기록을 띄웠을 때만), 아래에 이유·안내 한 줄
             var tools = Node("RecordTools", content);
@@ -1088,8 +1087,6 @@ namespace Intersection.EditorTools
             Wire(view, "compareToggle", compareToggle);
             Wire(view, "compareToggleLabel", compareToggleLabel);
             Wire(view, "toolsNote", toolsNote);
-            Wire(view, "jobsRoot", jobs);
-            Wire(view, "jobTemplate", jobTemplate.gameObject);
             Wire(view, "actionsRoot", actions.gameObject);
             Wire(view, "pinButton", pin);
             Wire(view, "pinLabel", pinLabel);
@@ -1478,6 +1475,99 @@ namespace Intersection.EditorTools
             Wire(view, "emptyLabel", empty);
             Wire(view, "rowPrefab", BuildNotificationRow());
             panelRoot.gameObject.SetActive(false);
+            return view;
+        }
+
+        /// <summary>
+        /// 검토 진행 팝오버. 상단 업무 상태 컨트롤 바로 아래(오른쪽 끝을 맞춤)에 열리며, 바깥을 누르면 닫힌다.
+        /// 분류 행(이름 · 확인 수량)과 `검토 계속`. 카드 높이는 실행 중 분류 수에 맞춘다.
+        /// </summary>
+        static ReviewPopoverView BuildReviewPopover(RectTransform root, float topH)
+        {
+            var panelRoot = Fill(Node("ReviewPopover", root));
+            var view = panelRoot.gameObject.AddComponent<ReviewPopoverView>();
+            var blocker = MakeButton(panelRoot, Img(panelRoot, Color.clear), Color.white, Color.white);
+            var card = Place(Node("Card", panelRoot), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-600, -(topH + 4)), new Vector2(320, 300));
+            Rounded(card, theme.panelRaised, 10f).raycastTarget = true;
+            Img(Fill(Node("Outline", card)), theme.border, theme.selectionOutline, 10f).raycastTarget = false;
+            var heading = Text(TopBand(Node("Title", card), 16, 24, 18, 18), theme.boldFont, 16, theme.text);
+            var body = Text(TopBand(Node("Body", card), 46, 22, 18, 18), theme.regularFont, 13, theme.subText);
+            var list = Fill(Node("List", card), 12, 52, 12, 58);
+            var layout = Stack(list, 4);
+            layout.childAlignment = TextAnchor.UpperLeft;
+
+            var row = Node("RowTemplate", list);
+            row.gameObject.AddComponent<LayoutElement>().preferredHeight = 40;
+            var rowBg = Rounded(row, theme.panel, 8f);
+            MakeButton(row, rowBg, Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            Text(Fill(Node("Label", row), 14, 0, 70, 0), theme.mediumFont, 14, theme.text, TextAlignmentOptions.MidlineLeft).richText = false;
+            Text(Fill(Node("Count", row), 0, 0, 14, 0), theme.monoFont, 13, theme.accent, TextAlignmentOptions.MidlineRight).richText = false;
+            row.gameObject.SetActive(false);
+
+            var cont = BottomBand(Node("Continue", card), 12, 38, 12, 12);
+            var contButton = MakeButton(cont, Rounded(cont, theme.accentSoft, 8f), Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            var contLabel = Text(Fill(Node("Label", cont)), theme.mediumFont, 14, theme.accent, TextAlignmentOptions.Center);
+
+            Wire(view, "card", card);
+            Wire(view, "heading", heading);
+            Wire(view, "body", body);
+            Wire(view, "blocker", blocker);
+            Wire(view, "listRoot", list);
+            Wire(view, "rowTemplate", row.gameObject);
+            Wire(view, "continueButton", contButton);
+            Wire(view, "continueLabel", contLabel);
+            panelRoot.gameObject.SetActive(false);
+            return view;
+        }
+
+        /// <summary>
+        /// 연동 결과 요약. 검색·작업함·비교처럼 중앙(휴대전화 자리)을 덮는 PC 업무 화면 하나.
+        /// 제목(의뢰 표시명 — 연동 데이터 확인 완료) · 새로 인덱싱된 자료 수 · 앱별 분류 행 · `연동 결과 보기`/`나중에 확인`.
+        /// </summary>
+        static SyncSummaryView BuildSyncSummary(RectTransform center)
+        {
+            var root = Fill(Node("SyncSummary", center));
+            Img(root, theme.stage).raycastTarget = true;
+            var view = root.gameObject.AddComponent<SyncSummaryView>();
+            var header = TopBand(Node("Header", root), 0, 60);
+            Line(header, "BottomLine", true, 0, false);
+            var heading = Text(Fill(Node("Label", header), 24, 0, 24, 0), theme.boldFont, 17, theme.text);
+
+            var card = Fill(Node("Card", root), 32, 88, 32, 96);
+            var title = Text(TopBand(Node("Title", card), 0, 30), theme.boldFont, 21, theme.text);
+            title.richText = false;
+            var count = Text(TopBand(Node("Count", card), 38, 22), theme.regularFont, 15, theme.subText);
+            var list = Fill(Node("List", card), 0, 80, 0, 0);
+            var layout = Stack(list, 6);
+            layout.childAlignment = TextAnchor.UpperLeft;
+            var row = Node("RowTemplate", list);
+            row.gameObject.AddComponent<LayoutElement>().preferredHeight = 52;
+            var rowBg = Rounded(row, theme.panel, 8f);
+            MakeButton(row, rowBg, Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            Text(Fill(Node("Label", row), 18, 0, 120, 0), theme.mediumFont, 15, theme.text, TextAlignmentOptions.MidlineLeft).richText = false;
+            Text(Fill(Node("Count", row), 0, 0, 18, 0), theme.monoFont, 14, theme.accent, TextAlignmentOptions.MidlineRight).richText = false;
+            row.gameObject.SetActive(false);
+            var empty = Text(TopBand(Node("Empty", card), 84, 22), theme.regularFont, 15, theme.subText);
+
+            // 하단 동작: `나중에 확인`(휴대전화로 돌아감) · `연동 결과 보기`(첫 분류의 앱 목록)
+            var later = Place(Node("Later", root), new Vector2(1, 0), new Vector2(1, 0), new Vector2(-32, 28), new Vector2(140, 42));
+            var laterButton = MakeButton(later, Rounded(later, theme.panelRaised, 8f), Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            var laterLabel = Text(Fill(Node("Label", later)), theme.mediumFont, 15, theme.text, TextAlignmentOptions.Center);
+            var open = Place(Node("Open", root), new Vector2(1, 0), new Vector2(1, 0), new Vector2(-184, 28), new Vector2(160, 42));
+            var openButton = MakeButton(open, Rounded(open, theme.accentSoft, 8f), Color.white, new Color(1.25f, 1.25f, 1.25f, 1f));
+            var openLabel = Text(Fill(Node("Label", open)), theme.boldFont, 15, theme.accent, TextAlignmentOptions.Center);
+
+            Wire(view, "heading", heading);
+            Wire(view, "title", title);
+            Wire(view, "countLabel", count);
+            Wire(view, "listRoot", list);
+            Wire(view, "rowTemplate", row.gameObject);
+            Wire(view, "emptyLabel", empty);
+            Wire(view, "openButton", openButton);
+            Wire(view, "openLabel", openLabel);
+            Wire(view, "laterButton", laterButton);
+            Wire(view, "laterLabel", laterLabel);
+            root.gameObject.SetActive(false);
             return view;
         }
 

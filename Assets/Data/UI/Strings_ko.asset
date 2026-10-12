@@ -476,15 +476,15 @@ MonoBehaviour:
   - key: panel.unavailableBody
     value: "현재 접근 단계에서 열 수 없는 기록입니다. 저장된 업무 상태는 그대로 보관됩니다."
   - key: job.inventory.action
-    value: "클라우드·연동 계정 인벤토리 생성"
+    value: "연동 데이터 조회 시작"
   - key: job.inventory.notReady
     value: "로컬 자료 검토 중"
   - key: job.inventory.running
-    value: "클라우드·연동 계정 인벤토리 생성 중"
+    value: "연동 데이터 인덱싱 중"
   - key: job.inventory.done
-    value: "연동 데이터 확인 가능"
+    value: "연동 데이터 확인 완료"
   - key: job.inventory.shortRunning
-    value: "연동 인벤토리 생성 중"
+    value: "연동 인덱싱 중"
   - key: job.inventory.shortDone
     value: "로컬 · 연동"
   - key: job.recovery.action
@@ -507,3 +507,51 @@ MonoBehaviour:
     value: "{caseDisplayName} 의뢰 — 복구 데이터 확인 완료"
   - key: notify.unclassified
     value: "보존/삭제 미분류 항목 {count}개"
+  - key: top.requestNeeded
+    value: "유족 요청 확인 필요"
+  - key: top.guideState
+    value: "{target} · {state}"
+  - key: top.review
+    value: "{title} {done}/{total}"
+  - key: review.groupCount
+    value: "{done}/{total}"
+  - key: review.continue
+    value: "검토 계속"
+  - key: review.local.title
+    value: "로컬 1차 검토"
+  - key: review.local.done
+    value: "로컬 1차 검토 완료"
+  - key: review.local.doneBody
+    value: "기기 내 지정 자료 {total}건을 확인했습니다."
+  - key: review.group.recentPhotos
+    value: "최근 사진"
+  - key: review.group.recentMessages
+    value: "최근 메시지"
+  - key: review.group.recentSearches
+    value: "최근 검색 기록"
+  - key: review.group.accountSettings
+    value: "계정 설정"
+  - key: summary.heading
+    value: "연동 결과 요약"
+  - key: summary.count
+    value: "새로 인덱싱된 자료 {count}건"
+  - key: summary.rowCount
+    value: "{count}건"
+  - key: summary.open
+    value: "연동 결과 보기"
+  - key: summary.later
+    value: "나중에 확인"
+  - key: summary.empty
+    value: "새로 접근할 수 있게 된 자료가 없습니다."
+  - key: summary.app.messages
+    value: "메시지·첨부"
+  - key: summary.app.photos
+    value: "사진·스크린샷"
+  - key: summary.app.browser
+    value: "브라우저 기록"
+  - key: summary.app.maps
+    value: "지도 기록"
+  - key: summary.app.files
+    value: "파일"
+  - key: summary.app.settings
+    value: "설정 기록"

@@ -80,6 +80,8 @@ namespace Intersection.UI
             // 검색·작업함·비교는 중앙에 하나만 보인다. 휴대전화 상태와 우측 현재 열람은 그대로 둔다.
             CloseSearch();
             CloseNotifications();
+            CloseReviewPopover();
+            CloseSummary();
             SaveScroll();
             compareWarnKey = null;
             workbench.Open(CloseWorkbench);
@@ -98,10 +100,12 @@ namespace Intersection.UI
             RefreshWorkPanel();
         }
 
-        /// <summary>좌측 의뢰·앱·요청을 누르면 중앙의 검색·작업함을 닫고 휴대전화 화면으로 돌아간다(비교는 좌측을 막으므로 해당 없음).</summary>
+        /// <summary>좌측 의뢰·앱·요청을 누르면 중앙의 검색·작업함·연동 결과 요약을 닫고 휴대전화 화면으로 돌아간다(비교는 좌측을 막으므로 해당 없음).</summary>
         void CloseCenterScreens()
         {
             CloseSearch();
+            CloseReviewPopover();
+            CloseSummary();
             if (WorkbenchOpen)
             {
                 workbench.Close();

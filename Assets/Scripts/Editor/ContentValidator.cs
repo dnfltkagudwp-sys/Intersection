@@ -64,10 +64,11 @@ namespace Intersection.EditorTools
             var requests = Find<WorkRequestData>();
             var tutorials = Find<TutorialData>();
             var jobs = Find<ProgressJobData>();
+            var reviews = Find<ReviewBatchData>();
 
             // 에셋 ID
             var allAssets = people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums)
-                .Concat(records).Concat(folders).Concat(requests).Concat(tutorials).Concat(jobs).ToList();
+                .Concat(records).Concat(folders).Concat(requests).Concat(tutorials).Concat(jobs).Concat(reviews).ToList();
             foreach (var a in allAssets.Where(a => string.IsNullOrEmpty(a.Id)))
                 Error($"ID가 비어 있습니다: {Path(a)}", a);
             foreach (var g in allAssets.Where(a => !string.IsNullOrEmpty(a.Id)).GroupBy(a => a.Id).Where(g => g.Count() > 1))
@@ -392,7 +393,7 @@ namespace Intersection.EditorTools
 
             // 진행 연동 (UI-07): 작업·효과·도달 가능성·출처와 접근 단계·검색 인덱스·진행 저장 파일
             if (config != null && config.database != null)
-                CheckProgress(config, jobs, cases, threads, photos, records, folders, requests, Error, Warn, CheckKey);
+                CheckProgress(config, jobs, reviews, cases, threads, photos, records, folders, requests, Error, Warn, CheckKey);
 
             // 플레이어 저장 파일: 원본에서 찾을 수 없는 참조 (실행 중에는 누락 상태로 표시되며 다른 기록으로 대체되지 않는다)
             if (config != null && config.database != null)
@@ -404,12 +405,14 @@ namespace Intersection.EditorTools
                 if (!people.All(db.people.Contains) || !cases.All(db.cases.Contains) || !threads.All(db.threads.Contains)
                     || !photos.All(db.photos.Contains) || !albums.All(db.albums.Contains)
                     || !browser.All(db.browser.Contains) || !maps.All(db.maps.Contains) || !files.All(db.files.Contains)
-                    || !folders.All(db.folders.Contains) || !settings.All(db.settings.Contains))
+                    || !folders.All(db.folders.Contains) || !settings.All(db.settings.Contains)
+                    || !jobs.All(db.jobs.Contains) || !reviews.All(db.reviews.Contains))
                     Warn("ContentDatabase가 최신이 아닙니다. Intersection/Content/Refresh Content Database를 실행하세요.", db);
                 if (db.people.Any(p => p == null) || db.cases.Any(c => c == null) || db.threads.Any(t => t == null)
                     || db.photos.Any(p => p == null) || db.albums.Any(a => a == null)
                     || db.browser.Any(x => x == null) || db.maps.Any(x => x == null) || db.files.Any(x => x == null)
-                    || db.folders.Any(x => x == null) || db.settings.Any(x => x == null))
+                    || db.folders.Any(x => x == null) || db.settings.Any(x => x == null)
+                    || db.jobs.Any(x => x == null) || db.reviews.Any(x => x == null))
                     Error("ContentDatabase에 삭제된 에셋 참조가 남아 있습니다.", db);
             }
 

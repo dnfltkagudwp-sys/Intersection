@@ -31,6 +31,22 @@ namespace Intersection.Core
         public long seq;
     }
 
+    /// <summary>
+    /// 작업 완료로 한 번 만들어진 연동 결과 요약. 요약 내용(수량·분류)은 저장하지 않고 표시할 때 현재 데이터에서 계산하며,
+    /// 만들어졌다는 사실과 플레이어가 확인(닫음)했는지만 저장한다. 확인 전이면 다음 실행 때 다시 자동으로 보인다.
+    /// </summary>
+    [Serializable]
+    public class SummaryEntry
+    {
+        /// <summary>요약을 만든 진행 효과의 불변 ID.</summary>
+        public string effectId;
+        /// <summary>요약 대상 작업(완료된 작업)의 불변 ID.</summary>
+        public string jobId;
+        public string caseId;
+        public bool seen;
+        public long seq;
+    }
+
     /// <summary>에디터 검수용 실패 주입 지점 (ProgressStore.Fault).</summary>
     public static class ProgressFaultPoint
     {
@@ -43,6 +59,8 @@ namespace Intersection.Core
         /// <summary>알림을 만들기 직전·직후 (인자는 효과 ID).</summary>
         public const string NotifyBefore = "notify-before";
         public const string NotifyAfter = "notify-after";
+        /// <summary>연동 결과 요약을 만든 직후 (인자는 효과 ID).</summary>
+        public const string Summary = "summary";
         /// <summary>임시 파일을 다 쓴 뒤 저장 파일과 교체하기 직전.</summary>
         public const string Replace = "replace";
     }
@@ -63,6 +81,8 @@ namespace Intersection.Core
         public List<JobStateEntry> jobs = new List<JobStateEntry>();
         public List<string> firedEffects = new List<string>();
         public List<NotificationEntry> notifications = new List<NotificationEntry>();
+        /// <summary>예전 저장 파일에는 없다(빈 목록으로 읽음, 형식 version 그대로).</summary>
+        public List<SummaryEntry> summaries = new List<SummaryEntry>();
     }
 
     /// <summary>
@@ -78,6 +98,7 @@ namespace Intersection.Core
         readonly Dictionary<string, JobState> jobs = new Dictionary<string, JobState>();
         readonly HashSet<string> fired = new HashSet<string>();
         readonly List<NotificationEntry> notifications = new List<NotificationEntry>();
+        readonly List<SummaryEntry> summaries = new List<SummaryEntry>();
         long nextSeq = 1;
         int transactionDepth;
         bool dirty;
@@ -109,6 +130,7 @@ namespace Intersection.Core
         public IEnumerable<string> JobIds => jobs.Keys;
         public IReadOnlyList<NotificationEntry> Notifications => notifications;
         public int UnreadCount => notifications.Count(n => !n.read);
+        public IReadOnlyList<SummaryEntry> Summaries => summaries;
 
         public JobState StateOf(string jobId) => jobId != null && jobs.TryGetValue(jobId, out var s) ? s : JobState.NotStarted;
 
@@ -150,6 +172,25 @@ namespace Intersection.Core
             return true;
         }
 
+        /// <summary>진행 효과가 처음 실행될 때만 연동 결과 요약을 만든다. 이미 실행된 효과면 false.</summary>
+        public bool AddSummary(string effectId, string jobId, string caseId)
+        {
+            if (string.IsNullOrEmpty(effectId) || !fired.Add(effectId))
+                return false;
+            summaries.Add(new SummaryEntry { effectId = effectId, jobId = jobId, caseId = caseId, seq = nextSeq++ });
+            Save();
+            return true;
+        }
+
+        /// <summary>플레이어가 요약을 확인(닫음)했다. 다음 실행부터 자동으로 보이지 않는다.</summary>
+        public void MarkSummarySeen(SummaryEntry entry)
+        {
+            if (entry == null || entry.seen)
+                return;
+            entry.seen = true;
+            Save();
+        }
+
         public void MarkRead(NotificationEntry entry)
         {
             if (entry == null || entry.read)
@@ -174,6 +215,7 @@ namespace Intersection.Core
             jobs.Clear();
             fired.Clear();
             notifications.Clear();
+            summaries.Clear();
             nextSeq = 1;
             Save();
         }
@@ -185,6 +227,7 @@ namespace Intersection.Core
             public Dictionary<string, JobState> jobs;
             public HashSet<string> fired;
             public List<NotificationEntry> notifications;
+            public List<SummaryEntry> summaries;
         }
 
         Snapshot Capture() => new Snapshot
@@ -196,6 +239,10 @@ namespace Intersection.Core
             notifications = notifications.Select(n => new NotificationEntry
             {
                 effectId = n.effectId, templateKey = n.templateKey, caseId = n.caseId, count = n.count, read = n.read, seq = n.seq,
+            }).ToList(),
+            summaries = summaries.Select(s => new SummaryEntry
+            {
+                effectId = s.effectId, jobId = s.jobId, caseId = s.caseId, seen = s.seen, seq = s.seq,
             }).ToList(),
         };
 
@@ -210,6 +257,8 @@ namespace Intersection.Core
             fired.UnionWith(s.fired);
             notifications.Clear();
             notifications.AddRange(s.notifications);
+            summaries.Clear();
+            summaries.AddRange(s.summaries);
         }
 
         /// <summary>
@@ -274,6 +323,7 @@ namespace Intersection.Core
                 jobs = jobs.OrderBy(j => j.Key).Select(j => new JobStateEntry { jobId = j.Key, state = j.Value.ToString() }).ToList(),
                 firedEffects = fired.OrderBy(f => f).ToList(),
                 notifications = notifications.ToList(),
+                summaries = summaries.ToList(),
             };
             string tmp = path + ".tmp";
             try
@@ -331,7 +381,15 @@ namespace Intersection.Core
                     fired.Add(n.effectId);
                     notifications.Add(n);
                 }
+                foreach (var s in data.summaries ?? new List<SummaryEntry>())
+                {
+                    if (s == null || string.IsNullOrEmpty(s.effectId) || summaries.Any(x => x.effectId == s.effectId))
+                        continue;
+                    fired.Add(s.effectId);
+                    summaries.Add(s);
+                }
                 nextSeq = Math.Max(nextSeq, notifications.Count == 0 ? 1 : notifications.Max(n => n.seq) + 1);
+                nextSeq = Math.Max(nextSeq, summaries.Count == 0 ? 1 : summaries.Max(s => s.seq) + 1);
             }
             catch (Exception ex)
             {
@@ -342,6 +400,7 @@ namespace Intersection.Core
                 jobs.Clear();
                 fired.Clear();
                 notifications.Clear();
+                summaries.Clear();
                 nextSeq = 1;
                 Debug.LogError($"[ProgressStore] 진행 저장 파일을 읽지 못해 시작 단계부터 시작합니다. 원본은 {backup}에 보관했습니다.\n{ex.Message}");
             }

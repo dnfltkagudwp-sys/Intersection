@@ -19,9 +19,18 @@ namespace Intersection.EditorTools
         /// 이 작업을 시작하기 전에 진행 구조상 도달할 수 있는 단계에서 열 수 있어야 한다.
         /// </summary>
         static void CheckViewTarget(ProgressJobData job, ContentAsset target, List<ProgressJobData> jobs, List<ThreadData> threads,
-            List<PhotoData> photos, List<DeviceRecord> records, ProgressStage startStage, string where, Action<string, Object> error)
+            List<PhotoData> photos, List<DeviceRecord> records, ProgressStage startStage, string where, Action<string, Object> error) =>
+            CheckOpenTarget(job.device, target, "시작 조건(RecordViewed)의 record", job, StageReachableBefore(job, jobs, startStage),
+                threads, photos, records, where, error);
+
+        /// <summary>
+        /// 실제로 열어야 하는 대상(RecordViewed·검토 묶음): 사진·기록·대화방 에셋이고, 지정한 의뢰 기기에 있으며, 불변 ID가 하나로 정해지고,
+        /// before 단계까지 진행 구조상 도달할 수 있는 단계에서 열 수 있어야 한다.
+        /// </summary>
+        static void CheckOpenTarget(CaseData device, ContentAsset target, string what, Object ctx, ProgressStage before,
+            List<ThreadData> threads, List<PhotoData> photos, List<DeviceRecord> records, string where, Action<string, Object> error)
         {
-            const string what = "시작 조건(RecordViewed)의 record";
+            var job = ctx;
             if (target == null)
             {
                 error($"{what}이 비어 있습니다(삭제된 대상): {where}", job);
@@ -40,7 +49,7 @@ namespace Intersection.EditorTools
                 if (same > 1)
                     error($"{what}의 불변 ID {target.Id}가 여러 원본에 있어 하나로 정할 수 없습니다: {where}", job);
             }
-            if (job.device == null)
+            if (device == null)
                 return;
 
             ProgressStage availableFrom;
@@ -48,7 +57,7 @@ namespace Intersection.EditorTools
             {
                 case ThreadData t:
                 {
-                    var state = t.StateFor(job.device);
+                    var state = t.StateFor(device);
                     if (state == null)
                     {
                         error($"{what} 대화방이 이 작업 의뢰의 기기에서 보이지 않습니다: {where}", job);
@@ -58,7 +67,7 @@ namespace Intersection.EditorTools
                     break;
                 }
                 case PhotoData p:
-                    if (p.device != job.device)
+                    if (p.device != device)
                     {
                         error($"{what}이 다른 의뢰의 기록입니다: {where}", job);
                         return;
@@ -68,7 +77,7 @@ namespace Intersection.EditorTools
                 default:
                 {
                     var r = (DeviceRecord)target;
-                    if (r.device != job.device)
+                    if (r.device != device)
                     {
                         error($"{what}이 다른 의뢰의 기록입니다: {where}", job);
                         return;
@@ -77,9 +86,8 @@ namespace Intersection.EditorTools
                     break;
                 }
             }
-            if (job.device.availableFrom > availableFrom)
-                availableFrom = job.device.availableFrom;
-            var before = StageReachableBefore(job, jobs, startStage);
+            if (device.availableFrom > availableFrom)
+                availableFrom = device.availableFrom;
             if (availableFrom > before)
                 error($"{what}은 {availableFrom}부터 열 수 있는데, 이 작업을 시작하기 전에 도달할 수 있는 단계는 {before}까지입니다: {where}", job);
         }
@@ -128,7 +136,7 @@ namespace Intersection.EditorTools
             return stage;
         }
 
-        static void CheckProgress(GameConfig config, List<ProgressJobData> jobs, List<CaseData> cases, List<ThreadData> threads,
+        static void CheckProgress(GameConfig config, List<ProgressJobData> jobs, List<ReviewBatchData> reviews, List<CaseData> cases, List<ThreadData> threads,
             List<PhotoData> photos, List<DeviceRecord> records, List<FolderData> folders, List<WorkRequestData> requests,
             Action<string, Object> error, Action<string, Object> warn, Action<string, string, Object> checkKey)
         {
@@ -163,6 +171,8 @@ namespace Intersection.EditorTools
                         checkKey(key, $"진행 작업 {field} ({where})", job);
                 }
 
+                if (job.startConditions.Count(c => c != null && c.kind == ProgressConditionKind.ReviewBatchViewed) > 1)
+                    error($"한 작업에 검토 묶음 조건이 둘 이상 있습니다: {where}", job);
                 foreach (var c in job.startConditions)
                 {
                     if (c == null)
@@ -184,6 +194,14 @@ namespace Intersection.EditorTools
                             break;
                         case ProgressConditionKind.RecordViewed:
                             CheckViewTarget(job, c.record, jobs, threads, photos, records, config.startStage, where, error);
+                            break;
+                        case ProgressConditionKind.ReviewBatchViewed:
+                            if (c.batch == null)
+                                error($"시작 조건의 검토 묶음이 비어 있습니다(삭제된 대상): {where}", job);
+                            else if (!reviews.Contains(c.batch))
+                                error($"시작 조건이 존재하지 않는 검토 묶음을 가리킵니다: {where}", job);
+                            else if (c.batch.job != job)
+                                error($"시작 조건의 검토 묶음이 다른 작업을 가리킵니다(끊긴 참조) — 묶음의 job과 이 작업이 같아야 합니다: {where} / {Path(c.batch)}", job);
                             break;
                         case ProgressConditionKind.ClassifiedRecords:
                             if (c.minCount < 1)
@@ -221,7 +239,125 @@ namespace Intersection.EditorTools
                         case ProgressEffectKind.Notify:
                             CheckTemplate(config, e, where, job, error);
                             break;
+                        case ProgressEffectKind.SyncSummary:
+                            if (!job.onComplete.Contains(e))
+                                error($"연동 결과 요약 효과는 완료 효과(onComplete)에만 둘 수 있습니다: {where}", job);
+                            if (job.unlocksSources.Count == 0)
+                                error($"연동 결과 요약 효과가 있는데 이 작업이 여는 출처(unlocksSources)가 없습니다: {where}", job);
+                            if (job.onComplete.Count(x => x != null && x.kind == ProgressEffectKind.SyncSummary) > 1)
+                                error($"한 작업에 연동 결과 요약 효과가 둘 이상 있습니다: {where}", job);
+                            CheckTemplate(config, e, where, job, error);
+                            break;
                     }
+                }
+            }
+
+            // ── 검토 묶음: 상단 진행률·팝오버·진행 판정이 함께 쓰는 대상 목록
+            var groupIds = new Dictionary<string, string>();
+            foreach (var batch in reviews)
+            {
+                string where = Path(batch);
+                if (batch.device == null)
+                    error($"검토 묶음의 의뢰가 비어 있습니다: {where}", batch);
+                else if (!cases.Contains(batch.device))
+                    error($"검토 묶음이 존재하지 않는 의뢰를 가리킵니다: {where}", batch);
+                var before = config.startStage;
+                if (batch.job == null)
+                    error($"검토 묶음의 진행 작업(job)이 비어 있습니다(끊긴 참조): {where}", batch);
+                else if (!jobs.Contains(batch.job))
+                    error($"검토 묶음이 존재하지 않는 진행 작업을 가리킵니다: {where}", batch);
+                else
+                {
+                    if (batch.job.device != batch.device)
+                        error($"검토 묶음의 의뢰와 진행 작업의 의뢰가 다릅니다: {where}", batch);
+                    if (!batch.job.startConditions.Any(c => c != null && c.kind == ProgressConditionKind.ReviewBatchViewed && c.batch == batch))
+                        error($"검토 묶음이 가리키는 진행 작업의 시작 조건에 이 묶음(ReviewBatchViewed)이 없습니다(끊긴 참조): {where} / {Path(batch.job)}", batch);
+                    if (batch.job.onStart.Concat(batch.job.onComplete).Any(e => e != null && e.kind == ProgressEffectKind.CompleteJob && e.job == batch.job))
+                        error($"검토 묶음의 진행 작업이 자기 자신을 완료시킵니다(순환): {where}", batch);
+                    before = StageReachableBefore(batch.job, jobs, config.startStage);
+                }
+                foreach (var (key, field) in new[] { (batch.titleKey, "titleKey"), (batch.doneTitleKey, "doneTitleKey"), (batch.doneBodyKey, "doneBodyKey") })
+                {
+                    if (string.IsNullOrEmpty(key))
+                        error($"검토 묶음의 {field}가 비어 있습니다: {where}", batch);
+                    else
+                        checkKey(key, $"검토 묶음 {field} ({where})", batch);
+                }
+                if (!string.IsNullOrEmpty(batch.doneBodyKey) && config.strings != null && config.strings.TryGet(batch.doneBodyKey, out var doneBody))
+                {
+                    foreach (Match m in Token.Matches(doneBody))
+                    {
+                        if (!UIKeys.ReviewTokens.Contains(m.Groups[1].Value))
+                            error($"검토 묶음 문구 '{batch.doneBodyKey}'에 지원하지 않는 토큰 {m.Value}이 있습니다: {where}", batch);
+                    }
+                }
+                if (batch.groups.Count == 0)
+                    error($"검토 묶음에 분류가 없습니다: {where}", batch);
+                var keys = new HashSet<string>();
+                int total = 0;
+                foreach (var group in batch.groups)
+                {
+                    if (group == null)
+                    {
+                        error($"비어 있는 검토 분류가 있습니다: {where}", batch);
+                        continue;
+                    }
+                    CheckInnerId(group.Id, "검토 분류", where, batch, groupIds, error);
+                    if (string.IsNullOrEmpty(group.labelKey))
+                        error($"검토 분류의 표시 문자열 키(labelKey)가 비어 있습니다: {where}", batch);
+                    else
+                        checkKey(group.labelKey, $"검토 분류 labelKey ({where})", batch);
+                    if (group.targets.Count == 0)
+                        error($"비어 있는 검토 분류가 있습니다({group.labelKey}): {where}", batch);
+                    foreach (var t in group.targets)
+                    {
+                        total++;
+                        string what = $"검토 분류({group.labelKey})의 대상";
+                        if (t == null || t.record == null)
+                        {
+                            error($"{what}이 비어 있습니다(삭제된 대상): {where}", batch);
+                            continue;
+                        }
+                        CheckOpenTarget(batch.device, t.record, what, batch, before, threads, photos, records, where, error);
+                        var target = Progression.ReviewTargetRef(batch, t.record);
+                        if (target == null)
+                            continue;
+                        if (!keys.Add(target.Key))
+                            error($"같은 원본이 검토 묶음에 두 번 이상 등록돼 있습니다: {target.Key} ({where})", batch);
+                        if (batch.device == null)
+                            continue;
+                        // 실제 판정·`검토 계속`과 같은 접근 판정·원본 열기 경로로 열 수 있는지(대상 단계까지 도달 가능한 범위에서).
+                        var access = RecordAccess.Check(target, db, before, text);
+                        if (access != AccessState.Accessible)
+                            error($"{what}을 이 작업 전 도달 단계({before})에서 열 수 없습니다({access}): {target.Key} ({where})", batch);
+                        else if (t.record is PhotoData photo)
+                        {
+                            var all = PhotoQuery.DevicePhotos(db, batch.device, before);
+                            if (!PhotoQuery.Albums(db, batch.device).Any(a => PhotoQuery.AlbumPhotos(a, all).Contains(photo)))
+                                error($"{what} 사진이 어떤 앨범에도 없어 한 장 보기로 열 수 없습니다: {Path(photo)}", batch);
+                        }
+                    }
+                }
+                // 화면 총합은 대상 수에서 계산하므로, 중복 등록이 있으면 상단 N/M과 실제로 열어야 하는 원본 수가 달라진다.
+                if (total != keys.Count)
+                    error($"검토 묶음의 화면 총합({total})과 실제 서로 다른 대상 수({keys.Count})가 다릅니다: {where}", batch);
+            }
+
+            // ── 연동 결과 요약: 완료 단계에서 그 출처의 자료가 모두 접근 가능해야 요약 수량이 실제 새 자료와 같다
+            foreach (var job in jobs.Where(j => j.device != null && Progression.SummaryEffect(j) != null))
+            {
+                var after = job.onComplete.Where(e => e != null && e.kind == ProgressEffectKind.RaiseStage).Select(e => e.stage)
+                    .DefaultIfEmpty(ProgressStage.P0).Max();
+                var sources = new HashSet<RecordSource>(job.unlocksSources);
+                var candidates = DeviceQuery.Threads(db, job.device, ProgressStage.P6).Where(e => sources.Contains(e.state.source))
+                    .Select(e => RecordRef.ForThread(job.device, e.thread))
+                    .Concat(PhotoQuery.DevicePhotos(db, job.device, ProgressStage.P6).Where(p => sources.Contains(p.source)).Select(RecordRef.ForPhoto))
+                    .Concat(records.Where(r => r.device == job.device && sources.Contains(r.source)).Select(RecordRef.ForRecord));
+                foreach (var r in candidates)
+                {
+                    var access = RecordAccess.Check(r, db, after, text);
+                    if (access != AccessState.Accessible)
+                        error($"연동 결과 요약의 출처 자료가 작업 완료 단계({after})에서 접근할 수 없습니다({access}) — 요약은 접근 가능한 자료만 셉니다: {r.Key} ({Path(job)})", job);
                 }
             }
 
@@ -362,6 +498,8 @@ namespace Intersection.EditorTools
                 var progress = new ProgressStore(progressPath, config.startStage);
                 foreach (var id in progress.JobIds.Where(id => !jobs.Any(j => j.Id == id)))
                     warn($"진행 저장 파일에 원본에 없는 작업 ID가 있습니다: {id} ({progressPath})", null);
+                foreach (var s in progress.Summaries.Where(s => !jobs.Any(j => j.Id == s.jobId)))
+                    warn($"진행 저장 파일의 연동 결과 요약이 원본에 없는 작업을 가리킵니다: {s.jobId} ({progressPath})", null);
                 foreach (var n in progress.Notifications)
                 {
                     if (!string.IsNullOrEmpty(n.caseId) && !cases.Any(c => c.Id == n.caseId))

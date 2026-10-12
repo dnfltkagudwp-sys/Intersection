@@ -209,6 +209,45 @@ namespace Intersection.Core
         public const string PanelUnavailable = "panel.unavailable";
         public const string PanelUnavailableBody = "panel.unavailableBody";
 
+        // 상단 업무 상태 컨트롤 (현재 의뢰의 통합 업무 상태)
+        public const string TopRequestNeeded = "top.requestNeeded";
+        /// <summary>초반 업무 대상의 현재 분류 ({target} · {state}).</summary>
+        public const string TopGuideState = "top.guideState";
+        /// <summary>검토 묶음 진행률 ({title} {done}/{total}).</summary>
+        public const string TopReview = "top.review";
+        // 검토 팝오버
+        public const string ReviewGroupCount = "review.groupCount";
+        public const string ReviewContinue = "review.continue";
+        // 연동 결과 요약 (중앙 PC 화면)
+        public const string SummaryHeading = "summary.heading";
+        public const string SummaryCount = "summary.count";
+        public const string SummaryRowCount = "summary.rowCount";
+        public const string SummaryOpen = "summary.open";
+        public const string SummaryLater = "summary.later";
+        public const string SummaryEmpty = "summary.empty";
+        public const string SummaryAppMessages = "summary.app.messages";
+        public const string SummaryAppPhotos = "summary.app.photos";
+        public const string SummaryAppBrowser = "summary.app.browser";
+        public const string SummaryAppMaps = "summary.app.maps";
+        public const string SummaryAppFiles = "summary.app.files";
+        public const string SummaryAppSettings = "summary.app.settings";
+
+        /// <summary>검토 묶음 문구에서 쓸 수 있는 토큰.</summary>
+        public static readonly string[] ReviewTokens = { "total" };
+
+        public static string SummaryAppKey(Intersection.Data.AppKind app)
+        {
+            switch (app)
+            {
+                case Intersection.Data.AppKind.Photos: return SummaryAppPhotos;
+                case Intersection.Data.AppKind.Browser: return SummaryAppBrowser;
+                case Intersection.Data.AppKind.Maps: return SummaryAppMaps;
+                case Intersection.Data.AppKind.Files: return SummaryAppFiles;
+                case Intersection.Data.AppKind.Settings: return SummaryAppSettings;
+                default: return SummaryAppMessages;
+            }
+        }
+
         /// <summary>알림 템플릿에서 쓸 수 있는 토큰. 검증 도구가 템플릿의 다른 토큰을 오류로 잡는다.</summary>
         public static readonly string[] NotificationTokens = { "caseDisplayName", "count" };
 
@@ -327,6 +366,9 @@ namespace Intersection.Core
             PanelTitleMessageList, PanelTitleThread, PanelRecordId, RecordCodeFormat, RecordPrefixThread, PanelOwner, PanelSource, PanelSourceFormat,
             PanelPeriod, PanelIntegrity, PanelThreadCount, PanelThreadCountValue,
             SourceLocal, SourceCloud, SourceLinked, SourceRecovered,
+            TopRequestNeeded, TopGuideState, TopReview, ReviewGroupCount, ReviewContinue,
+            SummaryHeading, SummaryCount, SummaryRowCount, SummaryOpen, SummaryLater, SummaryEmpty,
+            SummaryAppMessages, SummaryAppPhotos, SummaryAppBrowser, SummaryAppMaps, SummaryAppFiles, SummaryAppSettings,
         };
 
         public static string SourceKey(Intersection.Data.RecordSource source)

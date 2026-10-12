@@ -10,7 +10,7 @@ namespace Intersection.UI
     /// <summary>
     /// 진행 연동 (UI-07). 접근 단계·의뢰별 작업 상태·업무 알림은 ProgressStore(별도 저장 파일)에 두고,
     /// 시작 조건·효과·문구는 진행 작업 데이터(ProgressJobData)에서 읽는다. 코드는 특정 의뢰를 알지 못한다.
-    /// 작업은 플레이어가 의뢰 요청 패널에서 직접 시작하며, 진행·알림은 다음에 볼 앱이나 결론을 알려주지 않는다.
+    /// 작업은 플레이어가 상단 업무 상태 컨트롤에서 직접 시작하며, 진행·알림은 다음에 볼 앱이나 결론을 알려주지 않는다.
     /// </summary>
     public partial class AppShell
     {
@@ -30,7 +30,7 @@ namespace Intersection.UI
                 config.EffectiveStartStage);
             progression = new Progression(config.database, store, progressStore, text);
             session.Stage = progression.Stage;
-            topBar.Bind(OnSearchChanged, OnSearchSelected, ToggleNotifications);
+            topBar.Bind(OnSearchChanged, OnSearchSelected, ToggleNotifications, OnStatusClicked);
         }
 
         /// <summary>진행이 바뀐 뒤: 접근 단계를 맞추고 전체 화면·알림을 다시 그린다.</summary>
@@ -52,6 +52,8 @@ namespace Intersection.UI
             if (searchView.IsOpen)
                 RenderSearch(false);
             RenderNotifications();
+            // 작업 완료로 처음 만들어진 연동 결과 요약은 한 번 자동으로 보인다(비교 중이면 비교를 마친 뒤).
+            ShowPendingSummary();
         }
 
         void StartJob(ProgressJobData job)
@@ -59,64 +61,6 @@ namespace Intersection.UI
             if (comparing || !progression.Start(job))
                 return;
             AfterProgressChange();
-        }
-
-        // ───────────── 의뢰 요청 패널의 진행 작업 ─────────────
-
-        /// <summary>
-        /// 의뢰 요청을 띄웠을 때 그 요청에 속한 작업(인벤토리 생성 등). 조건 전에는 업무 상태만 보여주고 다음 행동을 지시하지 않는다.
-        /// 좌측 의뢰 요청·작업함·고정 목록·검색 어디서 열었든 같은 작업을 보여준다.
-        /// 시작 뒤에는 같은 버튼을 다시 누를 수 없다.
-        /// </summary>
-        void RenderJobs()
-        {
-            var items = new List<WorkPanelView.JobItem>();
-            var shown = ShownRecord;
-            if (shown != null && shown.kind == RecordKind.Request)
-            {
-                var request = config.database.requests.FirstOrDefault(q => q != null && q.Id == shown.recordId);
-                foreach (var job in request == null ? Enumerable.Empty<ProgressJobData>() : progression.JobsForRequest(request))
-                {
-                    if (job.device == null || !job.device.IsAvailable(session.Stage) || !progression.Visible(job))
-                        continue;
-                    var state = progression.StateOf(job);
-                    bool ready = state == JobState.NotStarted && progression.ConditionsMet(job);
-                    var target = job;
-                    items.Add(new WorkPanelView.JobItem
-                    {
-                        buttonText = text.Get(job.actionKey),
-                        statusText = state == JobState.Running ? text.Get(job.runningKey)
-                            : state == JobState.Completed ? text.Get(job.doneKey)
-                            : ready ? null : text.Get(job.notReadyKey),
-                        onStart = ready && !comparing ? () => StartJob(target) : (System.Action)null,
-                    });
-                }
-            }
-            workPanel.SetJobs(items, new WorkPanelView.JobStyle
-            {
-                readyColor = Theme.accentSoft,
-                readyTextColor = Theme.accent,
-                idleColor = Theme.panelRaised,
-                idleTextColor = Theme.subText,
-            });
-        }
-
-        // ───────────── 상단 상태 ─────────────
-
-        void RenderTopBar()
-        {
-            var c = session.CurrentCase;
-            if (c == null)
-            {
-                topBar.Show(string.Empty, string.Empty, false, 0f);
-                return;
-            }
-            var status = progression.StatusOf(c);
-            topBar.Show(
-                text.Format(UIKeys.TopCaseStatus, ("case", c.DisplayName), ("status", text.Get(status.sourcesKey))),
-                text.Get(status.statusKey),
-                status.progress == StatusProgress.Indeterminate,
-                status.progress == StatusProgress.Done ? 1f : 0f);
         }
 
         // ───────────── 전역 검색 ─────────────
@@ -148,6 +92,8 @@ namespace Intersection.UI
         void OpenSearch()
         {
             CloseNotifications();
+            CloseReviewPopover();
+            CloseSummary();
             if (selecting)
                 SetSelecting(false);
             bool hadWorkbench = WorkbenchOpen;
@@ -300,6 +246,7 @@ namespace Intersection.UI
                 CloseNotifications();
             else
             {
+                CloseReviewPopover();
                 notificationPanel.Open(CloseNotifications);
                 RenderNotifications();
             }

@@ -178,6 +178,8 @@ namespace Intersection.UI
             }
             CloseSearch();
             CloseNotifications();
+            CloseReviewPopover();
+            CloseSummary();
             var a = compareSlots[0];
             var b = compareSlots[1];
             comparing = true;
@@ -203,6 +205,8 @@ namespace Intersection.UI
             topBar.SetSearchEnabled(true);
             SetSideInteractable(true);
             RefreshWorkPanel();
+            // 비교 중에 만들어진 연동 결과 요약은 비교를 마친 뒤 보여준다.
+            ShowPendingSummary();
         }
 
         void SetSideInteractable(bool on)

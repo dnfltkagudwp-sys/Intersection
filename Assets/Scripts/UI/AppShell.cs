@@ -53,6 +53,8 @@ namespace Intersection.UI
             phone.Init(ClockFactory.Create(config), text, time.Culture);
             Refresh();
             RenderNotifications();
+            // 확인 전에 종료했던 연동 결과 요약은 다시 보여준다.
+            ShowPendingSummary();
         }
 
         void Update()
@@ -77,8 +79,8 @@ namespace Intersection.UI
                 workPanel.KeyboardFocus = false;
                 workbench.KeyboardFocus = false;
             }
-            // 검색·작업함이 휴대전화를 덮고 있으면 사진 넘기기·휴대전화 자동 탐색·기록 고르기를 하지 않는다.
-            bool phoneCovered = searchView.IsOpen || WorkbenchOpen;
+            // 검색·작업함·연동 결과 요약이 휴대전화를 덮고 있으면 사진 넘기기·휴대전화 자동 탐색·기록 고르기를 하지 않는다.
+            bool phoneCovered = searchView.IsOpen || WorkbenchOpen || SummaryOpen;
             if (keyboard.escapeKey.wasPressedThisFrame)
             {
                 if (!dropdownOpen)
@@ -147,7 +149,6 @@ namespace Intersection.UI
         {
             RenderSidebar();
             RenderRequests();
-            RenderTopBar();
             RenderCenter();
         }
 
@@ -336,7 +337,7 @@ namespace Intersection.UI
             if (!device.IsAvailable(session.Stage))
                 return;
             // 좌측 의뢰를 누르면 중앙의 검색·작업함을 닫고 휴대전화 화면으로 돌아간다(같은 의뢰면 닫기만).
-            bool covered = searchView.IsOpen || WorkbenchOpen;
+            bool covered = searchView.IsOpen || WorkbenchOpen || SummaryOpen;
             CloseCenterScreens();
             if (device == session.CurrentCase)
             {

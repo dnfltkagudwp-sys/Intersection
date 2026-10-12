@@ -212,7 +212,6 @@ namespace Intersection.UI
                     text.Get(UIKeys.PanelBackToCurrent));
             }
             RenderRecordTools();
-            RenderJobs();
 
             var target = ActionTarget;
             workPanel.SetActions(target != null ? ActionsFor(target) : null);
@@ -220,6 +219,8 @@ namespace Intersection.UI
             RenderCompareSlots();
             RenderGuideLine();
             RenderWorkToolbar();
+            // 열람·분류가 바뀌면 상단 업무 상태(검토 진행률·연동 시작)도 같은 기준으로 다시 계산한다.
+            RenderTopBar();
             SyncSelection();
             workPanel.ApplyNavigation();
             workPanel.RestoreFocus(keyboardFocus, null);
@@ -566,7 +567,7 @@ namespace Intersection.UI
         // ───────────── 키보드 ─────────────
 
         /// <summary>
-        /// Esc 우선순위: 비교 화면이면 비교 종료 → 알림 목록 닫기 → 검색 닫기 → 메모 입력 중이면 입력값을 저장하고 포커스만 해제
+        /// Esc 우선순위: 비교 화면이면 비교 종료 → 알림 목록 닫기 → 검토 팝오버 닫기 → 연동 결과 요약 닫기 → 검색 닫기 → 메모 입력 중이면 입력값을 저장하고 포커스만 해제
         /// → 작업함이 열려 있으면 작업함 닫기(보던 휴대전화로) → 패널에 다른 기록을 띄웠으면 현재 열람으로
         /// → 고르기 모드면 종료 → 휴대전화 뒤로. 한 번의 Esc는 한 단계만 처리하고 아래 단계로 넘기지 않는다.
         /// </summary>
@@ -576,6 +577,10 @@ namespace Intersection.UI
                 ExitCompare();
             else if (notificationPanel.IsOpen)
                 CloseNotifications();
+            else if (reviewPopover.IsOpen)
+                CloseReviewPopover();
+            else if (SummaryOpen)
+                CloseSummary();
             else if (searchView.IsOpen)
                 CloseSearch();
             else if (workPanel.IsEditingMemo || memoWasFocused)
