@@ -63,6 +63,10 @@ namespace Intersection.Core
             yield return date.ToString(text.Get(UIKeys.FormatFullDate), culture);
         }
 
+        /// <summary>사람이 직접 적은 짧은 날짜(파일 표시 문구의 {date:N}). 예: 4/8.</summary>
+        public string NoteDate(int dayOffset) =>
+            caseDate.AddDays(dayOffset).ToString(text.Get(UIKeys.FormatNoteDate), culture);
+
         /// <summary>업무 패널용 "사망 14일 전" 표기.</summary>
         public string SinceDeath(RelativeTime t)
         {

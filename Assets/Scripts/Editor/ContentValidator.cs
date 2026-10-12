@@ -46,6 +46,10 @@ namespace Intersection.EditorTools
             if (configs.Count != 1)
                 Error($"GameConfig는 정확히 1개여야 합니다 (현재 {configs.Count}개).");
             var config = configs.FirstOrDefault();
+            // 파일 표시 문구의 {date:N}을 화면과 같은 규칙으로 바꿔 검사한다. 설정이 없으면 숫자 그대로.
+            System.Func<int, string> noteDate = config != null && config.strings != null
+                ? new PhoneTime(config, new UIText(config.strings)).NoteDate
+                : (System.Func<int, string>)(n => n.ToString(System.Globalization.CultureInfo.InvariantCulture));
             var people = Find<PersonData>();
             var cases = Find<CaseData>();
             var threads = Find<ThreadData>();
@@ -239,6 +243,9 @@ namespace Intersection.EditorTools
                     if (p.image == null)
                         Warn($"실제 이미지가 없는 사진에 표시 문구(visibleText)가 있습니다. 이미지가 정해진 뒤 그 글자를 전사하세요: {where}", p);
                     CheckShownText(p.visibleText, p.evidenceRef, p.Id, p.authorNote, "사진", where, msg => Error(msg, p));
+                    // 이미지에 박힌 글자라 caseDate로 바뀌지 않는다. 날짜 토큰은 파일 표시 문구에만 쓴다.
+                    if (p.visibleText.IndexOf("{" + TextTokens.DateToken, System.StringComparison.OrdinalIgnoreCase) >= 0)
+                        Error($"사진 표시 문구에는 날짜 토큰을 쓸 수 없습니다(이미지 안 글자의 전사본): {where}", p);
                 }
             }
             foreach (var g in photos.Where(p => p.device != null).GroupBy(p => (p.device, p.takenAt.TotalMinutes, p.sortKey)).Where(g => g.Count() > 1))
@@ -319,7 +326,7 @@ namespace Intersection.EditorTools
             {
                 if (string.IsNullOrWhiteSpace(f.path) || f.path.EndsWith("/"))
                     Error($"파일 경로가 비어 있거나 폴더로 끝납니다: {Path(f)}", f);
-                CheckVisibleText(f, msg => Error(msg, f), msg => Warn(msg, f));
+                CheckVisibleText(f, noteDate, msg => Error(msg, f), msg => Warn(msg, f));
             }
             foreach (var g in files.Where(f => f.device != null && !string.IsNullOrEmpty(f.path))
                          .GroupBy(f => (f.device, f.source, f.path.Trim('/'))).Where(g => g.Count() > 1))
@@ -413,7 +420,7 @@ namespace Intersection.EditorTools
         /// 파일 표시 문구(visibleText)는 플레이어가 미리보기에서 읽는 문구만 담는다.
         /// 증거 ID·불변 ID·작가 메모가 들어 있으면(자동 복사 포함) 검색으로 내부 정보가 새므로 오류로 잡는다.
         /// </summary>
-        static void CheckVisibleText(FileRecord f, System.Action<string> error, System.Action<string> warn)
+        static void CheckVisibleText(FileRecord f, System.Func<int, string> date, System.Action<string> error, System.Action<string> warn)
         {
             if (f.visibleText == null)
                 return;
@@ -427,7 +434,15 @@ namespace Intersection.EditorTools
                     warn($"파일 표시 문구 {i + 1}번 블록이 비어 있습니다: {where}");
                     continue;
                 }
-                CheckShownText(b.text, f.evidenceRef, f.Id, note, "파일", where, error);
+                foreach (var problem in TextTokens.Problems(b.text))
+                    error($"파일 표시 문구 {i + 1}번 블록의 토큰 오류 — {problem}: {where}");
+                // 원문과 화면·검색에 쓰이는 변환 결과 모두 검사한다(같은 문제는 한 번만 보고).
+                var reported = new HashSet<string>();
+                System.Action<string> once = msg => { if (reported.Add(msg)) error(msg); };
+                CheckShownText(b.text, f.evidenceRef, f.Id, note, "파일", where, once);
+                string shown = b.Expanded(date).text;
+                if (shown != b.text)
+                    CheckShownText(shown, f.evidenceRef, f.Id, note, "파일", where, once);
                 if (b.kind == FileTextKind.Table && b.Rows().Select(r => r.Length).Distinct().Count() > 1)
                     warn($"파일 표시 문구 {i + 1}번 표의 행마다 칸 수가 다릅니다: {where}");
             }

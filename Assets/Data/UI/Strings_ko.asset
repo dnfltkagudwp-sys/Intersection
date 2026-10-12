@@ -21,6 +21,8 @@ MonoBehaviour:
     value: "M\uC6D4 d\uC77C"
   - key: format.fullDate
     value: yyyy. M. d.
+  - key: format.noteDate
+    value: M'/'d
   - key: format.weekday
     value: dddd
   - key: date.today

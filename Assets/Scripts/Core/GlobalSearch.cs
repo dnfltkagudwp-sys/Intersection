@@ -117,7 +117,7 @@ namespace Intersection.Core
                         m.placeLabel, m.routeFrom, m.routeTo, m.routeNote);
                 foreach (var f in RecordQuery.For(db.files, device, stage))
                     yield return RecordDoc(f, device, AppKind.Files, f.FileName, time,
-                        new[] { f.FileName, f.FolderPath }.Concat(f.VisibleLines()).ToArray());
+                        new[] { f.FileName, f.FolderPath }.Concat(f.VisibleLines(time.NoteDate)).ToArray());
                 foreach (var s in RecordQuery.For(db.settings, device, stage))
                 {
                     string item = RecordQuery.SettingItemLabel(s, device);

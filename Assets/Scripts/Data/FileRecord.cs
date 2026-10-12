@@ -43,6 +43,10 @@ namespace Intersection.Data
         /// </summary>
         public IEnumerable<string> DisplayLines() =>
             kind == FileTextKind.Table ? Rows().Select(r => string.Join("  ", r.Where(c => c.Length > 0))) : Lines();
+
+        /// <summary>토큰({date:N})을 화면 표기로 바꾼 사본. 렌더링과 검색은 이 사본을 쓴다.</summary>
+        public FileTextBlock Expanded(Func<int, string> date) =>
+            TextTokens.HasTokens(text) ? new FileTextBlock { kind = kind, text = TextTokens.Expand(text, date) } : this;
     }
 
     /// <summary>
@@ -64,18 +68,19 @@ namespace Intersection.Data
         [Tooltip("플레이어가 이 파일 미리보기에서 실제로 읽을 수 있는 문구만 넣는다.\n" +
                  "· preview 이미지가 없으면 이 블록이 그대로 미리보기로 그려진다.\n" +
                  "· preview 이미지가 있으면 그 이미지에 실제로 적힌 글자의 정확한 전사본이다(따로 그리지 않음).\n" +
-                 "전역 검색은 이 문구를 그대로 검색한다. 검색용 태그·정답 키워드·작가 메모·증거 ID를 넣지 않는다.")]
+                 "전역 검색은 이 문구를 그대로 검색한다. 검색용 태그·정답 키워드·작가 메모·증거 ID를 넣지 않는다.\n" +
+                 "사람이 적은 날짜는 {date:-180}처럼 쓴다(caseDate 기준, 화면에는 짧은 월/일).")]
         public List<FileTextBlock> visibleText = new List<FileTextBlock>();
 
         public bool HasVisibleText => visibleText != null && visibleText.Any(b => b != null && !b.IsEmpty);
 
-        /// <summary>미리보기로 직접 그릴 블록. 이미지가 있으면(전사본) 또는 비어 있으면 null.</summary>
-        public IReadOnlyList<FileTextBlock> RenderedDocument =>
-            preview == null && HasVisibleText ? visibleText.Where(b => b != null && !b.IsEmpty).ToList() : null;
+        /// <summary>미리보기로 직접 그릴 블록(토큰 변환 후). 이미지가 있으면(전사본) 또는 비어 있으면 null.</summary>
+        public IReadOnlyList<FileTextBlock> RenderedDocument(Func<int, string> date) =>
+            preview == null && HasVisibleText ? visibleText.Where(b => b != null && !b.IsEmpty).Select(b => b.Expanded(date)).ToList() : null;
 
-        /// <summary>플레이어가 미리보기에서 읽을 수 있는 문구 한 줄씩 (전역 검색 대상).</summary>
-        public IEnumerable<string> VisibleLines() =>
-            visibleText == null ? Enumerable.Empty<string>() : visibleText.Where(b => b != null).SelectMany(b => b.DisplayLines());
+        /// <summary>플레이어가 미리보기에서 읽을 수 있는 문구 한 줄씩 (토큰 변환 후, 전역 검색 대상).</summary>
+        public IEnumerable<string> VisibleLines(Func<int, string> date) =>
+            visibleText == null ? Enumerable.Empty<string>() : visibleText.Where(b => b != null).SelectMany(b => b.Expanded(date).DisplayLines());
 
         public string FileName
         {

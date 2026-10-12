@@ -90,7 +90,7 @@ namespace Intersection.UI
             string locationLabel = text.Get(UIKeys.FilesLocationKey(f.source));
             // 미리보기 이미지가 없고 표시 문구가 있으면 그 문구를 문서로 그린다(검색과 같은 원본).
             // 이미지가 있으면 visibleText는 이미지 글자의 전사본이라 따로 그리지 않는다. 둘 다 없으면 지금처럼 `미리보기 없음`.
-            var document = f.RenderedDocument;
+            var document = f.RenderedDocument(time.NoteDate);
             return new DetailModel
             {
                 title = f.FileName,

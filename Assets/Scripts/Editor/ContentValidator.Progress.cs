@@ -202,7 +202,7 @@ namespace Intersection.EditorTools
                 {
                     var target = RecordRef.ForRecord(f);
                     bool expected = RecordAccess.Searchable(f.device, stage) && RecordQuery.For(db.files, f.device, stage).Contains(f);
-                    foreach (var line in f.VisibleLines())
+                    foreach (var line in f.VisibleLines(time.NoteDate))
                     {
                         bool found = GlobalSearch.Run(db, stage, line, text, time).Any(h => h.target.Key == target.Key);
                         if (expected && !found)

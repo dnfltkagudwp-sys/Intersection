@@ -11,6 +11,8 @@ namespace Intersection.Core
         public const string FormatStatusClock = "format.statusClock";
         public const string FormatMonthDay = "format.monthDay";
         public const string FormatFullDate = "format.fullDate";
+        /// <summary>파일 표시 문구의 {date:N}처럼 사람이 직접 적은 짧은 날짜.</summary>
+        public const string FormatNoteDate = "format.noteDate";
         public const string FormatWeekday = "format.weekday";
         public const string DateToday = "date.today";
         public const string DateYesterday = "date.yesterday";
@@ -284,7 +286,7 @@ namespace Intersection.Core
 
         public static readonly string[] All =
         {
-            FormatTime, FormatStatusClock, FormatMonthDay, FormatFullDate, FormatWeekday,
+            FormatTime, FormatStatusClock, FormatMonthDay, FormatFullDate, FormatNoteDate, FormatWeekday,
             DateToday, DateYesterday, SeparatorTemplate,
             DeathBefore, DeathDayOf, DeathAfter, DeathWithTime, DeathRange,
             TopCaseStatus, TopIndexDone, TopIndexRunning,
