@@ -211,6 +211,20 @@ namespace Intersection.EditorTools
                             error($"{stage}: 접근 전 파일의 표시 문구가 검색됩니다('{line}'): {Path(f)}", f);
                     }
                 }
+                // 사진 안 글자 전사본(visibleText)도 같은 기준: 접근 가능한 단계에서만 그 사진이 검색된다.
+                foreach (var p in db.photos.Where(x => x != null && x.device != null && !string.IsNullOrWhiteSpace(x.visibleText)))
+                {
+                    var target = RecordRef.ForPhoto(p);
+                    bool expected = RecordAccess.Searchable(p.device, stage) && PhotoQuery.DevicePhotos(db, p.device, stage).Contains(p);
+                    foreach (var line in p.VisibleLines())
+                    {
+                        bool found = GlobalSearch.Run(db, stage, line, text, time).Any(h => h.target.Key == target.Key);
+                        if (expected && !found)
+                            error($"{stage}: 사진 표시 문구로 검색해도 그 사진이 나오지 않습니다('{line}'): {Path(p)}", p);
+                        else if (!expected && found)
+                            error($"{stage}: 접근 전 사진의 표시 문구가 검색됩니다('{line}'): {Path(p)}", p);
+                    }
+                }
                 foreach (var device in cases)
                 {
                     bool leak = PhotoQuery.DevicePhotos(db, device, stage).Any(p => p.availableFrom > stage)

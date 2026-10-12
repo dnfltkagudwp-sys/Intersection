@@ -233,6 +233,13 @@ namespace Intersection.EditorTools
                     Error($"촬영 시각이 올바르지 않습니다: {where}", p);
                 CheckKey(p.serviceKey, where, p);
                 CheckKey(p.integrityKey, where, p);
+                if (!string.IsNullOrWhiteSpace(p.visibleText))
+                {
+                    // 사진 표시 문구는 실제 이미지에 적힌 글자의 전사본이라 이미지가 없으면 채우지 않는다.
+                    if (p.image == null)
+                        Warn($"실제 이미지가 없는 사진에 표시 문구(visibleText)가 있습니다. 이미지가 정해진 뒤 그 글자를 전사하세요: {where}", p);
+                    CheckShownText(p.visibleText, p.evidenceRef, p.Id, p.authorNote, "사진", where, msg => Error(msg, p));
+                }
             }
             foreach (var g in photos.Where(p => p.device != null).GroupBy(p => (p.device, p.takenAt.TotalMinutes, p.sortKey)).Where(g => g.Count() > 1))
                 Error($"같은 기기·같은 촬영 시각·같은 sortKey 사진이 {g.Count()}장 있어 순서가 정해지지 않습니다: {string.Join(", ", g.Select(Path))}", g.First());
@@ -420,15 +427,26 @@ namespace Intersection.EditorTools
                     warn($"파일 표시 문구 {i + 1}번 블록이 비어 있습니다: {where}");
                     continue;
                 }
-                if (!string.IsNullOrEmpty(f.evidenceRef) && b.text.IndexOf(f.evidenceRef, System.StringComparison.OrdinalIgnoreCase) >= 0)
-                    error($"파일 표시 문구에 증거 ID '{f.evidenceRef}'가 들어 있습니다(검색에 노출됨): {where}");
-                if (!string.IsNullOrEmpty(f.Id) && b.text.IndexOf(f.Id, System.StringComparison.OrdinalIgnoreCase) >= 0)
-                    error($"파일 표시 문구에 내부 ID가 들어 있습니다(검색에 노출됨): {where}");
-                if (!string.IsNullOrEmpty(note) && b.text.IndexOf(note, System.StringComparison.Ordinal) >= 0)
-                    error($"파일 표시 문구에 작가 메모가 그대로 들어 있습니다. 미리보기에 실제로 보이는 문구만 넣으세요: {where}");
+                CheckShownText(b.text, f.evidenceRef, f.Id, note, "파일", where, error);
                 if (b.kind == FileTextKind.Table && b.Rows().Select(r => r.Length).Distinct().Count() > 1)
                     warn($"파일 표시 문구 {i + 1}번 표의 행마다 칸 수가 다릅니다: {where}");
             }
+        }
+
+        /// <summary>
+        /// 플레이어에게 보이는(검색되는) 표시 문구에 증거 ID·불변 ID·작가 메모가 들어 있으면 오류.
+        /// 파일 미리보기 문구와 사진 안 글자 전사본이 같은 기준을 쓴다.
+        /// </summary>
+        static void CheckShownText(string shown, string evidenceRef, string id, string authorNote, string what, string where,
+            System.Action<string> error)
+        {
+            string note = authorNote?.Trim();
+            if (!string.IsNullOrEmpty(evidenceRef) && shown.IndexOf(evidenceRef, System.StringComparison.OrdinalIgnoreCase) >= 0)
+                error($"{what} 표시 문구에 증거 ID '{evidenceRef}'가 들어 있습니다(검색에 노출됨): {where}");
+            if (!string.IsNullOrEmpty(id) && shown.IndexOf(id, System.StringComparison.OrdinalIgnoreCase) >= 0)
+                error($"{what} 표시 문구에 내부 ID가 들어 있습니다(검색에 노출됨): {where}");
+            if (!string.IsNullOrEmpty(note) && shown.IndexOf(note, System.StringComparison.Ordinal) >= 0)
+                error($"{what} 표시 문구에 작가 메모가 그대로 들어 있습니다. 실제로 보이는 글자만 넣으세요: {where}");
         }
 
         static void CheckInnerId(string id, string kind, string where, Object ctx, Dictionary<string, string> seen,

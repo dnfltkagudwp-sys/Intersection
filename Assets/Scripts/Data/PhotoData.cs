@@ -46,5 +46,23 @@ namespace Intersection.Data
 
         [TextArea(1, 4), Tooltip("작가용 장면 메모. 화면에 표시하지 않는다.")]
         public string authorNote;
+
+        [TextArea(2, 8), Tooltip("선택. 스크린샷·문서 사진·간판처럼 이 이미지 안에서 플레이어가 실제로 읽을 수 있는 글자의 정확한 전사본.\n" +
+                                 "전역 검색만 이 문구를 쓰며 갤러리·상세·비교에는 따로 표시하지 않는다(런타임 OCR 없음).\n" +
+                                 "실제 이미지가 없는 사진에는 채우지 않는다. 작가 메모·증거 ID·내부 ID·역할명·정답 설명을 넣지 않는다.")]
+        public string visibleText;
+
+        /// <summary>이미지에 적힌 글자 한 줄씩 (전역 검색 대상, 빈 줄 제외).</summary>
+        public System.Collections.Generic.IEnumerable<string> VisibleLines()
+        {
+            if (string.IsNullOrWhiteSpace(visibleText))
+                yield break;
+            foreach (var line in visibleText.Replace("\r", string.Empty).Split('\n'))
+            {
+                string l = line.Trim();
+                if (l.Length > 0)
+                    yield return l;
+            }
+        }
     }
 }
