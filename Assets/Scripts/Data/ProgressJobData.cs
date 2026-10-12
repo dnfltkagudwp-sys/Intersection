@@ -17,6 +17,8 @@ namespace Intersection.Data
         JobCompleted,
         [Tooltip("record 기록의 지금 분류가 보존 (분류 횟수나 과거 이력이 아니라 현재 상태)")]
         RecordKept,
+        [Tooltip("record 원본을 이 작업 의뢰에서 실제로 열람함 (사진은 한 장 보기, 대화방은 대화방 열기, 그 외 기록은 상세). 검색 결과·고정·비교만으로는 인정하지 않음")]
+        RecordViewed,
     }
 
     [Serializable]
@@ -25,7 +27,7 @@ namespace Intersection.Data
         public ProgressConditionKind kind;
         public WorkRequestData request;
         public ProgressJobData job;
-        [Tooltip("RecordKept: 대상 기록 (사진·기록 에셋)")]
+        [Tooltip("RecordKept: 대상 기록 (사진·기록 에셋) / RecordViewed: 대상 원본 (사진·기록·대화방 에셋, 대화방은 작업 의뢰 기기의 대화방으로 판정)")]
         public ContentAsset record;
         [Min(1)] public int minCount = 1;
         public RecordSource source = RecordSource.Local;

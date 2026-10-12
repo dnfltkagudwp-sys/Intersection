@@ -14,6 +14,120 @@ namespace Intersection.EditorTools
     {
         static readonly ProgressStage[] Stages = (ProgressStage[])Enum.GetValues(typeof(ProgressStage));
 
+        /// <summary>
+        /// RecordViewed 시작 조건의 대상: 사진·기록·대화방 에셋이고, 작업 의뢰 기기에 있으며, 불변 ID가 하나로 정해지고,
+        /// 이 작업을 시작하기 전에 진행 구조상 도달할 수 있는 단계에서 열 수 있어야 한다.
+        /// </summary>
+        static void CheckViewTarget(ProgressJobData job, ContentAsset target, List<ProgressJobData> jobs, List<ThreadData> threads,
+            List<PhotoData> photos, List<DeviceRecord> records, ProgressStage startStage, string where, Action<string, Object> error)
+        {
+            const string what = "시작 조건(RecordViewed)의 record";
+            if (target == null)
+            {
+                error($"{what}이 비어 있습니다(삭제된 대상): {where}", job);
+                return;
+            }
+            if (!(target is PhotoData || target is DeviceRecord || target is ThreadData))
+            {
+                error($"{what}은 사진·기록·대화방 에셋이어야 합니다{(target is WorkRequestData ? "(의뢰 요청은 RequestViewed를 씀)" : "")}: {where}", job);
+                return;
+            }
+            if (string.IsNullOrEmpty(target.Id))
+                error($"{what}의 불변 ID가 비어 있습니다: {where}", job);
+            else
+            {
+                int same = threads.Count(x => x.Id == target.Id) + photos.Count(x => x.Id == target.Id) + records.Count(x => x.Id == target.Id);
+                if (same > 1)
+                    error($"{what}의 불변 ID {target.Id}가 여러 원본에 있어 하나로 정할 수 없습니다: {where}", job);
+            }
+            if (job.device == null)
+                return;
+
+            ProgressStage availableFrom;
+            switch (target)
+            {
+                case ThreadData t:
+                {
+                    var state = t.StateFor(job.device);
+                    if (state == null)
+                    {
+                        error($"{what} 대화방이 이 작업 의뢰의 기기에서 보이지 않습니다: {where}", job);
+                        return;
+                    }
+                    availableFrom = state.availableFrom;
+                    break;
+                }
+                case PhotoData p:
+                    if (p.device != job.device)
+                    {
+                        error($"{what}이 다른 의뢰의 기록입니다: {where}", job);
+                        return;
+                    }
+                    availableFrom = p.availableFrom;
+                    break;
+                default:
+                {
+                    var r = (DeviceRecord)target;
+                    if (r.device != job.device)
+                    {
+                        error($"{what}이 다른 의뢰의 기록입니다: {where}", job);
+                        return;
+                    }
+                    availableFrom = r.availableFrom;
+                    break;
+                }
+            }
+            if (job.device.availableFrom > availableFrom)
+                availableFrom = job.device.availableFrom;
+            var before = StageReachableBefore(job, jobs, startStage);
+            if (availableFrom > before)
+                error($"{what}은 {availableFrom}부터 열 수 있는데, 이 작업을 시작하기 전에 도달할 수 있는 단계는 {before}까지입니다: {where}", job);
+        }
+
+        /// <summary>
+        /// 이 작업을 시작하지 않고 도달할 수 있는 최대 접근 단계. 다른 작업 중 시작할 수 있는 것의 시작 효과와,
+        /// 완료될 수 있는 것(completedExternally 또는 시작 가능한 다른 작업이 완료시킴)의 완료 효과만 반영한다.
+        /// </summary>
+        static ProgressStage StageReachableBefore(ProgressJobData self, List<ProgressJobData> jobs, ProgressStage startStage)
+        {
+            var started = new HashSet<ProgressJobData>();
+            var completed = new HashSet<ProgressJobData>();
+            ProgressStage stage = startStage;
+            bool changed = true;
+            while (changed)
+            {
+                changed = false;
+                foreach (var j in jobs.Where(j => j != self && j.device != null))
+                {
+                    if (!started.Contains(j) && j.device.availableFrom <= stage
+                        && j.startConditions.Where(c => c != null && c.kind == ProgressConditionKind.JobCompleted).All(c => completed.Contains(c.job)))
+                    {
+                        started.Add(j);
+                        changed = true;
+                        foreach (var e in j.onStart.Where(e => e != null))
+                        {
+                            if (e.kind == ProgressEffectKind.RaiseStage && e.stage > stage) stage = e.stage;
+                            if (e.kind == ProgressEffectKind.CompleteJob && e.job != null && e.job != self) completed.Add(e.job);
+                        }
+                    }
+                    if (started.Contains(j) && !completed.Contains(j) && j.completedExternally)
+                    {
+                        completed.Add(j);
+                        changed = true;
+                    }
+                }
+                foreach (var j in completed.ToList())
+                {
+                    foreach (var e in j.onComplete.Where(e => e != null))
+                    {
+                        if (e.kind == ProgressEffectKind.RaiseStage && e.stage > stage) { stage = e.stage; changed = true; }
+                        if (e.kind == ProgressEffectKind.CompleteJob && e.job != null && e.job != self && completed.Add(e.job)) changed = true;
+                    }
+                }
+            }
+            return stage;
+        }
+
         static void CheckProgress(GameConfig config, List<ProgressJobData> jobs, List<CaseData> cases, List<ThreadData> threads,
             List<PhotoData> photos, List<DeviceRecord> records, List<FolderData> folders, List<WorkRequestData> requests,
             Action<string, Object> error, Action<string, Object> warn, Action<string, string, Object> checkKey)
@@ -67,6 +181,9 @@ namespace Intersection.EditorTools
                         case ProgressConditionKind.RequestViewed:
                             if (c.request == null)
                                 error($"시작 조건의 요청이 비어 있습니다(삭제된 대상): {where}", job);
+                            break;
+                        case ProgressConditionKind.RecordViewed:
+                            CheckViewTarget(job, c.record, jobs, threads, photos, records, config.startStage, where, error);
                             break;
                         case ProgressConditionKind.ClassifiedRecords:
                             if (c.minCount < 1)

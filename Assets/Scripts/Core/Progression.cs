@@ -86,6 +86,14 @@ namespace Intersection.Core
                 }
                 case ProgressConditionKind.RequestViewed:
                     return c.request != null && work.IsViewed(RecordRef.ForRequest(c.request).Key);
+                case ProgressConditionKind.RecordViewed:
+                {
+                    // 실제로 원본을 연 기록(WorkStore의 viewed)만 인정한다. 검색 결과·고정·비교 슬롯은 viewed를 남기지 않는다.
+                    // 원본이 지금 접근 가능하고 하나로 정해질 때만 인정한다(누락·중복·접근 불가 원본은 저장 이력이 있어도 불인정).
+                    var target = ViewTarget(job, c.record);
+                    return target != null && work.IsViewed(target.Key)
+                           && RecordAccess.Check(target, db, Stage, text) == AccessState.Accessible;
+                }
                 case ProgressConditionKind.ClassifiedRecords:
                     return ClassifiedCount(job.device, c.source) >= c.minCount;
                 case ProgressConditionKind.JobCompleted:
@@ -94,6 +102,15 @@ namespace Intersection.Core
                     return false;
             }
         }
+
+        /// <summary>
+        /// RecordViewed 조건의 열람 키. 대화방은 같은 원본이 여러 기기에 있으므로 작업 의뢰 기기의 대화방
+        /// (<see cref="RecordRef.ForThread"/>)으로 정하고, 그 외에는 <see cref="RecordRef.ForAsset"/>과 같다. 지원하지 않으면 null.
+        /// </summary>
+        public static RecordRef ViewTarget(ProgressJobData job, ContentAsset record) =>
+            record is ThreadData thread
+                ? (job != null && job.device != null ? RecordRef.ForThread(job.device, thread) : null)
+                : RecordRef.ForAsset(record);
 
         /// <summary>이 의뢰에서 지금 접근할 수 있는 source 출처 기록 중 보존·삭제 후보로 분류한 수 (의뢰 요청 제외).</summary>
         public int ClassifiedCount(CaseData device, RecordSource source) =>

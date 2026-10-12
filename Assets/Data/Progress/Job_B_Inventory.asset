@@ -25,15 +25,27 @@ MonoBehaviour:
   shortDoneKey: job.inventory.shortDone
   startConditions:
   - kind: 1
-    tutorial: {fileID: 0}
     request: {fileID: 11400000, guid: 58a514d92112f294f83a2c9a8c0eb192, type: 2}
     job: {fileID: 0}
+    record: {fileID: 0}
     minCount: 1
     source: 0
-  - kind: 2
-    tutorial: {fileID: 0}
+  - kind: 5
     request: {fileID: 0}
     job: {fileID: 0}
+    record: {fileID: 11400000, guid: 97ac0fa71853a2e42b9ca5e99151b4c3, type: 2}
+    minCount: 1
+    source: 0
+  - kind: 5
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 11400000, guid: a0c9bc2056e4a5e4ca085bb3fc194b98, type: 2}
+    minCount: 1
+    source: 0
+  - kind: 5
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 11400000, guid: 0d6ff91806bbab540b96464a15c0fa05, type: 2}
     minCount: 1
     source: 0
   onStart:
@@ -57,4 +69,4 @@ MonoBehaviour:
     templateKey: notify.backupIndexed
     caseToken: {fileID: 0}
   completedExternally: 1
-  authorNote: "\uC2DC\uC81C\uD488 \uC784\uC2DC \uAE30\uC900: B \uC694\uCCAD \uC5F4\uB78C + B \uB85C\uCEEC \uAE30\uB85D 1\uAC74 \uC774\uC0C1 \uBCF4\uC874/\uC0AD\uC81C \uD6C4\uBCF4 \uBD84\uB958 \uD6C4 \uC2DC\uC791. \uC2DC\uC791\uD558\uBA74 A \uC5F0\uB3D9 \uC644\uB8CC. \uC644\uB8CC(P3)\uB294 \uC774\uD6C4 \uC815\uC2DD \uCF58\uD150\uCE20\uAC00 \uC5F0\uACB0."
+  authorNote: "\uC815\uC2DD \uAE30\uC900(GameDesign \uC5C5\uBB34 \uC9C4\uD589 \uC870\uAC74 P1): B \uC720\uC871 \uC694\uCCAD \uC5F4\uB78C + B01 \uC0AC\uC9C4(B_IMG_1192) \uD55C \uC7A5 \uBCF4\uAE30 \uC5F4\uB78C + B02 \uCE5C\uAD6C \uB300\uD654\uBC29 \uC5F4\uB78C + B03 A\uC640\uC758 \uB300\uD654\uBC29\uC744 B \uC758\uB8B0 \uAE30\uAE30\uC5D0\uC11C \uC5F4\uB78C. \uBD84\uB958\xB7\uACE0\uC815\xB7\uBA54\uBAA8\xB7\uBE44\uAD50\uB294 \uC4F0\uC9C0 \uC54A\uC74C. \uC2DC\uC791\uD558\uBA74 A \uC778\uBCA4\uD1A0\uB9AC \uC644\uB8CC(P2 + A \uC5F0\uB3D9 \uC644\uB8CC \uC54C\uB9BC). \uC644\uB8CC(P3)\uB294 \uC774\uD6C4 \uC815\uC2DD \uCF58\uD150\uCE20\uAC00 \uC5F0\uACB0."
