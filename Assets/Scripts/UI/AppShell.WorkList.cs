@@ -9,18 +9,21 @@ using UnityEngine.UI;
 namespace Intersection.UI
 {
     /// <summary>
-    /// 작업 기록 목록 (UI-05/06 보완). 평소에는 우측 아래 빠른 목록(패널 높이의 일부), `전체 보기`를 누르면 우측 패널 전체를 목록으로 쓴다.
-    /// 전체 보기·필터는 임시 UI 상태라 업무 저장 파일에 넣지 않으며, 재실행하면 간단한 패널과 `전체`·`모든 의뢰`로 시작한다.
-    /// 전체 보기 중에도 휴대전화 이동·기기 전환은 그대로 되고, 패널은 목록(또는 연 상세)을 유지한다.
+    /// 작업함과 고정 자료 빠른 목록.
+    /// 작업함은 휴대전화 자리를 덮는 중앙 PC 업무 화면으로, 고정·분류·메모한 자료 전체를 필터와 함께 보여준다.
+    /// 행을 누르면 목록은 그대로 두고 우측 패널에 그 자료의 상세·조작을 띄운다(`원본 열기`를 눌러야 휴대전화로 이동).
+    /// 우측 아래 빠른 목록은 최근에 고정한 자료 몇 개만 보여주는 북마크라, 누르면 원본으로 바로 이동한다.
+    /// 작업함의 열림·필터·스크롤·선택은 실행 중에만 기억하는 임시 UI 상태라 업무 저장 파일에 넣지 않는다.
     /// </summary>
     public partial class AppShell
     {
-        [Header("작업 기록 진입 (상단 툴바)")]
+        [Header("작업함 진입 (중앙 툴바)")]
         [SerializeField] Button workRecordsButton;
         [SerializeField] TMP_Text workRecordsLabel;
         [SerializeField] Image workRecordsBackground;
+        [SerializeField] WorkbenchView workbench;
 
-        /// <summary>전체 보기 상태 필터. 순서는 필터 버튼 순서와 같다.</summary>
+        /// <summary>작업함 상태 필터. 순서는 필터 버튼 순서와 같다.</summary>
         enum WorkFilter
         {
             All,
@@ -33,83 +36,102 @@ namespace Intersection.UI
         static readonly string[] FilterKeys =
             { UIKeys.FilterAll, UIKeys.FilterPinned, UIKeys.FilterKeep, UIKeys.FilterDelete, UIKeys.FilterMemo };
 
-        bool fullView;
+        /// <summary>빠른 고정 목록에 보여줄 최대 개수. 전체 고정 수는 제목에 표시한다.</summary>
+        const int QuickPinnedMax = 3;
+
         WorkFilter workFilter;
         /// <summary>의뢰 필터(기기 ID). null이면 모든 의뢰.</summary>
         string caseFilterId;
         readonly List<string> caseFilterIds = new List<string>();
-        /// <summary>전체 목록을 마지막으로 그린 기기. 바뀌면 현재 기기 우선 정렬이 달라지므로 맨 위로 보낸다.</summary>
-        string fullViewDevice;
-        /// <summary>전체 보기에서 마지막으로 연 상세. 목록으로 돌아오면 그 행을 표시하고 키보드 포커스를 둔다.</summary>
-        string lastDetailKey;
+        /// <summary>작업함에서 고른 자료. 우측 패널이 이 자료의 상세·조작을 보여준다. 다시 열어도 유지한다(실행 중에만).</summary>
+        RecordRef workbenchSelected;
+
+        bool WorkbenchOpen => workbench.IsOpen;
 
         string CurrentDeviceId => session.CurrentCase != null ? session.CurrentCase.Id : null;
 
         /// <summary>
-        /// 작업 기록 전체 보기 진입. 상단 툴바 `작업 기록 {count}`와 빠른 목록의 `전체 보기`가 함께 쓴다.
-        /// 전체 보기 상세면 목록으로 돌아가고(필터·스크롤 유지), 이미 목록이면 아무것도 바꾸지 않는다. 비교 중에는 받지 않는다.
+        /// 상단 `작업함 N건`: 작업함을 연다. 처음에는 `전체`·`모든 의뢰`, 같은 실행 중 다시 열면 이전 필터·스크롤·선택 그대로.
+        /// 이미 열려 있으면 아무것도 바꾸지 않는다. 비교 중에는 받지 않는다.
         /// </summary>
-        void ShowWorkRecords()
+        void ShowWorkRecords() => OpenWorkbench(null);
+
+        /// <summary>빠른 목록의 `고정 자료 N건` 제목·`작업함 열기`, 비교 1/2 상태 줄에서 연다.</summary>
+        void OpenWorkbenchPinned() => OpenWorkbench(WorkFilter.Pinned);
+
+        /// <summary>작업함을 연다. filter가 있으면 그 필터로 바꾸고(목록 맨 위부터), 없으면 이전 상태 그대로.</summary>
+        void OpenWorkbench(WorkFilter? filter)
         {
             if (comparing)
                 return;
-            if (FullDetailOpen)
-                ReturnToFullList();
-            else if (!fullView)
-                OpenFullView();
-        }
-
-        void OpenFullView()
-        {
-            if (comparing || fullView)
+            if (filter.HasValue && filter.Value != workFilter)
+            {
+                workFilter = filter.Value;
+                workbench.ResetScroll();
+            }
+            if (WorkbenchOpen)
+            {
+                if (filter.HasValue)
+                    RenderWorkbench();
                 return;
+            }
             if (selecting)
                 SetSelecting(false);
-            fullView = true;
-            focus = PanelFocus.Current;
-            focusRecord = null;
+            // 검색·작업함·비교는 중앙에 하나만 보인다. 휴대전화 상태와 우측 현재 열람은 그대로 둔다.
+            CloseSearch();
+            CloseNotifications();
+            SaveScroll();
             compareWarnKey = null;
-            lastDetailKey = null;
-            fullViewDevice = CurrentDeviceId;
-            workPanel.ResetFullScroll();
+            workbench.Open(CloseWorkbench);
             RefreshWorkPanel();
         }
 
-        /// <summary>`< 현재 화면` 또는 Esc: 간단한 패널(현재 열람)로 돌아간다.</summary>
-        void CloseFullView()
+        /// <summary>`< 현재 화면`·`작업함 닫기`·Esc: 작업함을 닫고 보던 휴대전화 화면과 우측 패널로 돌아간다.</summary>
+        void CloseWorkbench()
         {
-            fullView = false;
-            focus = PanelFocus.Current;
-            focusRecord = null;
+            if (!WorkbenchOpen)
+                return;
+            workbench.Close();
+            workbench.KeyboardFocus = false;
             compareWarnKey = null;
+            UnityEngine.EventSystems.EventSystem.current?.SetSelectedGameObject(null);
             RefreshWorkPanel();
         }
 
-        /// <summary>상세의 `< 작업 기록` 또는 Esc: 필터·스크롤을 그대로 둔 전체 목록으로 돌아간다.</summary>
-        void ReturnToFullList()
+        /// <summary>좌측 의뢰·앱·요청을 누르면 중앙의 검색·작업함을 닫고 휴대전화 화면으로 돌아간다(비교는 좌측을 막으므로 해당 없음).</summary>
+        void CloseCenterScreens()
         {
-            focus = PanelFocus.Current;
-            focusRecord = null;
+            CloseSearch();
+            if (WorkbenchOpen)
+            {
+                workbench.Close();
+                workbench.KeyboardFocus = false;
+                compareWarnKey = null;
+            }
+        }
+
+        /// <summary>작업함 행 본문: 목록은 그대로 두고 우측 패널에 상세를 띄운다. 의뢰 요청은 좌측에서 열 때와 같이 열람으로 기록한다.</summary>
+        void SelectWorkbench(RecordRef target)
+        {
+            if (target.kind == RecordKind.Request
+                && RecordAccess.Check(target, config.database, session.Stage, text) == AccessState.Accessible)
+                store.MarkViewed(target);
+            workbenchSelected = target;
             compareWarnKey = null;
             RefreshWorkPanel();
         }
 
-        bool FullDetailOpen => fullView && focus != PanelFocus.Current;
-
-        /// <summary>핀·분류·메모 중 하나라도 있는 기록 (열람만 한 기록 제외). 목록과 상단 개수가 같은 기준을 쓴다.</summary>
+        /// <summary>고정·분류·메모 중 하나라도 있는 기록 (열람만 한 기록 제외). 목록과 상단 개수가 같은 기준을 쓴다.</summary>
         static bool IsWorked(WorkEntry e) =>
             e.pinned || e.classification != Classification.Unclassified || !string.IsNullOrEmpty(e.memo);
 
-        /// <summary>
-        /// 상단 툴바 `작업 기록 {count}건`: 필터와 무관한 전체 작업 기록 수(빠른 목록 머리말·전체 보기의 전체 수와 같은 IsWorked 기준),
-        /// 전체 보기 중이면 켜진 상태.
-        /// </summary>
+        /// <summary>상단 `작업함 {count}건`: 필터와 무관한 전체 작업함 자료 수(IsWorked 기준), 작업함이 열려 있으면 켜진 상태.</summary>
         void RenderWorkToolbar()
         {
             workRecordsLabel.text = text.Format(UIKeys.ToolbarWorkRecords,
                 ("count", store.All.Count(IsWorked).ToString(time.Culture)));
-            workRecordsBackground.color = fullView ? Theme.accentSoft : Theme.panelRaised;
-            workRecordsLabel.color = fullView ? Theme.accent : Theme.text;
+            workRecordsBackground.color = WorkbenchOpen ? Theme.accentSoft : Theme.panelRaised;
+            workRecordsLabel.color = WorkbenchOpen ? Theme.accent : Theme.text;
         }
 
         void SetWorkFilter(int index)
@@ -117,8 +139,8 @@ namespace Intersection.UI
             if ((int)workFilter == index)
                 return;
             workFilter = (WorkFilter)index;
-            workPanel.ResetFullScroll();
-            RefreshWorkPanel();
+            workbench.ResetScroll();
+            RenderWorkbench();
         }
 
         void SetCaseFilter(int index)
@@ -127,8 +149,8 @@ namespace Intersection.UI
             if (id == caseFilterId)
                 return;
             caseFilterId = id;
-            workPanel.ResetFullScroll();
-            RefreshWorkPanel();
+            workbench.ResetScroll();
+            RenderWorkbench();
         }
 
         bool Matches(WorkEntry e)
@@ -145,7 +167,7 @@ namespace Intersection.UI
             }
         }
 
-        /// <summary>작업 기록 행·슬롯·의뢰 필터에 쓰는 의뢰 표시명. 원본을 찾지 못한 기록도 저장된 기기 ID로 찾는다.</summary>
+        /// <summary>작업함 행·슬롯·의뢰 필터에 쓰는 의뢰 표시명. 원본을 찾지 못한 기록도 저장된 기기 ID로 찾는다.</summary>
         string CaseNameOf(RecordRef target, ResolvedRecord res)
         {
             var device = res.device != null ? res.device
@@ -157,15 +179,33 @@ namespace Intersection.UI
             text.Format(UIKeys.WorkItemMeta, ("owner", CaseNameOf(target, res)),
                 ("code", RecordCode.Format(text, RecordResolver.PrefixFor(target.kind), target.recordId, target.deviceId)));
 
-        /// <summary>
-        /// 핀·분류·메모 중 하나라도 있는 기록. 열람만 한 기록은 넣지 않는다.
-        /// 핀한 기록이 위(핀 순서), 나머지는 기기별(현재 기기 먼저)로 묶어 의뢰 요청 → 원본 시각 최신순 → 불변 키 순.
-        /// 간단한 패널이면 빠른 목록, 전체 보기 목록이면 필터를 적용한 전체 목록을 그린다(상세를 연 동안에는 목록을 그대로 둔다).
-        /// </summary>
+        /// <summary>작업함·빠른 목록을 다시 그린다. 업무 상태가 바뀔 때마다 RefreshWorkPanel에서 부른다.</summary>
         void RenderWorkList()
         {
-            if (FullDetailOpen)
-                return;
+            RenderPinnedList();
+            if (WorkbenchOpen)
+                RenderWorkbench();
+        }
+
+        /// <summary>
+        /// 우측 아래 `고정 자료 N건`: 최근에 고정한 자료부터 최대 QuickPinnedMax개. 고정 자료가 없어도 제목·`작업함 열기`는 쓸 수 있다.
+        /// </summary>
+        void RenderPinnedList()
+        {
+            var pinned = store.RecentlyPinned();
+            var quick = pinned.Take(QuickPinnedMax)
+                .Select(e => WorkItem(e, RecordResolver.Resolve(e.target, config.database, text), null, OpenPinned))
+                .ToList();
+            workPanel.ShowPinnedList(quick, text.Format(UIKeys.PanelWorkListHeader, ("count", pinned.Count.ToString(time.Culture))),
+                text.Get(UIKeys.PanelPinnedEmpty), RowStyle());
+        }
+
+        /// <summary>
+        /// 작업함 목록. 고정·분류·메모 중 하나라도 있는 기록만(열람만 한 기록 제외).
+        /// 고정한 기록이 위(고정 순서), 나머지는 기기별(현재 기기 먼저)로 묶어 의뢰 요청 → 원본 시각 최신순 → 불변 키 순.
+        /// </summary>
+        void RenderWorkbench()
+        {
             var deviceOrder = Cases().Select((c, i) => (c.Id, i)).ToDictionary(x => x.Id, x => x.i);
             string currentDevice = CurrentDeviceId;
 
@@ -188,21 +228,6 @@ namespace Intersection.UI
                     .ThenBy(x => x.entry.target.Key, System.StringComparer.Ordinal))
                 .ToList();
 
-            if (!fullView)
-            {
-                var actionKey = ActionTarget?.Key;
-                var quick = ordered.Select(x => WorkItem(x.entry, x.res, actionKey)).ToList();
-                workPanel.ShowWorkList(quick, text.Format(UIKeys.PanelWorkListHeader, ("count", quick.Count.ToString(time.Culture))),
-                    text.Get(UIKeys.PanelWorkEmpty), text.Get(UIKeys.PanelWorkCollapse), text.Get(UIKeys.PanelWorkExpand), RowStyle());
-                return;
-            }
-
-            // 기기가 바뀌면 현재 기기 우선 정렬이 달라지므로 목록을 맨 위에서 다시 보여준다.
-            if (currentDevice != fullViewDevice)
-            {
-                fullViewDevice = currentDevice;
-                workPanel.ResetFullScroll();
-            }
             // 의뢰 필터 항목: `모든 의뢰` + 데이터의 의뢰 표시명(의뢰 순서). 사라진 의뢰를 가리키던 필터는 해제한다.
             caseFilterIds.Clear();
             caseFilterIds.AddRange(Cases().Select(c => c.Id));
@@ -211,18 +236,18 @@ namespace Intersection.UI
             var caseNames = new List<string> { text.Get(UIKeys.FilterAllCases) };
             caseNames.AddRange(Cases().Select(c => c.DisplayName));
 
-            // 필터는 보이는 행만 바꾼다. 핀·분류·메모·비교 슬롯은 그대로다.
-            var shown = ordered.Where(x => Matches(x.entry)).Select(x => WorkItem(x.entry, x.res, lastDetailKey)).ToList();
+            // 필터는 보이는 행만 바꾼다. 고정·분류·메모·비교 슬롯은 그대로다.
+            string selectedKey = workbenchSelected?.Key;
+            var shown = ordered.Where(x => Matches(x.entry)).Select(x => WorkItem(x.entry, x.res, selectedKey, SelectWorkbench)).ToList();
             bool filtered = workFilter != WorkFilter.All || caseFilterId != null;
             string total = ordered.Count.ToString(time.Culture);
-            workPanel.ShowFullList(new WorkPanelView.FullList
+            string focusedRow = workbench.FocusedRowKey();
+            workbench.Show(new WorkbenchView.Data
             {
                 title = text.Get(UIKeys.FullViewTitle),
                 count = filtered
                     ? text.Format(UIKeys.FullViewCountFiltered, ("shown", shown.Count.ToString(time.Culture)), ("total", total))
                     : text.Format(UIKeys.FullViewCount, ("total", total)),
-                backText = text.Get(UIKeys.PanelBackToCurrent),
-                onBack = CloseFullView,
                 filters = FilterKeys.Select(k => text.Get(k)).ToArray(),
                 filterIndex = (int)workFilter,
                 onFilter = SetWorkFilter,
@@ -240,12 +265,14 @@ namespace Intersection.UI
                     idleTextColor = Theme.text,
                 },
             });
+            // 다시 그려도 키보드로 보던 행에 포커스를 둔다.
+            workbench.FocusRow(focusedRow);
         }
 
-        WorkPanelView.WorkItem WorkItem(WorkEntry e, ResolvedRecord res, string selectedKey)
+        WorkPanelView.WorkItem WorkItem(WorkEntry e, ResolvedRecord res, string selectedKey, System.Action<RecordRef> onClick)
         {
             var target = e.target;
-            // `+ 비교`: 핀과 무관. 칸에 있으면 `비교 중`(다시 누르면 뺌), 칸이 차 있으면 비활성, 열 수 없는 원본이면 숨김.
+            // `+ 비교`: 고정과 무관. 칸에 있으면 `비교 중`(다시 누르면 뺌), 칸이 차 있으면 비활성, 열 수 없는 원본이면 숨김.
             // 자동 교체는 하지 않는다.
             var compare = PinnedItemView.CompareState.Hidden;
             if (SlotOf(target.Key) >= 0)
@@ -258,6 +285,7 @@ namespace Intersection.UI
                 compare = compare,
                 compareLabel = text.Get(compare == PinnedItemView.CompareState.InSlot ? UIKeys.ListCompareOn : UIKeys.ListCompareAdd),
                 onCompare = () => ToggleCompareSlot(target),
+                // 원본 누락·중복·현재 단계 접근 불가 자료는 실제 제목 대신 중립 문구만 보여준다.
                 title = !res.found ? text.Get(res.duplicate ? UIKeys.PanelMissingDuplicate : UIKeys.PanelMissing)
                     : RecordAccess.Check(target, config.database, session.Stage, text) == AccessState.Unavailable
                         ? text.Get(UIKeys.PanelUnavailable) : res.title,
@@ -267,8 +295,35 @@ namespace Intersection.UI
                 pinned = e.pinned,
                 selected = selectedKey != null && selectedKey == target.Key,
                 missing = !res.found,
-                onClick = () => OpenWorkRecord(target),
+                onClick = () => onClick(target),
             };
+        }
+
+        /// <summary>
+        /// 빠른 고정 목록 항목: 북마크라 우측 상세를 거치지 않고 원본 위치로 바로 이동한다(이후 복귀는 휴대전화 뒤로가기).
+        /// 의뢰 요청은 휴대전화 원본이 없으므로 우측 패널에 열고, 원본 누락·ID 중복·현재 단계 접근 불가면 이동하지 않고
+        /// 우측 패널에 이유만 보여준다(제목·내용은 가린 채). 판정은 원본 열기·검색과 같은 RecordAccess/PlanSource다.
+        /// </summary>
+        void OpenPinned(RecordRef target)
+        {
+            if (comparing)
+                return;
+            if (target.kind == RecordKind.Request)
+            {
+                var request = RecordAccess.Check(target, config.database, session.Stage, text) == AccessState.Accessible
+                    ? config.database.requests.FirstOrDefault(q => q != null && q.Id == target.recordId && q.device != null && q.device.Id == target.deviceId)
+                    : null;
+                // 요청은 우측 패널에만 연다(휴대전화 기기·화면은 그대로).
+                if (request != null)
+                    OpenRequest(request);
+                else
+                    OpenWorkRecord(target);
+                return;
+            }
+            if (PlanSource(target, out _, out _, out _))
+                OpenSource(target);
+            else
+                OpenWorkRecord(target);
         }
 
         WorkPanelView.RowStyle RowStyle() => new WorkPanelView.RowStyle

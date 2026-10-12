@@ -118,7 +118,7 @@ namespace Intersection.Core
         public const string PanelTitleSettings = "panel.title.settings";
         public const string RecordPrefixSetting = "record.prefix.setting";
 
-        // UI-05 기록 고르기·핀·처리 후보·작업 기록
+        // UI-05 기록 고르기·고정(내부 이름 pin)·처리 후보·작업함
         public const string ToolbarSelectStart = "toolbar.selectRecord";
         public const string ToolbarSelectEnd = "toolbar.selectEnd";
         public const string ToolbarPickHint = "toolbar.pickHint";
@@ -138,11 +138,11 @@ namespace Intersection.Core
         public const string PanelMissing = "panel.missing";
         public const string PanelMissingDuplicate = "panel.missingDuplicate";
         public const string PanelMissingBody = "panel.missingBody";
+        public const string PanelMissingDuplicateBody = "panel.missingDuplicateBody";
         public const string WorkItemMeta = "panel.pinnedMeta";
         public const string PanelWorkListHeader = "panel.workList";
         public const string PanelWorkEmpty = "panel.workEmpty";
-        public const string PanelWorkCollapse = "panel.workCollapse";
-        public const string PanelWorkExpand = "panel.workExpand";
+        public const string PanelPinnedEmpty = "panel.pinnedEmpty";
         public const string SelectionMessageContext = "selection.messageContext";
         public const string ActionOpenSource = "panel.openSource";
         public const string ActionOpenSourceMessage = "panel.openSourceMessage";
@@ -157,7 +157,6 @@ namespace Intersection.Core
         public const string CompareBlockedMissing = "panel.compareMissing";
         public const string CompareBlockedDuplicate = "panel.compareDuplicate";
         public const string CompareBlockedUnavailable = "panel.compareUnavailable";
-        public const string CompareSlotsHeader = "panel.compareSlots";
         public const string ListCompareAdd = "list.compareAdd";
         public const string ListCompareOn = "list.compareOn";
         public const string CompareSlotEmpty = "panel.compareSlotEmpty";
@@ -166,10 +165,9 @@ namespace Intersection.Core
         public const string CompareKindFormat = "compare.kindFormat";
         public const string CompareAppWork = "compare.app.work";
 
-        // UI-05/06 보완: 작업 기록 전체 보기
+        // 작업함 (중앙 업무 화면, 예전 작업 기록 전체 보기를 대체)
         public const string PanelFullViewOpen = "panel.fullViewOpen";
         public const string PanelBackToCurrent = "panel.backToCurrent";
-        public const string PanelBackToList = "panel.backToList";
         public const string FullViewTitle = "fullView.title";
         public const string FullViewCount = "fullView.count";
         public const string FullViewCountFiltered = "fullView.countFiltered";
@@ -183,6 +181,15 @@ namespace Intersection.Core
         public const string ListMemoMark = "list.memoMark";
         public const string DropdownArrow = "dropdown.arrow";
         public const string ToolbarWorkRecords = "toolbar.workRecords";
+        public const string WorkbenchClose = "workbench.close";
+        public const string WorkbenchNoSelection = "workbench.noSelection";
+        public const string WorkbenchNoSelectionBody = "workbench.noSelectionBody";
+        public const string WorkbenchCompareStart = "workbench.compareStart";
+        public const string WorkbenchSlots0 = "workbench.slots0";
+        public const string WorkbenchSlots1 = "workbench.slots1";
+        public const string WorkbenchSlots2 = "workbench.slots2";
+        public const string PanelCompareStatus1 = "panel.compareStatus1";
+        public const string PanelCompareStatus2 = "panel.compareStatus2";
 
         // UI-07 검색·진행·알림
         public const string StatusLocalReady = "status.localReady";
@@ -299,16 +306,17 @@ namespace Intersection.Core
             ToolbarSelectStart, ToolbarSelectEnd, ToolbarPickHint, ToolbarPicked,
             PanelHeadingCurrent, PanelHeadingPicked, PanelHeadingWork, PanelHeadingRequest, ActionPin, ActionUnpin,
             PanelViewed, ViewedYes, ViewedNo, ClassUnclassified, ClassKeep, ClassDelete,
-            PanelMissing, PanelMissingDuplicate, PanelMissingBody, WorkItemMeta,
-            PanelWorkListHeader, PanelWorkEmpty, PanelWorkCollapse, PanelWorkExpand, SelectionMessageContext, SideRequests,
+            PanelMissing, PanelMissingDuplicate, PanelMissingBody, PanelMissingDuplicateBody, WorkItemMeta,
+            PanelWorkListHeader, PanelWorkEmpty, PanelPinnedEmpty, SelectionMessageContext, SideRequests,
             ActionOpenSource, ActionOpenSourceMessage, SourceMissing, SourceDuplicate, SourceUnavailable,
             ActionCompareAdd, ActionCompareRemove, CompareFull, CompareBlockedMissing, CompareBlockedDuplicate,
-            CompareBlockedUnavailable, CompareSlotsHeader,
+            CompareBlockedUnavailable,
             ListCompareAdd, ListCompareOn, CompareSlotEmpty, CompareSlotRemove, CompareRowKind,
             CompareKindFormat, CompareAppWork,
-            PanelFullViewOpen, PanelBackToCurrent, PanelBackToList, FullViewTitle, FullViewCount, FullViewCountFiltered,
+            PanelFullViewOpen, PanelBackToCurrent, FullViewTitle, FullViewCount, FullViewCountFiltered,
             FullViewNoMatch, FilterAll, FilterPinned, FilterKeep, FilterDelete, FilterMemo, FilterAllCases, ListMemoMark,
-            DropdownArrow, ToolbarWorkRecords,
+            DropdownArrow, ToolbarWorkRecords, WorkbenchClose, WorkbenchNoSelection, WorkbenchNoSelectionBody, WorkbenchCompareStart,
+            WorkbenchSlots0, WorkbenchSlots1, WorkbenchSlots2, PanelCompareStatus1, PanelCompareStatus2,
             StatusLocalReady, SearchTitle, SearchHint, GlobalSearchEmpty, SearchCount, SearchGroup, SearchMeta, SearchMetaNoTime,
             SearchClose, NotificationsTitle, NotificationsMarkAll, NotificationsEmpty, PanelUnavailable, PanelUnavailableBody,
             KindThread, KindMessage, KindAttachment, KindLocationShare, KindPhoto, KindBrowser, KindMap, KindFile,

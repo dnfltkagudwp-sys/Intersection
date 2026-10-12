@@ -10,8 +10,8 @@ using UnityEngine.UI;
 namespace Intersection.UI
 {
     /// <summary>
-    /// 핀·분류·작업메모·기록 고르기·초반 업무 안내 (UI-05, 안내는 단계 없는 한 줄로 간소화).
-    /// 우측 패널은 기본적으로 휴대전화에 열린 기록(현재 열람)을 보여주며 바로 핀·분류·메모할 수 있다.
+    /// 고정(화면 용어, 코드·저장 이름은 pin)·분류·작업메모·기록 고르기·초반 업무 안내 (UI-05, 안내는 단계 없는 한 줄로 간소화).
+    /// 우측 패널은 기본적으로 휴대전화에 열린 기록(현재 열람)을, 작업함이 열려 있으면 작업함에서 고른 자료를 보여주며 바로 고정·분류·메모할 수 있다.
     /// 기록 고르기 모드는 개별 메시지처럼 화면 안의 더 작은 단위를 고를 때만 쓴다.
     /// 휴대전화 화면에는 고르기 모드에서만 얇은 테두리·체크·핀 표시가 보인다.
     /// </summary>
@@ -31,7 +31,7 @@ namespace Intersection.UI
             Current,
             /// <summary>기록 고르기 모드에서 고른 기록 (선택한 기록).</summary>
             Picked,
-            /// <summary>작업 기록 목록에서 다시 연 기록. 휴대전화 화면과 기기는 그대로다.</summary>
+            /// <summary>고정 자료 빠른 목록에서 원본으로 이동하지 못한 기록(누락·중복·접근 불가). 휴대전화 화면과 기기는 그대로다.</summary>
             WorkRecord,
             /// <summary>좌측에서 연 의뢰 요청.</summary>
             Request,
@@ -52,8 +52,16 @@ namespace Intersection.UI
         /// <summary>검수·테스트용 업무 상태 저장소.</summary>
         public WorkStore Store => store;
 
-        /// <summary>핀·분류·메모 조작이 적용되는 기록 (패널에 보이는 기록). 전체 보기 목록에는 없다(P·1·2·0 무시).</summary>
-        RecordRef ActionTarget => focus != PanelFocus.Current ? focusRecord : fullView ? null : sourceFocus ?? currentRecord;
+        /// <summary>
+        /// 고정·분류·메모 조작이 적용되는 기록 (패널에 보이는 기록). 작업함이 열려 있으면 작업함에서 고른 자료,
+        /// 아무것도 고르지 않았으면 없다(P·1·2·0 무시).
+        /// </summary>
+        RecordRef ActionTarget => WorkbenchOpen ? workbenchSelected
+            : focus != PanelFocus.Current ? focusRecord : sourceFocus ?? currentRecord;
+
+        /// <summary>우측 패널에 띄운 기록(작업함에서 고른 자료·작업함 고정 목록에서 연 자료·의뢰 요청). 현재 열람이면 null.</summary>
+        RecordRef ShownRecord => WorkbenchOpen ? workbenchSelected
+            : focus == PanelFocus.WorkRecord || focus == PanelFocus.Request ? focusRecord : null;
 
         void InitWork()
         {
@@ -62,7 +70,7 @@ namespace Intersection.UI
             SelectionBus.IsPinned = store.IsPinned;
             SelectionBus.SelectRequested = Pick;
             selectToggle.onClick.AddListener(() => SetSelecting(!selecting));
-            workPanel.BindFullView(ShowWorkRecords);
+            workPanel.BindWorkbench(OpenWorkbenchPinned);
             workRecordsButton.onClick.AddListener(ShowWorkRecords);
             SyncSelection();
         }
@@ -90,9 +98,9 @@ namespace Intersection.UI
             if (selecting == on)
                 return;
             selecting = on;
-            // 기록 고르기는 휴대전화 화면 안을 고르는 모드라 전체 보기를 닫고 간단한 패널로 돌아간다.
+            // 기록 고르기는 휴대전화 화면 안을 고르는 모드라 중앙의 검색·작업함을 닫는다.
             if (on)
-                fullView = false;
+                CloseCenterScreens();
             // 고르기를 시작하거나 끝내면 패널은 현재 열람으로 돌아간다.
             SaveScroll();
             RenderCenter();
@@ -111,7 +119,7 @@ namespace Intersection.UI
         }
 
         /// <summary>
-        /// 작업 기록에서 연 기록을 패널에만 띄운다. 휴대전화 화면·현재 기기는 바꾸지 않는다.
+        /// 고정 자료를 원본으로 열 수 없을 때(누락·중복·접근 불가) 패널에만 띄워 이유를 보여준다. 휴대전화 화면·현재 기기는 바꾸지 않는다.
         /// 의뢰 요청은 좌측에서 열 때와 같은 내용(상태 줄·진행 작업)을 보여주고, 열람도 같은 기준으로 기록한다.
         /// </summary>
         void OpenWorkRecord(RecordRef target)
@@ -121,10 +129,9 @@ namespace Intersection.UI
             if (target.kind == RecordKind.Request
                 && RecordAccess.Check(target, config.database, session.Stage, text) == AccessState.Accessible)
                 store.MarkViewed(target);
-            // 휴대전화에 열린 기록과 같아도 작업 기록으로 띄운다(원본 열기·비교에 추가 같은 보조 행동은 여기서만 제공).
+            // 휴대전화에 열린 기록과 같아도 패널에 따로 띄운다(원본 열기 불가 이유는 여기서만 보여준다).
             focus = PanelFocus.WorkRecord;
             focusRecord = target;
-            lastDetailKey = target.Key;
             compareWarnKey = null;
             RefreshWorkPanel();
         }
@@ -161,14 +168,13 @@ namespace Intersection.UI
 
         /// <summary>
         /// RenderCenter 뒤에 호출된다. 패널이 보여줄 대상에 따라 내용·머리말·조작을 그린다.
-        /// 전체 보기면 focus가 Current일 때 목록, 다른 기록이면 그 상세(`< 작업 기록`)를 보여준다.
+        /// 작업함이 열려 있으면 작업함에서 고른 자료의 상세(돌아가기 `< 현재 화면`은 작업함을 닫음),
+        /// 아니면 현재 열람·고른 기록·고정 목록에서 연 기록·의뢰 요청.
         /// 다시 그린 뒤 패널에 있던 키보드 포커스를 같은 기록·조작으로 되살린다.
         /// </summary>
         void RefreshWorkPanel()
         {
             var keyboardFocus = workPanel.CaptureFocus();
-            if (fullView && selecting)
-                fullView = false;
             if (focus == PanelFocus.Picked && !selecting)
                 focus = PanelFocus.Current;
             if (focus != PanelFocus.Current && focusRecord == null)
@@ -176,12 +182,18 @@ namespace Intersection.UI
             // 비교 슬롯 정리는 보조 행동(비교에 추가/빼기)을 그리기 전에 한다.
             PruneCompareSlots();
 
-            bool fullList = fullView && focus == PanelFocus.Current;
-            workPanel.SetMode(!fullView ? WorkPanelView.Mode.Simple
-                : fullList ? WorkPanelView.Mode.FullList : WorkPanelView.Mode.FullDetail);
-            if (fullList)
+            bool bench = WorkbenchOpen;
+            workPanel.SetMode(bench ? WorkPanelView.Mode.Workbench : WorkPanelView.Mode.Simple);
+            if (bench)
             {
-                // 목록은 RenderWorkList가 그린다.
+                if (workbenchSelected != null)
+                    DrawRecord(workbenchSelected);
+                else
+                    workPanel.Show(text.Get(UIKeys.WorkbenchNoSelection), text.Get(UIKeys.WorkbenchNoSelectionBody),
+                        new WorkPanelView.Row[0]);
+                // 머리말에는 기록 종류(사진·의뢰 요청 등)를, 돌아가기는 작업함을 닫는 `< 현재 화면`.
+                workPanel.SetHeading(text.Get(workbenchSelected != null ? UIKeys.KindKey(workbenchSelected.kind) : UIKeys.FullViewTitle),
+                    CloseWorkbench, text.Get(UIKeys.PanelBackToCurrent));
             }
             else if (focus == PanelFocus.Current)
             {
@@ -196,12 +208,8 @@ namespace Intersection.UI
                 DrawRecord(focusRecord);
                 string heading = text.Get(focus == PanelFocus.Picked ? UIKeys.PanelHeadingPicked
                     : focus == PanelFocus.Request ? UIKeys.PanelHeadingRequest : UIKeys.PanelHeadingWork);
-                // 전체 보기 상세는 돌아가기가 `< 작업 기록`이므로 머리말에는 기록 종류(사진·의뢰 요청 등)를 보여준다.
-                if (fullView)
-                    workPanel.SetHeading(text.Get(UIKeys.KindKey(focusRecord.kind)), ReturnToFullList, text.Get(UIKeys.PanelBackToList));
-                else
-                    workPanel.SetHeading(heading, PanelShowsOther ? ReturnPanelToCurrent : (System.Action)null,
-                        text.Get(UIKeys.PanelBackToCurrent));
+                workPanel.SetHeading(heading, PanelShowsOther ? ReturnPanelToCurrent : (System.Action)null,
+                    text.Get(UIKeys.PanelBackToCurrent));
             }
             RenderRecordTools();
             RenderJobs();
@@ -214,7 +222,7 @@ namespace Intersection.UI
             RenderWorkToolbar();
             SyncSelection();
             workPanel.ApplyNavigation();
-            workPanel.RestoreFocus(keyboardFocus, fullList ? lastDetailKey : null);
+            workPanel.RestoreFocus(keyboardFocus, null);
         }
 
         WorkPanelView.Actions ActionsFor(RecordRef target) => new WorkPanelView.Actions
@@ -280,7 +288,8 @@ namespace Intersection.UI
             }
             string sourceText = null, sourceNote = null;
             System.Action onSource = null;
-            if (focus == PanelFocus.WorkRecord && target.kind != RecordKind.Request)
+            // 원본 열기는 작업함에서 고른 자료와 고정 목록에서 이동하지 못하고 패널에 띄운 자료에만 둔다(현재 열람은 이미 원본 화면).
+            if ((WorkbenchOpen || focus == PanelFocus.WorkRecord) && target.kind != RecordKind.Request)
             {
                 if (PlanSource(target, out _, out _, out var reasonKey))
                 {
@@ -420,8 +429,8 @@ namespace Intersection.UI
             if (!PlanSource(target, out var device, out var apply, out _))
                 return;
             SaveScroll();
-            // 원본은 중앙 휴대전화에 열리므로 전체 보기를 끝낸다.
-            fullView = false;
+            // 원본은 중앙 휴대전화에 열리므로 검색·작업함을 닫는다(작업함의 필터·스크롤·선택은 다음에 열 때 그대로).
+            CloseCenterScreens();
             EndSelectingForNavigation();
             session.CurrentCase = device;
             apply(session.Nav(device));
@@ -448,7 +457,7 @@ namespace Intersection.UI
             {
                 // 원본이 없어도 다른 기록으로 대체하지 않고, 저장된 ID 그대로 누락 상태로 보여준다.
                 workPanel.Show(text.Get(res.duplicate ? UIKeys.PanelMissingDuplicate : UIKeys.PanelMissing),
-                    text.Get(UIKeys.PanelMissingBody), new[] { Row(UIKeys.PanelRecordId, code, Theme.monoFont) });
+                    text.Get(res.duplicate ? UIKeys.PanelMissingDuplicateBody : UIKeys.PanelMissingBody), new[] { Row(UIKeys.PanelRecordId, code, Theme.monoFont) });
                 return;
             }
             if (RecordAccess.Check(target, config.database, session.Stage, text) == AccessState.Unavailable)
@@ -501,13 +510,14 @@ namespace Intersection.UI
         /// <summary>의뢰 요청은 업무 프로그램 기록이라 휴대전화가 아니라 우측 패널에 열리고, 바로 핀할 수 있다.</summary>
         void OpenRequest(WorkRequestData request)
         {
+            // 좌측 요청은 좌측 탐색이라 중앙의 검색·작업함을 닫고 패널에 요청을 띄운다.
+            CloseCenterScreens();
             if (selecting)
                 SetSelecting(false);
             var target = RecordRef.ForRequest(request);
             store.MarkViewed(target);
             focus = PanelFocus.Request;
             focusRecord = target;
-            lastDetailKey = target.Key;
             RefreshWorkPanel();
         }
 
@@ -557,7 +567,7 @@ namespace Intersection.UI
 
         /// <summary>
         /// Esc 우선순위: 비교 화면이면 비교 종료 → 알림 목록 닫기 → 검색 닫기 → 메모 입력 중이면 입력값을 저장하고 포커스만 해제
-        /// → 전체 보기 상세면 전체 목록으로 → 전체 목록이면 간단한 패널로 → 패널에 다른 기록을 띄웠으면 현재 열람으로
+        /// → 작업함이 열려 있으면 작업함 닫기(보던 휴대전화로) → 패널에 다른 기록을 띄웠으면 현재 열람으로
         /// → 고르기 모드면 종료 → 휴대전화 뒤로. 한 번의 Esc는 한 단계만 처리하고 아래 단계로 넘기지 않는다.
         /// </summary>
         void HandleEscape()
@@ -570,10 +580,8 @@ namespace Intersection.UI
                 CloseSearch();
             else if (workPanel.IsEditingMemo || memoWasFocused)
                 workPanel.EndMemoEdit();
-            else if (FullDetailOpen)
-                ReturnToFullList();
-            else if (fullView)
-                CloseFullView();
+            else if (WorkbenchOpen)
+                CloseWorkbench();
             else if (PanelShowsOther)
                 ReturnPanelToCurrent();
             else if (selecting)

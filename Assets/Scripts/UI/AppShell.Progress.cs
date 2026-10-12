@@ -65,16 +65,16 @@ namespace Intersection.UI
 
         /// <summary>
         /// 의뢰 요청을 띄웠을 때 그 요청에 속한 작업(인벤토리 생성 등). 조건 전에는 업무 상태만 보여주고 다음 행동을 지시하지 않는다.
-        /// 좌측 의뢰 요청·작업 기록(빠른 목록·전체 보기 상세)·검색 어디서 열었든 같은 작업을 보여준다.
+        /// 좌측 의뢰 요청·작업함·고정 목록·검색 어디서 열었든 같은 작업을 보여준다.
         /// 시작 뒤에는 같은 버튼을 다시 누를 수 없다.
         /// </summary>
         void RenderJobs()
         {
             var items = new List<WorkPanelView.JobItem>();
-            if ((focus == PanelFocus.Request || focus == PanelFocus.WorkRecord) && focusRecord != null
-                && focusRecord.kind == RecordKind.Request)
+            var shown = ShownRecord;
+            if (shown != null && shown.kind == RecordKind.Request)
             {
-                var request = config.database.requests.FirstOrDefault(q => q != null && q.Id == focusRecord.recordId);
+                var request = config.database.requests.FirstOrDefault(q => q != null && q.Id == shown.recordId);
                 foreach (var job in request == null ? Enumerable.Empty<ProgressJobData>() : progression.JobsForRequest(request))
                 {
                     if (job.device == null || !job.device.IsAvailable(session.Stage) || !progression.Visible(job))
@@ -141,14 +141,26 @@ namespace Intersection.UI
             RenderSearch(true);
         }
 
-        /// <summary>검색 결과 화면을 연다. 휴대전화·우측 패널 상태는 그대로 두고 중앙만 덮는다.</summary>
+        /// <summary>
+        /// 검색 결과 화면을 연다. 휴대전화·우측 패널 상태는 그대로 두고 중앙만 덮는다.
+        /// 검색·작업함·비교는 중앙에 하나만 보이므로 작업함이 열려 있으면 닫는다(쌓아 두지 않아 검색을 닫으면 휴대전화로 돌아간다).
+        /// </summary>
         void OpenSearch()
         {
             CloseNotifications();
             if (selecting)
                 SetSelecting(false);
+            bool hadWorkbench = WorkbenchOpen;
+            if (hadWorkbench)
+            {
+                workbench.Close();
+                workbench.KeyboardFocus = false;
+                compareWarnKey = null;
+            }
             searchView.Open(CloseSearch);
             RenderSearch(true);
+            if (hadWorkbench)
+                RefreshWorkPanel();
         }
 
         /// <summary>검색을 닫으면 검색 전의 기기·앱·상세·스크롤·우측 패널 그대로다.</summary>

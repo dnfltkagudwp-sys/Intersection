@@ -127,8 +127,6 @@ MonoBehaviour:
     value: "\uC791\uC5C5\uBA54\uBAA8"
   - key: panel.memoPlaceholder
     value: "\uAE30\uB85D\uC5D0 \uB300\uD55C \uBA54\uBAA8"
-  - key: panel.compare
-    value: "\uBE44\uAD50"
   - key: source.local
     value: "\uB85C\uCEEC"
   - key: source.cloud
@@ -280,9 +278,9 @@ MonoBehaviour:
   - key: toolbar.selectEnd
     value: "\uACE0\uB974\uAE30 \uC644\uB8CC"
   - key: panel.action.pin
-    value: "\uC791\uC5C5\uBA54\uBAA8\uC5D0 \uD540"
+    value: "작업함에 고정"
   - key: panel.action.unpin
-    value: "\uD540 \uD574\uC81C"
+    value: "고정 해제"
   - key: panel.action.keep
     value: "\uBCF4\uC874"
   - key: panel.action.delete
@@ -305,6 +303,8 @@ MonoBehaviour:
     value: "\uC6D0\uBCF8 ID\uAC00 \uC911\uBCF5\uB41C \uAE30\uB85D"
   - key: panel.missingBody
     value: "\uC800\uC7A5\uB41C ID\uC640 \uC77C\uCE58\uD558\uB294 \uC6D0\uBCF8\uC774 \uC5C6\uC5B4 \uB2E4\uB978 \uAE30\uB85D\uC73C\uB85C \uC5F0\uACB0\uD558\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. \uC6D0\uBCF8\uC774 \uBCF5\uAD6C\uB418\uBA74 \uB2E4\uC2DC \uC5F0\uACB0\uB429\uB2C8\uB2E4."
+  - key: panel.missingDuplicateBody
+    value: "같은 ID를 가진 원본이 여러 개라 어느 기록인지 정할 수 없어 다른 기록으로 연결하지 않았습니다. 원본이 정리되면 다시 연결됩니다."
   - key: panel.pinnedMeta
     value: "{owner} \xB7 {code}"
   - key: selection.messageContext
@@ -326,7 +326,7 @@ MonoBehaviour:
   - key: panel.heading.picked
     value: "\uC120\uD0DD\uD55C \uAE30\uB85D"
   - key: panel.heading.work
-    value: "\uC791\uC5C5 \uAE30\uB85D"
+    value: "작업함"
   - key: panel.heading.request
     value: "\uC758\uB8B0 \uC694\uCCAD"
   - key: panel.backToCurrent
@@ -334,13 +334,9 @@ MonoBehaviour:
   - key: panel.classLabel
     value: "\uCC98\uB9AC \uD6C4\uBCF4"
   - key: panel.workList
-    value: "\uC791\uC5C5 \uAE30\uB85D {count}\uAC74"
+    value: "고정 자료 {count}건"
   - key: panel.workEmpty
-    value: "\uD540\xB7\uBD84\uB958\xB7\uBA54\uBAA8\uD55C \uAE30\uB85D \uC5C6\uC74C"
-  - key: panel.workCollapse
-    value: "\uC811\uAE30"
-  - key: panel.workExpand
-    value: "\uD3BC\uCE58\uAE30"
+    value: "고정·분류·메모한 자료 없음"
   - key: kind.thread
     value: "\uB300\uD654\uBC29"
   - key: kind.message
@@ -383,8 +379,6 @@ MonoBehaviour:
     value: "\uC6D0\uBCF8 ID\uAC00 \uC911\uBCF5\uB418\uC5B4 \uC5F4\uAC70\uB098 \uBE44\uAD50\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
   - key: panel.compareUnavailable
     value: "\uD604\uC7AC \uC811\uADFC\uD560 \uC218 \uC5C6\uB294 \uC6D0\uBCF8\uC774\uB77C \uC5F4\uAC70\uB098 \uBE44\uAD50\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
-  - key: panel.compareSlots
-    value: "\uBE44\uAD50\uD560 \uC790\uB8CC"
   - key: panel.compareSlotEmpty
     value: "\uBE44\uC5B4 \uC788\uC74C"
   - key: panel.compareSlotRemove
@@ -404,21 +398,19 @@ MonoBehaviour:
   - key: list.compareOn
     value: "\uBE44\uAD50 \uC911"
   - key: panel.fullViewOpen
-    value: "전체 보기"
-  - key: panel.backToList
-    value: "< 작업 기록"
+    value: "작업함 열기"
   - key: fullView.title
-    value: "작업 기록"
+    value: "작업함"
   - key: fullView.count
     value: "{total}건"
   - key: fullView.countFiltered
     value: "전체 {total}건 중 {shown}건 표시"
   - key: fullView.noMatch
-    value: "조건에 맞는 작업 기록 없음"
+    value: "조건에 맞는 자료 없음"
   - key: fullView.filter.all
     value: "전체"
   - key: fullView.filter.pinned
-    value: "핀"
+    value: "고정"
   - key: fullView.filter.keep
     value: "보존"
   - key: fullView.filter.delete
@@ -432,7 +424,27 @@ MonoBehaviour:
   - key: dropdown.arrow
     value: "▼"
   - key: toolbar.workRecords
-    value: "작업 기록 {count}건"
+    value: "작업함 {count}건"
+  - key: panel.pinnedEmpty
+    value: "고정한 자료 없음"
+  - key: workbench.close
+    value: "작업함 닫기"
+  - key: workbench.noSelection
+    value: "선택한 자료 없음"
+  - key: workbench.noSelectionBody
+    value: "목록에서 자료를 누르면 정보와 조작이 여기에 표시됩니다."
+  - key: workbench.compareStart
+    value: "비교 시작"
+  - key: workbench.slots0
+    value: "비교할 자료 0/2"
+  - key: workbench.slots1
+    value: "비교할 자료 1/2 · 자료 하나 더 필요"
+  - key: workbench.slots2
+    value: "비교할 자료 2/2 · 비교할 수 있습니다"
+  - key: panel.compareStatus1
+    value: "비교 1/2 · 자료 하나 더 필요"
+  - key: panel.compareStatus2
+    value: "비교 2/2 · 비교 시작"
   - key: status.localReady
     value: "로컬 데이터 확인 가능"
   - key: globalSearch.title

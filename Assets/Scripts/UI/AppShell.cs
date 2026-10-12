@@ -70,16 +70,21 @@ namespace Intersection.UI
             }
             bool typing = IsTyping();
             // 펼친 의뢰 드롭다운은 방향키·Enter·Esc를 스스로 처리한다(Esc는 목록만 닫고 아래 단계로 넘기지 않는다).
-            bool dropdownOpen = workPanel.CaseFilterExpanded;
+            bool dropdownOpen = workbench.CaseFilterExpanded;
             var mouse = Mouse.current;
             if (mouse != null && (mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame))
+            {
                 workPanel.KeyboardFocus = false;
+                workbench.KeyboardFocus = false;
+            }
+            // 검색·작업함이 휴대전화를 덮고 있으면 사진 넘기기·휴대전화 자동 탐색·기록 고르기를 하지 않는다.
+            bool phoneCovered = searchView.IsOpen || WorkbenchOpen;
             if (keyboard.escapeKey.wasPressedThisFrame)
             {
                 if (!dropdownOpen)
                     HandleEscape();
             }
-            else if (!typing && !dropdownOpen && !searchView.IsOpen && keyboard.sKey.wasPressedThisFrame)
+            else if (!typing && !dropdownOpen && !phoneCovered && keyboard.sKey.wasPressedThisFrame)
                 SetSelecting(!selecting);
             if (!dropdownOpen)
                 HandleWorkKeys(keyboard);
@@ -88,8 +93,7 @@ namespace Intersection.UI
             var selected = events != null ? events.currentSelectedGameObject : null;
             // 패널에 키보드 포커스가 있으면 방향키는 패널 탐색에만 쓴다(사진 넘기기·휴대전화 자동 탐색 없음).
             bool panelFocused = workPanel.Owns(selected);
-            // 검색 결과가 휴대전화를 덮고 있으면 사진 넘기기·휴대전화 자동 탐색도 하지 않는다.
-            bool phoneCovered = searchView.IsOpen;
+            bool benchFocused = WorkbenchOpen && workbench.Owns(selected);
             if (!typing && !panelFocused && !phoneCovered && phone.Current == PhoneView.Screen.PhotoDetail)
             {
                 if (keyboard.leftArrowKey.wasPressedThisFrame)
@@ -101,12 +105,23 @@ namespace Intersection.UI
             bool arrows = keyboard.upArrowKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame
                 || keyboard.leftArrowKey.wasPressedThisFrame || keyboard.rightArrowKey.wasPressedThisFrame;
             bool submit = keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame;
-            if (tab && !typing && !dropdownOpen && (panelFocused || fullView))
+            bool shift = keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed;
+            if (tab && !typing && !dropdownOpen && panelFocused)
             {
-                // 패널 안 Tab 순서: 전체 목록은 닫기 → 상태 필터 → 의뢰 필터 → 기록 행 → 비교 칸 → 비교. 전체 보기 중 처음 Tab은 켜진 필터로.
+                // 패널 안 Tab 순서는 WorkPanelView.Lines()의 명시적 순서를 쓴다.
                 workPanel.KeyboardFocus = true;
-                bool shift = keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed;
                 workPanel.FocusNext(shift);
+            }
+            else if (tab && !typing && !dropdownOpen && WorkbenchOpen)
+            {
+                // 작업함 Tab 순서: 닫기 → 비교 칸·비교 시작 → 상태 필터 → 의뢰 필터 → 자료 행. 처음 Tab은 켜진 필터로.
+                workbench.KeyboardFocus = true;
+                workbench.FocusNext(shift);
+            }
+            else if (benchFocused)
+            {
+                if (arrows || submit)
+                    workbench.KeyboardFocus = true;
             }
             else if (!panelFocused && !phoneCovered)
             {
@@ -142,8 +157,8 @@ namespace Intersection.UI
         /// </summary>
         void RenderCenter()
         {
-            // 전체 보기 중에는 휴대전화를 이동해도 패널의 목록·상세를 그대로 둔다.
-            if (!fullView && !(focus == PanelFocus.Picked && selecting))
+            // 작업함이 열려 있는 동안에는 작업함을 열기 전 패널 상태(현재 열람·의뢰 요청 등)를 그대로 두어 닫으면 돌아간다.
+            if (!WorkbenchOpen && !(focus == PanelFocus.Picked && selecting))
             {
                 focus = PanelFocus.Current;
                 focusRecord = null;
@@ -318,8 +333,17 @@ namespace Intersection.UI
 
         void SelectCase(CaseData device)
         {
-            if (device == session.CurrentCase || !device.IsAvailable(session.Stage))
+            if (!device.IsAvailable(session.Stage))
                 return;
+            // 좌측 의뢰를 누르면 중앙의 검색·작업함을 닫고 휴대전화 화면으로 돌아간다(같은 의뢰면 닫기만).
+            bool covered = searchView.IsOpen || WorkbenchOpen;
+            CloseCenterScreens();
+            if (device == session.CurrentCase)
+            {
+                if (covered)
+                    RefreshWorkPanel();
+                return;
+            }
             SaveScroll();
             EndSelectingForNavigation();
             session.CurrentCase = device;
@@ -331,7 +355,8 @@ namespace Intersection.UI
             var nav = session.Nav(session.CurrentCase);
             SaveScroll();
             EndSelectingForNavigation();
-            // 좌측 앱 버튼은 해당 앱의 최상위 화면을 연다.
+            // 좌측 앱을 누르면 중앙의 검색·작업함을 닫고 그 앱의 최상위 화면을 연다.
+            CloseCenterScreens();
             nav.app = kind;
             if (kind == AppKind.Messages)
                 nav.openThreadId = null;

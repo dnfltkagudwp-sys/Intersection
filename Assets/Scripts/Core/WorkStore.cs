@@ -99,6 +99,9 @@ namespace Intersection.Core
 
         public List<WorkEntry> Pinned() => entries.Values.Where(e => e.pinned).OrderBy(e => e.pinOrder).ToList();
 
+        /// <summary>최근에 고정한 자료부터 (빠른 고정 목록). 순번은 고정할 때마다 새로 받으므로 해제 후 다시 고정하면 맨 위로 온다.</summary>
+        public List<WorkEntry> RecentlyPinned() => entries.Values.Where(e => e.pinned).OrderByDescending(e => e.pinOrder).ToList();
+
         WorkEntry Ensure(RecordRef target)
         {
             if (!entries.TryGetValue(target.Key, out var e))
@@ -194,6 +197,26 @@ namespace Intersection.Core
             }
         }
 
+        /// <summary>
+        /// 고정 순번 정리. 순번이 없거나(0 이하) 겹치는 고정 항목이 있으면, 순번이 있는 항목은 그 순서를,
+        /// 없는 항목은 그보다 앞(오래된 고정)으로 불변 키 순서를 써서 1부터 다시 매긴다. 고정·분류·메모 값은 바꾸지 않는다.
+        /// 다음 순번은 늘 기존 최대값보다 크게 둔다(새로 고정한 자료가 맨 위).
+        /// </summary>
+        void MigratePinOrder()
+        {
+            var pinned = entries.Values.Where(e => e.pinned).ToList();
+            bool needs = pinned.Any(e => e.pinOrder <= 0) || pinned.GroupBy(e => e.pinOrder).Any(g => g.Count() > 1);
+            if (needs)
+            {
+                long order = 1;
+                foreach (var e in pinned.OrderBy(e => e.pinOrder > 0 ? 1 : 0).ThenBy(e => e.pinOrder)
+                             .ThenBy(e => e.target.Key, StringComparer.Ordinal))
+                    e.pinOrder = order++;
+            }
+            long max = pinned.Count == 0 ? 0 : pinned.Max(e => e.pinOrder);
+            nextPinOrder = Math.Max(nextPinOrder, max + 1);
+        }
+
         void Load()
         {
             if (!File.Exists(path))
@@ -219,6 +242,7 @@ namespace Intersection.Core
                 foreach (var s in data.completedTutorialSteps ?? new List<string>())
                     completedSteps.Add(s);
                 comparisons.AddRange(data.comparisons ?? new List<ComparisonEntry>());
+                MigratePinOrder();
             }
             catch (Exception ex)
             {

@@ -117,43 +117,56 @@ namespace Intersection.UI
             RefreshWorkPanel();
         }
 
+        /// <summary>
+        /// 비교할 자료 두 칸은 작업함 위쪽에 둔다(`비교할 자료 0/2` · `1/2 · 자료 하나 더 필요` · `2/2 · 비교할 수 있습니다`).
+        /// 작업함 밖(휴대전화 화면)에서는 우측 패널 아래 한 줄로 상태만 알려준다: 0/2면 숨김, 1/2는 누르면 작업함, 2/2는 누르면 비교 시작.
+        /// </summary>
         void RenderCompareSlots()
         {
             PruneCompareSlots();
-            var items = new List<WorkPanelView.SlotItem>();
-            for (int i = 0; i < compareSlots.Length; i++)
-            {
-                var target = compareSlots[i];
-                int index = i;
-                var res = target == null ? null : RecordResolver.Resolve(target, config.database, text);
-                // 슬롯은 필터로 목록에서 숨겨져도 그대로 남으므로 칸 안에 제목·의뢰 표시명·기록 코드를 함께 보여준다.
-                // 칸을 누르면 작업 기록을 연다(전체 보기 중이면 전체 보기 안의 상세).
-                items.Add(target == null ? null : new WorkPanelView.SlotItem
-                {
-                    title = res.title,
-                    meta = WorkMeta(target, res),
-                    onOpen = () => OpenWorkRecord(target),
-                    onRemove = () =>
-                    {
-                        compareSlots[index] = null;
-                        RefreshWorkPanel();
-                    },
-                });
-            }
             int filled = compareSlots.Count(s => s != null);
-            // 제목은 `비교할 자료`뿐이다(개수·비율을 표시하지 않음). 두 칸이 모두 비면 영역 전체를 숨겨 공간을 돌려준다.
-            // 비교 화면은 두 칸이 찼을 때 사용자가 `비교`를 눌러야 열린다.
-            workPanel.ShowCompareSlots(filled > 0, text.Get(UIKeys.CompareSlotsHeader), null,
-                items, text.Get(UIKeys.CompareSlotEmpty), text.Get(UIKeys.CompareSlotRemove),
-                filled == compareSlots.Length ? EnterCompare : (System.Action)null,
-                Theme.panelRaised, Theme.subText, Theme.text);
+            bool ready = filled == compareSlots.Length;
+            if (WorkbenchOpen)
+            {
+                var items = new List<WorkPanelView.SlotItem>();
+                for (int i = 0; i < compareSlots.Length; i++)
+                {
+                    var target = compareSlots[i];
+                    int index = i;
+                    var res = target == null ? null : RecordResolver.Resolve(target, config.database, text);
+                    // 슬롯은 필터로 목록에서 숨겨져도 그대로 남으므로 칸 안에 제목·의뢰 표시명·기록 코드를 함께 보여준다.
+                    // 칸을 누르면 그 자료를 우측 패널에 띄운다(목록은 그대로).
+                    items.Add(target == null ? null : new WorkPanelView.SlotItem
+                    {
+                        title = res.title,
+                        meta = WorkMeta(target, res),
+                        onOpen = () => SelectWorkbench(target),
+                        onRemove = () =>
+                        {
+                            compareSlots[index] = null;
+                            RefreshWorkPanel();
+                        },
+                    });
+                }
+                string label = text.Get(filled == 0 ? UIKeys.WorkbenchSlots0 : ready ? UIKeys.WorkbenchSlots2 : UIKeys.WorkbenchSlots1);
+                string note = compareWarnKey != null && ready ? text.Get(UIKeys.CompareFull) : null;
+                workbench.ShowSlots(label, items, text.Get(UIKeys.CompareSlotEmpty), text.Get(UIKeys.CompareSlotRemove), note,
+                    ready ? EnterCompare : (System.Action)null, Theme.panelRaised, Theme.subText, Theme.text);
+            }
+            string status = filled == 0 ? null : text.Get(ready ? UIKeys.PanelCompareStatus2 : UIKeys.PanelCompareStatus1);
+            workPanel.ShowCompareStatus(status, ready ? EnterCompare : (System.Action)OpenWorkbenchForCompare,
+                Theme.accentSoft, Theme.accent);
         }
+
+        /// <summary>비교 1/2 상태 줄: 작업함을 열어 슬롯을 확인한다(필터·스크롤은 그대로).</summary>
+        void OpenWorkbenchForCompare() => OpenWorkbench(null);
 
         // ───────────── 비교 화면 ─────────────
 
         /// <summary>
-        /// 비교 화면을 연다. 휴대전화 탐색 상태·우측 패널·작업 기록은 건드리지 않고 덮기만 하며,
+        /// 비교 화면을 연다. 휴대전화 탐색 상태·우측 패널·작업함은 건드리지 않고 덮기만 하며,
         /// 그동안 좌측·우측 패널 조작을 막아 종료 후 그대로 돌아오게 한다.
+        /// 작업함에서 시작했으면 작업함(필터·스크롤·선택)이 아래에 그대로 남아 종료하면 작업함으로, 휴대전화에서 시작했으면 휴대전화로 돌아간다.
         /// </summary>
         void EnterCompare()
         {
@@ -170,6 +183,8 @@ namespace Intersection.UI
             comparing = true;
             topBar.SetSearchEnabled(false);
             SelectionBus.Set(false, null);
+            workbench.KeyboardFocus = false;
+            workPanel.KeyboardFocus = false;
             EventSystem.current?.SetSelectedGameObject(null);
             SetSideInteractable(false);
             compareView.Open(ExitCompare);
