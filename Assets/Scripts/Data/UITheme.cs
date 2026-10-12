@@ -65,7 +65,7 @@ namespace Intersection.Data
         public Color phoneSeparator = Hex("2C2C2E");
         public Color phoneAccent = Hex("0A84FF");
         public Color phoneField = Hex("1C1C1E");
-        public Color bubbleOutgoing = Hex("30D158");
+        public Color bubbleOutgoing = Hex("2A7D46");
         public Color bubbleOutgoingText = Hex("FFFFFF");
         public Color bubbleIncoming = Hex("26262A");
         public Color bubbleIncomingText = Hex("FFFFFF");

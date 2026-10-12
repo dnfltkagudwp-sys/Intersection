@@ -51,7 +51,7 @@ MonoBehaviour:
   phoneSeparator: {r: 0.17254902, g: 0.17254902, b: 0.18039216, a: 1}
   phoneAccent: {r: 0.039215688, g: 0.5176471, b: 1, a: 1}
   phoneField: {r: 0.10980392, g: 0.10980392, b: 0.11764706, a: 1}
-  bubbleOutgoing: {r: 0.1882353, g: 0.81960785, b: 0.34509805, a: 1}
+  bubbleOutgoing: {r: 0.16470589, g: 0.49019608, b: 0.27450982, a: 1}
   bubbleOutgoingText: {r: 1, g: 1, b: 1, a: 1}
   bubbleIncoming: {r: 0.14901961, g: 0.14901961, b: 0.16470589, a: 1}
   bubbleIncomingText: {r: 1, g: 1, b: 1, a: 1}
