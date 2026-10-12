@@ -26,6 +26,7 @@ MonoBehaviour:
   availableFrom: 1
   evidenceRef: B07
   mediaAssetId: c-outfit-01
-  image: {fileID: 0}
+  image: {fileID: 2800000, guid: b28e6820c3a64af498a968239a70f539, type: 3}
   integrityKey: integrity.original
   authorNote: "B05-01/B07 C \uCC29\uC7A5 \uC0AC\uC9C4 \uC800\uC7A5\uBCF8"
+  visibleText: 

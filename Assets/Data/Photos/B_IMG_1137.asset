@@ -26,6 +26,7 @@ MonoBehaviour:
   availableFrom: 1
   evidenceRef: 
   mediaAssetId: 
-  image: {fileID: 0}
+  image: {fileID: 2800000, guid: e0371ae282d86ef4aaa504044b290a36, type: 3}
   integrityKey: integrity.original
   authorNote: "B-F08 \uCC45 \uD45C\uC9C0\uC640 \uCE74\uD398 \uCEF5"
+  visibleText: 

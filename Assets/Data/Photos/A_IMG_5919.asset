@@ -26,6 +26,7 @@ MonoBehaviour:
   availableFrom: 0
   evidenceRef: A01
   mediaAssetId: face-b-follow-18
-  image: {fileID: 0}
+  image: {fileID: 2800000, guid: ea40055ad1cd28e43ac37a96874a38da, type: 3}
   integrityKey: integrity.original
   authorNote: "A01-18 \uADC0\uAC00 \uC9C1\uC804. B01\uACFC \uC5BC\uAD74\xB7\uC637\xB7\uAC00\uBC29 \uBE44\uAD50 \uAC00\uB2A5"
+  visibleText: 
