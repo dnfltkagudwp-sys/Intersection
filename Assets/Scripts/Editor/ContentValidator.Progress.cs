@@ -196,6 +196,21 @@ namespace Intersection.EditorTools
                             error($"검색 결과 사진이 어떤 앨범에도 없어 원본을 열 수 없습니다: {Path(photo)}", photo);
                     }
                 }
+                // 파일 표시 문구는 검색 가능한 원본과 연결돼야 한다: 접근·인덱싱된 파일의 각 줄로 검색하면 그 파일이 나와야 하고,
+                // 접근 전 파일은 어떤 줄로도 나오면 안 된다.
+                foreach (var f in db.files.Where(x => x != null && x.device != null && x.HasVisibleText))
+                {
+                    var target = RecordRef.ForRecord(f);
+                    bool expected = RecordAccess.Searchable(f.device, stage) && RecordQuery.For(db.files, f.device, stage).Contains(f);
+                    foreach (var line in f.VisibleLines())
+                    {
+                        bool found = GlobalSearch.Run(db, stage, line, text, time).Any(h => h.target.Key == target.Key);
+                        if (expected && !found)
+                            error($"{stage}: 파일 표시 문구로 검색해도 그 파일이 나오지 않습니다('{line}'): {Path(f)}", f);
+                        else if (!expected && found)
+                            error($"{stage}: 접근 전 파일의 표시 문구가 검색됩니다('{line}'): {Path(f)}", f);
+                    }
+                }
                 foreach (var device in cases)
                 {
                     bool leak = PhotoQuery.DevicePhotos(db, device, stage).Any(p => p.availableFrom > stage)

@@ -108,22 +108,39 @@ namespace Intersection.Core
                                 && e.target.deviceId == device.Id && e.target.kind != RecordKind.Request
                                 && RecordAccess.Check(e.target, db, Stage, text) == AccessState.Accessible);
 
-        /// <summary>플레이어가 작업을 시작한다. 조건을 만족하지 않았거나 이미 시작했으면 false.</summary>
+        /// <summary>
+        /// 플레이어가 작업을 시작한다. 조건을 만족하지 않았거나 이미 시작했으면 false.
+        /// 작업 상태·시작 효과(단계 변경·다른 작업 완료·알림)를 한 트랜잭션으로 처리해 전부 반영됐을 때만 한 번 저장한다.
+        /// 도중에 실패하면 작업은 시작 전 상태로 남아 다시 시작할 수 있다.
+        /// </summary>
         public bool Start(ProgressJobData job)
         {
             if (StateOf(job) != JobState.NotStarted || !ConditionsMet(job))
                 return false;
-            store.SetJob(job.Id, JobState.Running);
-            Apply(job.onStart);
-            return true;
+            return store.Transact(() =>
+            {
+                store.SetJob(job.Id, JobState.Running);
+                ProgressStore.Fault(ProgressFaultPoint.JobState, job.Id);
+                Apply(job.onStart);
+            });
         }
 
-        /// <summary>작업을 완료한다(다른 작업의 효과 또는 이후 정식 콘텐츠·에디터 검수). 완료 효과를 한 번 실행한다.</summary>
-        public void Complete(ProgressJobData job)
+        /// <summary>작업을 완료한다(다른 작업의 효과 또는 이후 정식 콘텐츠·에디터 검수). 완료 효과를 한 번 실행한다.
+        /// 연쇄 완료·단계 변경·알림까지 한 트랜잭션이며, 실패하면 아무것도 바뀌지 않은 상태로 false를 돌려준다.</summary>
+        public bool Complete(ProgressJobData job)
+        {
+            if (job == null || StateOf(job) == JobState.Completed)
+                return false;
+            return store.Transact(() => CompleteCore(job));
+        }
+
+        /// <summary>트랜잭션 안에서만 부른다. CompleteJob 효과의 연쇄 완료도 같은 트랜잭션에 포함된다.</summary>
+        void CompleteCore(ProgressJobData job)
         {
             if (job == null || StateOf(job) == JobState.Completed)
                 return;
             store.SetJob(job.Id, JobState.Completed);
+            ProgressStore.Fault(ProgressFaultPoint.JobState, job.Id);
             Apply(job.onComplete);
         }
 
@@ -135,14 +152,20 @@ namespace Intersection.Core
                 {
                     case ProgressEffectKind.RaiseStage:
                         if (e.stage > store.Stage)
+                        {
                             store.SetStage(e.stage);
+                            ProgressStore.Fault(ProgressFaultPoint.Stage, e.stage.ToString());
+                        }
                         break;
                     case ProgressEffectKind.CompleteJob:
-                        Complete(e.job);
+                        CompleteCore(e.job);
+                        ProgressStore.Fault(ProgressFaultPoint.ChainComplete, e.job != null ? e.job.Id : null);
                         break;
                     case ProgressEffectKind.Notify:
+                        ProgressStore.Fault(ProgressFaultPoint.NotifyBefore, e.Id);
                         store.AddNotification(e.Id, e.templateKey, e.caseToken != null ? e.caseToken.Id : null,
                             e.caseToken != null ? UnclassifiedCount(e.caseToken) : 0);
+                        ProgressStore.Fault(ProgressFaultPoint.NotifyAfter, e.Id);
                         break;
                 }
             }

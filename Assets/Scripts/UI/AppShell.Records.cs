@@ -43,6 +43,8 @@ namespace Intersection.UI
             public string title;
             public string headline;
             public PhoneDetailView.Hero hero;
+            /// <summary>미리보기 자리에 그대로 그리는 문서(파일 visibleText). 없으면 null.</summary>
+            public IReadOnlyList<FileTextBlock> document;
             public List<(string, string)> fields;
         }
 
@@ -51,7 +53,7 @@ namespace Intersection.UI
         {
             store.MarkViewed(selection);
             phone.Show(PhoneView.Screen.RecordDetail);
-            phone.RecordDetail.Show(d.title, backText, d.headline, d.hero, d.fields, Theme, Back, selection);
+            phone.RecordDetail.Show(d.title, backText, d.headline, d.hero, d.fields, Theme, Back, selection, d.document);
         }
 
         DetailModel BrowserDetail(BrowserRecord r) => new DetailModel
@@ -86,11 +88,15 @@ namespace Intersection.UI
         DetailModel FileDetail(FileRecord f)
         {
             string locationLabel = text.Get(UIKeys.FilesLocationKey(f.source));
+            // 미리보기 이미지가 없고 표시 문구가 있으면 그 문구를 문서로 그린다(검색과 같은 원본).
+            // 이미지가 있으면 visibleText는 이미지 글자의 전사본이라 따로 그리지 않는다. 둘 다 없으면 지금처럼 `미리보기 없음`.
+            var document = f.RenderedDocument;
             return new DetailModel
             {
                 title = f.FileName,
                 headline = f.FileName,
-                hero = new PhoneDetailView.Hero
+                document = document,
+                hero = document != null ? null : new PhoneDetailView.Hero
                 {
                     texture = f.preview,
                     glyph = IsImageFile(f.FileName) ? Theme.photoGlyph : Theme.documentGlyph,

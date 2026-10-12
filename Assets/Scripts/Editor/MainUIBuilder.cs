@@ -1756,6 +1756,16 @@ namespace Intersection.EditorTools
             var message = Text(Place(Node("Message", hero), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 1f), new Vector2(0, -20), new Vector2(320, 24)),
                 theme.regularFont, 14, theme.phoneSubText, TextAlignmentOptions.Center);
 
+            // 파일 미리보기 문서(visibleText). 미리보기 이미지가 없을 때 Hero 자리에 대신 보인다.
+            var document = Node("Document", content);
+            Rounded(document, theme.phoneField, 12f);
+            var documentLayout = Stack(document, 10);
+            documentLayout.padding = new RectOffset(14, 14, 12, 14);
+            var block = Text(Node("BlockTemplate", document), theme.regularFont, 14, theme.phoneText, TextAlignmentOptions.TopLeft, null, true);
+            block.richText = false;
+            block.gameObject.SetActive(false);
+            document.gameObject.SetActive(false);
+
             var headlineRt = Node("Headline", content);
             var headline = Text(headlineRt, theme.boldFont, 21, theme.phoneText, TextAlignmentOptions.TopLeft, null, true);
 
@@ -1772,6 +1782,8 @@ namespace Intersection.EditorTools
             Wire(view, "heroTexture", heroTex);
             Wire(view, "heroGlyph", glyph);
             Wire(view, "heroMessage", message);
+            Wire(view, "documentRoot", document);
+            Wire(view, "documentBlockTemplate", block);
             Wire(view, "headline", headline);
             Wire(view, "fieldRoot", fields);
             Wire(view, "fieldPrefab", recordPrefabs.field);

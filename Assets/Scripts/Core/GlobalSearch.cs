@@ -26,7 +26,7 @@ namespace Intersection.Core
 
     /// <summary>
     /// 상단 전역 검색. 현재 단계에서 접근 가능하고 인덱싱이 끝난 모든 의뢰의 원본 기록을 매번 현재 데이터에서 다시 계산한다.
-    /// 검색 대상은 화면에 실제로 보이는 값(대화 상대·대화방 제목·말풍선 문구·파일명·브라우저 제목·장소명·설정 값·요청 본문·
+    /// 검색 대상은 화면에 실제로 보이는 값(대화 상대·대화방 제목·말풍선 문구·파일명·파일 미리보기 문구(visibleText)·브라우저 제목·장소명·설정 값·요청 본문·
     /// caseDate 기준 표시 날짜·"사망 N일 전")뿐이다. 증거 참조·작가 메모·내부 ID·제작용 표기·작업메모는 넣지 않는다.
     /// 검색은 새 자료를 만들거나 접근 단계를 바꾸지 않는다.
     /// </summary>
@@ -115,7 +115,8 @@ namespace Intersection.Core
                     yield return RecordDoc(m, device, AppKind.Maps, RecordResolver.MapTitle(m, text), time,
                         m.placeLabel, m.routeFrom, m.routeTo, m.routeNote);
                 foreach (var f in RecordQuery.For(db.files, device, stage))
-                    yield return RecordDoc(f, device, AppKind.Files, f.FileName, time, f.FileName, f.FolderPath);
+                    yield return RecordDoc(f, device, AppKind.Files, f.FileName, time,
+                        new[] { f.FileName, f.FolderPath }.Concat(f.VisibleLines()).ToArray());
                 foreach (var s in RecordQuery.For(db.settings, device, stage))
                 {
                     string item = RecordQuery.SettingItemLabel(s, device);

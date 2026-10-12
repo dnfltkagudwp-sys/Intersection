@@ -263,7 +263,7 @@ namespace Intersection.UI
 
         bool ShowDetailPane(ComparePaneView pane, DetailModel d, RecordRef r)
         {
-            pane.ShowDetail().Show(d.title, string.Empty, d.headline, d.hero, d.fields, Theme, () => { }, r);
+            pane.ShowDetail().Show(d.title, string.Empty, d.headline, d.hero, d.fields, Theme, () => { }, r, d.document);
             return true;
         }
 

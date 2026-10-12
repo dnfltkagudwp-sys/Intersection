@@ -312,6 +312,7 @@ namespace Intersection.EditorTools
             {
                 if (string.IsNullOrWhiteSpace(f.path) || f.path.EndsWith("/"))
                     Error($"파일 경로가 비어 있거나 폴더로 끝납니다: {Path(f)}", f);
+                CheckVisibleText(f, msg => Error(msg, f), msg => Warn(msg, f));
             }
             foreach (var g in files.Where(f => f.device != null && !string.IsNullOrEmpty(f.path))
                          .GroupBy(f => (f.device, f.source, f.path.Trim('/'))).Where(g => g.Count() > 1))
@@ -399,6 +400,35 @@ namespace Intersection.EditorTools
             }
 
             return issues;
+        }
+
+        /// <summary>
+        /// 파일 표시 문구(visibleText)는 플레이어가 미리보기에서 읽는 문구만 담는다.
+        /// 증거 ID·불변 ID·작가 메모가 들어 있으면(자동 복사 포함) 검색으로 내부 정보가 새므로 오류로 잡는다.
+        /// </summary>
+        static void CheckVisibleText(FileRecord f, System.Action<string> error, System.Action<string> warn)
+        {
+            if (f.visibleText == null)
+                return;
+            string where = Path(f);
+            string note = f.authorNote?.Trim();
+            for (int i = 0; i < f.visibleText.Count; i++)
+            {
+                var b = f.visibleText[i];
+                if (b == null || b.IsEmpty)
+                {
+                    warn($"파일 표시 문구 {i + 1}번 블록이 비어 있습니다: {where}");
+                    continue;
+                }
+                if (!string.IsNullOrEmpty(f.evidenceRef) && b.text.IndexOf(f.evidenceRef, System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    error($"파일 표시 문구에 증거 ID '{f.evidenceRef}'가 들어 있습니다(검색에 노출됨): {where}");
+                if (!string.IsNullOrEmpty(f.Id) && b.text.IndexOf(f.Id, System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    error($"파일 표시 문구에 내부 ID가 들어 있습니다(검색에 노출됨): {where}");
+                if (!string.IsNullOrEmpty(note) && b.text.IndexOf(note, System.StringComparison.Ordinal) >= 0)
+                    error($"파일 표시 문구에 작가 메모가 그대로 들어 있습니다. 미리보기에 실제로 보이는 문구만 넣으세요: {where}");
+                if (b.kind == FileTextKind.Table && b.Rows().Select(r => r.Length).Distinct().Count() > 1)
+                    warn($"파일 표시 문구 {i + 1}번 표의 행마다 칸 수가 다릅니다: {where}");
+            }
         }
 
         static void CheckInnerId(string id, string kind, string where, Object ctx, Dictionary<string, string> seen,
