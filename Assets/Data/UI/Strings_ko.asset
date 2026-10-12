@@ -529,8 +529,8 @@ MonoBehaviour:
     value: "최근 메시지"
   - key: review.group.recentSearches
     value: "최근 검색 기록"
-  - key: review.group.accountSettings
-    value: "계정 설정"
+  - key: review.group.recentSettings
+    value: "최근 설정 변경"
   - key: summary.heading
     value: "연동 결과 요약"
   - key: summary.count

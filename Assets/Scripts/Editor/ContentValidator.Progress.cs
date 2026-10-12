@@ -338,6 +338,11 @@ namespace Intersection.EditorTools
                         }
                     }
                 }
+                if (batch.device != null)
+                {
+                    foreach (var group in batch.groups.Where(g => g != null && g.targets.Count > 0))
+                        CheckRecentPrefix(db, batch, group, before, warn);
+                }
                 // 화면 총합은 대상 수에서 계산하므로, 중복 등록이 있으면 상단 N/M과 실제로 열어야 하는 원본 수가 달라진다.
                 if (total != keys.Count)
                     error($"검토 묶음의 화면 총합({total})과 실제 서로 다른 대상 수({keys.Count})가 다릅니다: {where}", batch);
@@ -520,6 +525,50 @@ namespace Intersection.EditorTools
                         warn($"삭제 대기 조회에 원본을 {(e.state == AccessState.Duplicate ? "하나로 정할 수 없는(ID 중복)" : "찾을 수 없는")} 항목이 있습니다: {e.target.Key} ({workPath})", null);
                 }
             }
+        }
+
+        /// <summary>
+        /// 검토 분류는 `최근 사진 N`처럼 기기 목록의 최근순 상위 N건 전체여야 한다(꼭 봐야 하는 자료가 N번째면 그 위 최근 자료까지 포함).
+        /// 일상 자료 날짜가 바뀌어 대상이 실제 상위 N건과 달라지면 경고한다. 한 분류는 한 종류(사진·대화방·브라우저·지도·파일·설정)만 담는다.
+        /// </summary>
+        static void CheckRecentPrefix(ContentDatabase db, ReviewBatchData batch, ReviewGroup group, ProgressStage stage, Action<string, Object> warn)
+        {
+            var records = group.targets.Where(t => t != null && t.record != null).Select(t => t.record).ToList();
+            if (records.Count == 0)
+                return;
+            string where = $"{group.labelKey} ({Path(batch)})";
+            var device = batch.device;
+            List<ContentAsset> ordered;
+            static List<ContentAsset> ByTime<T>(IEnumerable<T> items) where T : DeviceRecord =>
+                items.OrderByDescending(r => r.time.TotalMinutes).ThenByDescending(r => r.sortKey).Cast<ContentAsset>().ToList();
+            if (records.All(r => r is PhotoData))
+                ordered = PhotoQuery.DevicePhotos(db, device, stage)
+                    .OrderByDescending(p => p.takenAt.TotalMinutes).ThenByDescending(p => p.sortKey).Cast<ContentAsset>().ToList();
+            else if (records.All(r => r is ThreadData))
+                ordered = DeviceQuery.Threads(db, device, stage).Select(e => (ContentAsset)e.thread).ToList();
+            else if (records.All(r => r is BrowserRecord))
+            {
+                // 검색 기록만 담은 분류는 검색 기록끼리, 방문 기록만 담은 분류는 방문끼리 비교한다.
+                var kinds = records.Cast<BrowserRecord>().Select(r => r.kind).Distinct().ToList();
+                ordered = ByTime(RecordQuery.For(db.browser, device, stage).Where(r => kinds.Count != 1 || r.kind == kinds[0]));
+            }
+            else if (records.All(r => r is MapRecord))
+                ordered = ByTime(RecordQuery.For(db.maps, device, stage));
+            else if (records.All(r => r is FileRecord))
+                ordered = ByTime(RecordQuery.For(db.files, device, stage));
+            else if (records.All(r => r is SettingRecord))
+                ordered = ByTime(RecordQuery.For(db.settings, device, stage));
+            else
+            {
+                warn($"검토 분류에 서로 다른 종류의 자료가 섞여 있어 최근순 상위 N건인지 확인할 수 없습니다: {where}", batch);
+                return;
+            }
+            var expected = ordered.Take(records.Count).ToList();
+            var missing = expected.Where(e => !records.Contains(e)).ToList();
+            if (missing.Count == 0)
+                return;
+            var extra = records.Where(r => !expected.Contains(r)).ToList();
+            warn($"검토 분류가 기기 목록의 최근순 상위 {records.Count}건과 다릅니다({stage} 기준) — 빠진 최근 자료: {string.Join(", ", missing.Select(m => m.name))} / 상위 밖 대상: {string.Join(", ", extra.Select(m => m.name))}. 대상을 늘리거나 다시 맞추세요: {where}", batch);
         }
 
         static bool CompletionReaches(ProgressJobData from, ProgressJobData target, HashSet<ProgressJobData> visited)

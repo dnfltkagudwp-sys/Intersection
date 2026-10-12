@@ -22,27 +22,37 @@ MonoBehaviour:
   - id: 596f2a3fc2fe4e0b8497f528394cce1f
     labelKey: review.group.recentPhotos
     targets:
-    - record: {fileID: 11400000, guid: 97ac0fa71853a2e42b9ca5e99151b4c3, type: 2}
-      order: 10
     - record: {fileID: 11400000, guid: 535d7e2a0c9407a4e83cbacdbce7026e, type: 2}
-      order: 20
+      order: 110
+    - record: {fileID: 11400000, guid: 97ac0fa71853a2e42b9ca5e99151b4c3, type: 2}
+      order: 120
   - id: e2d117cbf6a54256a4d78d9569e0df16
     labelKey: review.group.recentMessages
     targets:
-    - record: {fileID: 11400000, guid: a0c9bc2056e4a5e4ca085bb3fc194b98, type: 2}
-      order: 30
     - record: {fileID: 11400000, guid: 0d6ff91806bbab540b96464a15c0fa05, type: 2}
-      order: 40
+      order: 210
     - record: {fileID: 11400000, guid: 947e08b3196473b4eab81e2fda79549a, type: 2}
-      order: 50
+      order: 220
+    - record: {fileID: 11400000, guid: 038cbea0cb810d649807388ea8aefa0f, type: 2}
+      order: 230
+    - record: {fileID: 11400000, guid: a0c9bc2056e4a5e4ca085bb3fc194b98, type: 2}
+      order: 240
   - id: 896a3333cec9444a8b953a19c8f06f64
     labelKey: review.group.recentSearches
     targets:
+    - record: {fileID: 11400000, guid: b63034295ae0d794e9d16d6fdbea22f9, type: 2}
+      order: 310
+    - record: {fileID: 11400000, guid: 3ac035b5d03614a49984dd2346a2a469, type: 2}
+      order: 320
+    - record: {fileID: 11400000, guid: 246f8ece26cbfe04285fffc709be1159, type: 2}
+      order: 330
     - record: {fileID: 11400000, guid: 1af84b1d726236e47b87af4acc58922c, type: 2}
-      order: 60
+      order: 340
   - id: f9e3f04ee4da45c48366cd4d073fa265
-    labelKey: review.group.accountSettings
+    labelKey: review.group.recentSettings
     targets:
+    - record: {fileID: 11400000, guid: d4ddf1460e162ee40b4bc0d7b1688158, type: 2}
+      order: 410
     - record: {fileID: 11400000, guid: 75ebfa87bd2777142902abbba1c5165f, type: 2}
-      order: 70
-  authorNote: "P1 \uB85C\uCEEC 1\uCC28 \uAC80\uD1A0(\uC628\uBCF4\uB529). B01(B_IMG_1192)\xB7B02 \uCE5C\uAD6C \uB300\uD654(\uD558\uC740)\xB7B03 A\uC640\uC758 \uB300\uD654(\uBAA8\uB974\uB294 \uBC88\uD638)\xB7B02-S4 \uAC80\uC0C9\xB7B02-C1 \uACF5\uAC1C \uBC94\uC704 \uBCC0\uACBD + \uC77C\uC0C1 \uC790\uB8CC B-F07 \uB2E8\uCCB4 \uC0AC\uC9C4(B_IMG_1195)\xB7B-F03 \uCE5C\uAD6C \uB300\uD654(\uB2E4\uC5F0\uC774). 7\uAC74 \uBAA8\uB450 \uC2E4\uC81C \uC5F4\uB78C\uD574\uC57C B \uC778\uBCA4\uD1A0\uB9AC(\uC5F0\uB3D9 \uB370\uC774\uD130 \uC870\uD68C) \uC2DC\uC791."
+      order: 420
+  authorNote: "P1 \uB85C\uCEEC 1\uCC28 \uAC80\uD1A0(\uC628\uBCF4\uB529). \uAC01 \uBD84\uB958\uB294 B \uAE30\uAE30 \uBAA9\uB85D\uC758 \uCD5C\uADFC\uC21C \uC0C1\uC704 N\uAC74 \uC804\uCCB4(\uAF2D \uBD10\uC57C \uD558\uB294 \uC790\uB8CC\uAC00 N\uBC88\uC9F8\uC5D0 \uC788\uC73C\uBA74 \uADF8 \uC704 \uCD5C\uADFC \uC790\uB8CC\uAE4C\uC9C0 \uD3EC\uD568): \uCD5C\uADFC \uC0AC\uC9C4 2(B-F07 IMG_1195\xB7B01 IMG_1192) \xB7 \uCD5C\uADFC \uBA54\uC2DC\uC9C0 4(\uBAA8\uB974\uB294 \uBC88\uD638 B03\xB7\uB2E4\uC5F0\uC774\xB7\uB9C8\uCF00\uD305\uC6D0\uB860 2\uC870\xB7\uD558\uC740 B02) \xB7 \uCD5C\uADFC \uAC80\uC0C9 \uAE30\uB85D 4(\uB3C4\uC11C\uAD00 \uC88C\uC11D \uC608\uC57D\xB7B02-S5\xB7\uAC00\uC744 \uC637 \uC138\uD0C1\xB7B02-S4) \xB7 \uCD5C\uADFC \uC124\uC815 \uBCC0\uACBD 2(B03-C1 \uC54C\uB9BC \uB054\xB7B02-C1 \uACF5\uAC1C \uBC94\uC704). 12\uAC74 \uBAA8\uB450 \uC2E4\uC81C \uC5F4\uB78C\uD574\uC57C B \uC778\uBCA4\uD1A0\uB9AC(\uC5F0\uB3D9 \uB370\uC774\uD130 \uC870\uD68C) \uC2DC\uC791. \uBAA9\uB85D \uB0A0\uC9DC\uB97C \uBC14\uAFB8\uBA74 \uC774 \uC0C1\uC704 N\uAC74\uB3C4 \uB2E4\uC2DC \uB9DE\uCD9C \uAC83."
