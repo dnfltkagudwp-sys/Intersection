@@ -15,9 +15,9 @@ MonoBehaviour:
   id: 1769baeac14e45a9ad09096874f89726
   device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
   time:
-    dayOffset: -203
-    hour: 22
-    minute: 14
+    dayOffset: -150
+    hour: 21
+    minute: 40
   sortKey: 0
   source: 1
   availableFrom: 2
@@ -26,4 +26,7 @@ MonoBehaviour:
   authorNote: "\uAC19\uC740 \uAC8C\uC2DC\uBB3C \uC0AD\uC81C \uD6C4 \uBE48 \uC8FC\uC18C \uD654\uBA74"
   path: Download/capture_1743.png
   mediaAssetId: 
-  preview: {fileID: 0}
+  preview: {fileID: 2800000, guid: fc2685db70c27564a82f77d1149d59c8, type: 3}
+  visibleText:
+  - kind: 0
+    text: "\u2026/daylog_041/p/7Rk2Qm\u2026\n\uC774 \uAC8C\uC2DC\uBB3C\uC744 \uBCFC \uC218 \uC5C6\uC2B5\uB2C8\uB2E4\n\uB9C1\uD06C\uAC00 \uC798\uBABB\uB418\uC5C8\uAC70\uB098 \uAC8C\uC2DC\uBB3C\uC774 \uC0AD\uC81C\uB418\uC5C8\uC744 \uC218 \uC788\uC2B5\uB2C8\uB2E4.\n\uD648\uC73C\uB85C \uC774\uB3D9"

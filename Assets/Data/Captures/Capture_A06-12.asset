@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12dd992eba6218b439b940ac47860acd, type: 3}
+  m_Name: Capture_A06-12
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.CaptureScreenData
+  record: {fileID: 11400000, guid: c2b6ef18c7376ca43b33fb85d753bc4b, type: 2}
+  style: {fileID: 11400000, guid: f3c1e482b2079eb4d891b9e970ec8514, type: 2}
+  blocks:
+  - kind: 8
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: 
+    meta: 
+    text: daylog_041
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 9
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: 
+    meta: 
+    text: 
+    textStyle: 0
+    items:
+    - "\uACC4\uC815"
+    - "\uD0DC\uADF8"
+    - "\uC7A5\uC18C"
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 2
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: 
+    meta: 
+    text: "\uAC80\uC0C9 \uACB0\uACFC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4"
+    textStyle: 4
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  bottom: 0
+  temporary: 0
+  temporaryNote: 
+  output: {fileID: 2800000, guid: 5029519308872ad44bbefac92f5ba16f, type: 3}
+  renderedHash: 58a7ac454dc4253431de1a2a3b64b723

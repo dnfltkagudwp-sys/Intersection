@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12dd992eba6218b439b940ac47860acd, type: 3}
+  m_Name: Capture_D01-01
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.CaptureScreenData
+  record: {fileID: 11400000, guid: e4e86a564c2b4a349a7c00dc213e1912, type: 2}
+  style: {fileID: 11400000, guid: f3c1e482b2079eb4d891b9e970ec8514, type: 2}
+  blocks:
+  - kind: 14
+    barStyle: 0
+    reactions: 0
+    title: "\uAC15\uB098\uB9B0"
+    account: nrn.closet
+    meta: 
+    text: "\uC785\uC740 \uAC70 \uAE30\uB85D\uD574\uC694."
+    textStyle: 0
+    items: []
+    images:
+    - texture: {fileID: 2800000, guid: ae99eaedb0da39d42b8d0ee3fe9c43bc, type: 3}
+      crop:
+        serializedVersion: 2
+        x: 0.109
+        y: 0.175
+        width: 0.781
+        height: 0.583
+      redactions: []
+      sampleWidth: 0
+      jpegQuality: 80
+      background: {r: 0.78, g: 0.76, b: 0.72, a: 1}
+      seed: 0
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  bottom: 1
+  temporary: 0
+  temporaryNote: 
+  output: {fileID: 2800000, guid: 9384fe62857ab504aafdb0dab81f503a, type: 3}
+  renderedHash: 2624b35d326b2b916c3c953243800d82

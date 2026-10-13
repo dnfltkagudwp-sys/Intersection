@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12dd992eba6218b439b940ac47860acd, type: 3}
+  m_Name: Capture_A06-02
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.CaptureScreenData
+  record: {fileID: 11400000, guid: 600aecd8fdb2ac3409c5cc70338b7cec, type: 2}
+  style: {fileID: 11400000, guid: f3c1e482b2079eb4d891b9e970ec8514, type: 2}
+  blocks:
+  - kind: 0
+    barStyle: 1
+    reactions: 0
+    title: 
+    account: daylog_041
+    meta: "15\uC2DC\uAC04"
+    text: 
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 6
+    barStyle: 0
+    reactions: 1
+    title: 
+    account: 
+    meta: 
+    text: 
+    textStyle: 0
+    items: []
+    images:
+    - texture: {fileID: 2800000, guid: 036455b20db02754fbcdf98c3f8f2dac, type: 3}
+      crop:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      redactions: []
+      sampleWidth: 720
+      jpegQuality: 70
+      background: {r: 0.78, g: 0.76, b: 0.72, a: 1}
+      seed: 0
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 2
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: 
+    meta: 
+    text: "\uC88B\uC544\uC694 12\uAC1C"
+    textStyle: 1
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 2
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: 
+    meta: 
+    text: "\uB313\uAE00 0\uAC1C"
+    textStyle: 2
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 3
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: daylog_041
+    meta: 
+    text: "\uC9C0\uB09C\uBC88 \uAC70 \uBC18\uC751 \uC788\uC5B4\uC11C \uD558\uB098 \uB354\n\uC5BC\uAD74\uC740 \uC544\uC9C1"
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  bottom: 0
+  temporary: 0
+  temporaryNote: 
+  output: {fileID: 2800000, guid: 33cbf216fe46e9345a2de8ae95056aa0, type: 3}
+  renderedHash: 8a71b140bda335aa50676e48aceabce6

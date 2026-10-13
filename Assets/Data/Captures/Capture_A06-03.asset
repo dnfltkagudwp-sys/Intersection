@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12dd992eba6218b439b940ac47860acd, type: 3}
+  m_Name: Capture_A06-03
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.CaptureScreenData
+  record: {fileID: 11400000, guid: 05d45d043a372894b8c05df6646bd813, type: 2}
+  style: {fileID: 11400000, guid: 834114949e7d38949a040fe478631b06, type: 2}
+  blocks:
+  - kind: 10
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: 
+    meta: 
+    text: "\u2026/daylog_041/p/7Rk2Qm\u2026"
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 11
+    barStyle: 0
+    reactions: 0
+    title: "\uC774 \uAC8C\uC2DC\uBB3C\uC744 \uBCFC \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
+    account: 
+    meta: 
+    text: "\uB9C1\uD06C\uAC00 \uC798\uBABB\uB418\uC5C8\uAC70\uB098 \uAC8C\uC2DC\uBB3C\uC774 \uC0AD\uC81C\uB418\uC5C8\uC744 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+    textStyle: 0
+    items:
+    - "\uD648\uC73C\uB85C \uC774\uB3D9"
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  bottom: 0
+  temporary: 0
+  temporaryNote: 
+  output: {fileID: 2800000, guid: fc2685db70c27564a82f77d1149d59c8, type: 3}
+  renderedHash: ea22495b05bdfdfd0c1d1ca5b966fbad

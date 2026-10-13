@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12dd992eba6218b439b940ac47860acd, type: 3}
+  m_Name: Capture_A06-16
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.CaptureScreenData
+  record: {fileID: 11400000, guid: 774edb7c190a80c47afa60c4dded334a, type: 2}
+  style: {fileID: 11400000, guid: f3c1e482b2079eb4d891b9e970ec8514, type: 2}
+  blocks:
+  - kind: 0
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: mildcase_12
+    meta: 
+    text: 
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 1
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: 
+    meta: 
+    text: 
+    textStyle: 0
+    items:
+    - "\uAC8C\uC2DC\uBB3C 4"
+    - "\uD314\uB85C\uC6CC 23"
+    - "\uD314\uB85C\uC789 0"
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 2
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: 
+    meta: 
+    text: "\uADF8\uB54C\uADF8\uB54C\n\uB514\uC5E0 \uD655\uC778 \uC548 \uD568"
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 13
+    barStyle: 0
+    reactions: 0
+    title: "\uACE0\uC815\uB428"
+    account: mildcase_12
+    meta: "\uC218\uC815\uB428 \xB7 3\uC77C"
+    text: "\uC9C0\uB09C\uBC88\uCC98\uB7FC \uC21C\uC11C\uB300\uB85C\n\uC694\uCCAD \uC548 \uBC1B\uC74C"
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  bottom: 0
+  temporary: 0
+  temporaryNote: 
+  output: {fileID: 2800000, guid: 98067cebdd9188542b05d8b9a1180262, type: 3}
+  renderedHash: 390892345e2344bcb22898aff7c9d20f

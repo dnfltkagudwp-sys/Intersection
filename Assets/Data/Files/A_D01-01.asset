@@ -16,8 +16,8 @@ MonoBehaviour:
   device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
   time:
     dayOffset: -127
-    hour: 22
-    minute: 42
+    hour: 23
+    minute: 44
   sortKey: 0
   source: 1
   availableFrom: 2
@@ -26,4 +26,7 @@ MonoBehaviour:
   authorNote: "parentId A06. D \uACF5\uAC1C \uD504\uB85C\uD544"
   path: Screenshots/shot_1760.png
   mediaAssetId: d-public-01
-  preview: {fileID: 0}
+  preview: {fileID: 2800000, guid: 9384fe62857ab504aafdb0dab81f503a, type: 3}
+  visibleText:
+  - kind: 0
+    text: "nrn.closet\n\uAC15\uB098\uB9B0\n\uC785\uC740 \uAC70 \uAE30\uB85D\uD574\uC694."

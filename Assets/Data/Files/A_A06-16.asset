@@ -15,9 +15,9 @@ MonoBehaviour:
   id: 04d84191944143c49a271c3d539357c5
   device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
   time:
-    dayOffset: -80
-    hour: 22
-    minute: 45
+    dayOffset: -90
+    hour: 23
+    minute: 20
   sortKey: 0
   source: 1
   availableFrom: 2
@@ -26,4 +26,7 @@ MonoBehaviour:
   authorNote: "\uC775\uBA85 \uACC4\uC815 \uC18C\uAC1C\uBB38\uACFC \uC218\uC815 \uC2DC\uAC01"
   path: Screenshots/shot_1788.png
   mediaAssetId: 
-  preview: {fileID: 0}
+  preview: {fileID: 2800000, guid: 98067cebdd9188542b05d8b9a1180262, type: 3}
+  visibleText:
+  - kind: 0
+    text: "mildcase_12\n\uAC8C\uC2DC\uBB3C 4\n\uD314\uB85C\uC6CC 23\n\uD314\uB85C\uC789 0\n\uADF8\uB54C\uADF8\uB54C\n\uB514\uC5E0 \uD655\uC778 \uC548 \uD568\n\uACE0\uC815\uB428\nmildcase_12 \uC9C0\uB09C\uBC88\uCC98\uB7FC \uC21C\uC11C\uB300\uB85C\n\uC694\uCCAD \uC548 \uBC1B\uC74C\n\uC218\uC815\uB428 \xB7 3\uC77C"

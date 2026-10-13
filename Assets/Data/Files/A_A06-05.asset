@@ -15,9 +15,9 @@ MonoBehaviour:
   id: 2fe9c6f2bd3840faafae840df7284dcb
   device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
   time:
-    dayOffset: -148
-    hour: 22
-    minute: 28
+    dayOffset: -127
+    hour: 23
+    minute: 16
   sortKey: 0
   source: 1
   availableFrom: 2
@@ -26,4 +26,7 @@ MonoBehaviour:
   authorNote: "\uACC4\uC815\uBA85 \uC798\uB9B0 \uAC8C\uC2DC\uBB3C \uC18D \uBBF8\uC0C1 \uC5EC\uC131(E)"
   path: Download/capture_1751.png
   mediaAssetId: 
-  preview: {fileID: 0}
+  preview: {fileID: 2800000, guid: 8cbde91712817dc4199b03914dcc4098, type: 3}
+  visibleText:
+  - kind: 0
+    text: "\uC88B\uC544\uC694 8\uAC1C\n\uC5B4\uC81C \uC62C\uB9B0 \uAC70 \uC9C0\uC6C0\n\uB2E4\uC2DC \uC62C\uB9BC\n3\uC77C"

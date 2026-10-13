@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12dd992eba6218b439b940ac47860acd, type: 3}
+  m_Name: Capture_D01-03
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.CaptureScreenData
+  record: {fileID: 11400000, guid: 6a5417891c140264981bb6b2adae8d7b, type: 2}
+  style: {fileID: 11400000, guid: f3c1e482b2079eb4d891b9e970ec8514, type: 2}
+  blocks:
+  - kind: 0
+    barStyle: 1
+    reactions: 0
+    title: 
+    account: nrn.closet
+    meta: "14\uC8FC"
+    text: 
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 6
+    barStyle: 0
+    reactions: 1
+    title: 
+    account: 
+    meta: 
+    text: 
+    textStyle: 0
+    items: []
+    images:
+    - texture: {fileID: 2800000, guid: cc6ff978124c946458ec22c6335f43b4, type: 3}
+      crop:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 0.9333
+      redactions: []
+      sampleWidth: 0
+      jpegQuality: 70
+      background: {r: 0.78, g: 0.76, b: 0.72, a: 1}
+      seed: 0
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 2
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: 
+    meta: 
+    text: "\uC88B\uC544\uC694 51\uAC1C"
+    textStyle: 1
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 3
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: nrn.closet
+    meta: 
+    text: "\uC694\uC998\uC740 \uC154\uCE20\uC7AC\uD0B7 \uD558\uB098\uB85C \uC9C0\uB0B4\uC694."
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  bottom: 0
+  temporary: 0
+  temporaryNote: 
+  output: {fileID: 2800000, guid: d6ea51e4344e99647abaf7b61d0e7e1b, type: 3}
+  renderedHash: 1c3baba550b58e542ee7f70ba49df438

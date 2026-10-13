@@ -16,8 +16,8 @@ MonoBehaviour:
   device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
   time:
     dayOffset: -127
-    hour: 21
-    minute: 14
+    hour: 23
+    minute: 38
   sortKey: 0
   source: 1
   availableFrom: 2
@@ -25,5 +25,5 @@ MonoBehaviour:
   integrityKey: integrity.original
   authorNote: D01-S2
   kind: 0
-  title: "\uAC15\uB098\uB9B0 \uCEE4\uBBA4\uB2C8\uD2F0 \uB2C9\uB124\uC784"
+  title: "\uAC15\uB098\uB9B0 \uB9B0\uC637\uC7A5"
   url: 

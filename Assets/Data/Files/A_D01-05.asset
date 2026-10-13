@@ -15,9 +15,9 @@ MonoBehaviour:
   id: 5efd7b79a7c64deeb277201a0dea9256
   device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
   time:
-    dayOffset: -124
-    hour: 22
-    minute: 10
+    dayOffset: -126
+    hour: 0
+    minute: 3
   sortKey: 0
   source: 1
   availableFrom: 2
@@ -26,4 +26,9 @@ MonoBehaviour:
   authorNote: "parentId A06. D \uAD00\uB828 \uC775\uBA85 \uACC4\uC815 \uAC00\uB824\uC9C4 \uC774\uBBF8\uC9C0 \uC870\uAC01"
   path: Download/capture_1766.png
   mediaAssetId: 
-  preview: {fileID: 0}
+  preview: {fileID: 2800000, guid: 6fb7ed827e708b14db04c35a53fbba39, type: 3}
+  visibleText:
+  - kind: 0
+    text: 'smallroom_08
+
+      2/3'

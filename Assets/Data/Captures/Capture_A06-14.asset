@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12dd992eba6218b439b940ac47860acd, type: 3}
+  m_Name: Capture_A06-14
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.CaptureScreenData
+  record: {fileID: 11400000, guid: 3f9c5e48e67e3084a81c802be0c19457, type: 2}
+  style: {fileID: 11400000, guid: f3c1e482b2079eb4d891b9e970ec8514, type: 2}
+  blocks:
+  - kind: 0
+    barStyle: 2
+    reactions: 0
+    title: "\uB313\uAE00"
+    account: 
+    meta: 
+    text: 
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 7
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: rami.pic
+    meta: "2\uC8FC"
+    text: "\uC804\uC5D0 \uBCF4\uB358 \uB370 \uC5C6\uC5B4\uC84C\uB358\uB370 \uC5EC\uAE30\uC784?"
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 2
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: 
+    meta: 
+    text: "\uC228\uACA8\uC9C4 \uB313\uAE00\uC785\uB2C8\uB2E4"
+    textStyle: 2
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 7
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: hyunn_o
+    meta: "1\uC8FC"
+    text: "\uC774\uB7F0 \uAC70 \uC2E0\uACE0 \uC548 \uB418\uB098"
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  - kind: 2
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: 
+    meta: 
+    text: "\uC228\uACA8\uC9C4 \uB313\uAE00 2\uAC1C \uBCF4\uAE30"
+    textStyle: 3
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  bottom: 3
+  temporary: 0
+  temporaryNote: 
+  output: {fileID: 2800000, guid: 0158d51ba1e5f974bb2ff854a677904a, type: 3}
+  renderedHash: b10315b573e6b61baded7efd8bf50dd0

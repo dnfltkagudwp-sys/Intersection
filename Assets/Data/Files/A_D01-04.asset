@@ -15,9 +15,9 @@ MonoBehaviour:
   id: b5781bac56e64ecd8fae46134f37d790
   device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
   time:
-    dayOffset: -125
-    hour: 22
-    minute: 3
+    dayOffset: -127
+    hour: 23
+    minute: 58
   sortKey: 0
   source: 1
   availableFrom: 2
@@ -26,4 +26,7 @@ MonoBehaviour:
   authorNote: "parentId A06. \uC775\uBA85 \uACC4\uC815 \uD654\uBA74\uC5D0 D \uC774\uB984\xB7\uB2C9\uB124\uC784 \uC870\uAC01"
   path: Download/capture_1764.png
   mediaAssetId: 
-  preview: {fileID: 0}
+  preview: {fileID: 2800000, guid: 11c21eaf1f4c0174d993c0447f2039b9, type: 3}
+  visibleText:
+  - kind: 0
+    text: "smallroom_08 \xB7 1\uC77C\n\uC88B\uC544\uC694 19\uAC1C\nsmallroom_08 \uC774\uBC88 \uAC70 \uB9B0\uC637\uC7A5\n\uB354 \uC788\uC74C\n\uB313\uAE00 2\uAC1C\nyeon.d_ \uC774 \uC0AC\uB78C \uACC4\uC815 nrn.closet \uC544\uB2D8?\n1\uC77C\nmoa_moa \uB9B0\uC637\uC7A5\uC774\uBA74 \uCEE4\uBBA4 \uADF8 \uC0AC\uB78C?\n1\uC77C"

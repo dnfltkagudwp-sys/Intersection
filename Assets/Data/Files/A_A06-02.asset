@@ -15,9 +15,9 @@ MonoBehaviour:
   id: 292f5a4570c842269426bfc3f1670de9
   device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
   time:
-    dayOffset: -205
-    hour: 22
-    minute: 7
+    dayOffset: -180
+    hour: 14
+    minute: 35
   sortKey: 0
   source: 1
   availableFrom: 2
@@ -26,4 +26,7 @@ MonoBehaviour:
   authorNote: "@daylog_041 \uAC00\uB824\uC9C4 \uAC8C\uC2DC\uBB3C, C \uC0AC\uC9C4 \uC77C\uBD80"
   path: Screenshots/shot_1742.png
   mediaAssetId: c-post-01
-  preview: {fileID: 0}
+  preview: {fileID: 2800000, guid: 33cbf216fe46e9345a2de8ae95056aa0, type: 3}
+  visibleText:
+  - kind: 0
+    text: "daylog_041 \xB7 15\uC2DC\uAC04\n\uC88B\uC544\uC694 12\uAC1C\n\uB313\uAE00 0\uAC1C\ndaylog_041 \uC9C0\uB09C\uBC88 \uAC70 \uBC18\uC751 \uC788\uC5B4\uC11C \uD558\uB098 \uB354\n\uC5BC\uAD74\uC740 \uC544\uC9C1"
