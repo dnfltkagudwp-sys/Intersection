@@ -109,6 +109,16 @@ namespace Intersection.Core
         public const string PanelTitleFiles = "panel.title.files";
         public const string RecordPrefixFile = "record.prefix.file";
 
+        // 캡처 확대 열람 (휴대전화 안)
+        public const string ZoomOut = "zoom.out";
+        public const string ZoomIn = "zoom.in";
+        /// <summary>캡처 전체를 한 번에 보기.</summary>
+        public const string ZoomFit = "zoom.fit";
+        /// <summary>전체 보기 중 다시 화면 폭에 맞추기 (처음 여는 배율).</summary>
+        public const string ZoomFitWidth = "zoom.fitWidth";
+        /// <summary>현재 배율. {n}은 원본 픽셀 대비 백분율.</summary>
+        public const string ZoomPercent = "zoom.percent";
+
         // 설정
         public const string SettingsTitle = "app.settings.title";
         public const string SettingsSectionCurrent = "settings.section.current";
@@ -342,6 +352,7 @@ namespace Intersection.Core
             MapsFieldShared, MapsPeriodFormat, PanelTitleMaps, RecordPrefixMap,
             FilesTitle, FilesLocationLocal, FilesLocationCloud, FilesLocationLinked, FilesLocationRecovered, FilesItemCount,
             FilesPreviewUnavailable, FilesFieldName, FilesFieldModified, FilesFieldWhere, PanelTitleFiles, RecordPrefixFile,
+            ZoomOut, ZoomIn, ZoomFit, ZoomFitWidth, ZoomPercent,
             SettingsTitle, SettingsSectionCurrent, SettingsSectionHistory, SettingsChangeFormat, SettingsFieldItem,
             SettingsFieldBefore, SettingsFieldAfter, PanelTitleSettings, RecordPrefixSetting,
             ToolbarSelectStart, ToolbarSelectEnd, ToolbarPickHint, ToolbarPicked,

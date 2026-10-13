@@ -42,10 +42,23 @@ namespace Intersection.UI
             foreach (var label in GetComponentsInChildren<LocalizedText>(true))
                 label.Apply(text);
             phone.MessageList.QueryChanged += OnQueryChanged;
+            ApplyUiPostProcessing();
             InitWork();
             // 접근 단계는 진행 저장 파일에서 읽는다(없으면 시작 단계).
             InitProgress();
             session.CurrentCase = Cases().FirstOrDefault(c => c.IsAvailable(session.Stage));
+        }
+
+        /// <summary>
+        /// UI를 그리는 카메라를 씬의 전역 후처리(톤 매핑·블룸·비네트)에서 분리한다(테마 설정).
+        /// 씬 파일은 바꾸지 않고 실행 중 카메라 설정만 맞춘다.
+        /// </summary>
+        void ApplyUiPostProcessing()
+        {
+            var canvas = GetComponentInParent<Canvas>();
+            var cam = canvas != null ? canvas.rootCanvas.worldCamera : null;
+            if (cam != null && cam.TryGetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>(out var data))
+                data.renderPostProcessing = Theme.uiPostProcessing;
         }
 
         void Start()

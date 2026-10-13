@@ -73,6 +73,11 @@ MonoBehaviour:
   bubbleSenderGap: 12
   photoGridColumns: 4
   photoGridSpacing: 2
+  uiPostProcessing: 0
+  captureMaterial: {fileID: 2100000, guid: be5f010d633dbf7449a1b10394ba7110, type: 2}
+  zoomReadPercent: 45
+  zoomMaxPercent: 100
+  zoomStep: 1.2
   backGlyph: "\u2039"
   chevronGlyph: "\u203A"
   attachGlyph: +

@@ -91,6 +91,22 @@ namespace Intersection.Data
         [Range(2, 6)] public int photoGridColumns = 4;
         public float photoGridSpacing = 2f;
 
+        [Header("화면 후처리")]
+        [Tooltip("업무 프로그램 UI를 그리는 카메라에 씬의 전역 후처리(톤 매핑·블룸·비네트)를 적용할지. " +
+                 "끄면 캡처·사진·글자가 원래 밝기와 대비로 보인다. 이 게임 화면은 UI뿐이라 기본은 끔.")]
+        public bool uiPostProcessing;
+
+        [Tooltip("휴대전화 화면 캡처 등 큰 이미지를 작게 표시할 때의 재질(다중 샘플 축소 셰이더). 비우면 기본 UI 재질")]
+        public Material captureMaterial;
+
+        [Header("캡처 확대 열람 (배율은 원본 픽셀 대비 %)")]
+        [Tooltip("더블클릭으로 전환하는 읽기 배율")]
+        public float zoomReadPercent = 45f;
+        [Tooltip("최대 배율 (100 = 원본 픽셀 크기)")]
+        public float zoomMaxPercent = 100f;
+        [Tooltip("휠 한 칸·+/− 버튼 한 번의 배율 변화")]
+        public float zoomStep = 1.2f;
+
         [Header("Glyphs")]
         public string backGlyph = "‹";
         public string chevronGlyph = "›";

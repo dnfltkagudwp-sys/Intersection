@@ -555,3 +555,13 @@ MonoBehaviour:
     value: "파일"
   - key: summary.app.settings
     value: "설정 기록"
+  - key: zoom.out
+    value: "\u2212"
+  - key: zoom.in
+    value: "+"
+  - key: zoom.fit
+    value: "\uD654\uBA74 \uB9DE\uCDA4"
+  - key: zoom.percent
+    value: "{n}%"
+  - key: zoom.fitWidth
+    value: "\uB108\uBE44 \uB9DE\uCDA4"

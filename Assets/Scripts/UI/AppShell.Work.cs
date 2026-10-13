@@ -52,6 +52,11 @@ namespace Intersection.UI
         /// <summary>검수·테스트용 업무 상태 저장소.</summary>
         public WorkStore Store => store;
 
+#if UNITY_EDITOR
+        /// <summary>에디터 검수 전용: 우측 패널의 현재 열람 기록 키 (없으면 null). 빌드에는 포함되지 않는다.</summary>
+        public string DebugCurrentRecordKey => (sourceFocus ?? currentRecord)?.Key;
+#endif
+
         /// <summary>
         /// 고정·분류·메모 조작이 적용되는 기록 (패널에 보이는 기록). 작업함이 열려 있으면 작업함에서 고른 자료,
         /// 아무것도 고르지 않았으면 없다(P·1·2·0 무시).
@@ -567,12 +572,15 @@ namespace Intersection.UI
         // ───────────── 키보드 ─────────────
 
         /// <summary>
-        /// Esc 우선순위: 비교 화면이면 비교 종료 → 알림 목록 닫기 → 검토 팝오버 닫기 → 연동 결과 요약 닫기 → 검색 닫기 → 메모 입력 중이면 입력값을 저장하고 포커스만 해제
+        /// Esc 우선순위: 보이는 캡처 확대 열람 닫기 → 비교 화면이면 비교 종료 → 알림 목록 닫기 → 검토 팝오버 닫기 → 연동 결과 요약 닫기 → 검색 닫기 → 메모 입력 중이면 입력값을 저장하고 포커스만 해제
         /// → 작업함이 열려 있으면 작업함 닫기(보던 휴대전화로) → 패널에 다른 기록을 띄웠으면 현재 열람으로
         /// → 고르기 모드면 종료 → 휴대전화 뒤로. 한 번의 Esc는 한 단계만 처리하고 아래 단계로 넘기지 않는다.
         /// </summary>
         void HandleEscape()
         {
+            // 캡처 확대 열람(휴대전화·비교 좌우 어디든)이 가장 먼저 닫힌다. 상세 화면과 스크롤 위치는 그대로.
+            if (CaptureZoomView.CloseTopmost())
+                return;
             if (comparing)
                 ExitCompare();
             else if (notificationPanel.IsOpen)

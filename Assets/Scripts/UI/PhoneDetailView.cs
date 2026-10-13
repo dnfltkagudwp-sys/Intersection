@@ -44,25 +44,47 @@ namespace Intersection.UI
         readonly List<GameObject> fields = new List<GameObject>();
         readonly List<GameObject> blocks = new List<GameObject>();
 
+        LayoutElement heroLayout;
+        float heroDefaultHeight = -1f;
+        /// <summary>미리보기 이미지의 세로/가로. 0이면 기본 높이(자리 표시).</summary>
+        float heroAspect;
+        bool fitting;
+        CaptureZoomView zoom;
+
+        /// <summary>확대 열람이 열려 있는지 (뒤로가기·Esc는 이것부터 닫는다).</summary>
+        public bool ZoomOpen => zoom != null && zoom.IsOpen;
+
         /// <param name="selection">열린 기록(페이지·장소·파일·설정 변경) 자체. 선택 모드에서 화면 전체로 선택한다.</param>
         /// <param name="document">미리보기 자리에 그릴 문서 블록(파일 visibleText). 검색과 같은 원본이다.</param>
         public void Show(string title, string backText, string headlineText, Hero hero,
             List<(string label, string value)> fieldValues, UITheme theme, Action onBack, RecordRef selection,
-            IReadOnlyList<FileTextBlock> document = null)
+            IReadOnlyList<FileTextBlock> document = null, UIText text = null)
         {
+            if (zoom != null)
+                zoom.Close();
             ShowDocument(document, theme);
             selectable.Bind(selection);
             headerTitle.text = title;
             backLabel.text = theme.backGlyph + " " + backText;
             backButton.onClick.RemoveAllListeners();
-            backButton.onClick.AddListener(() => onBack());
+            // 확대 열람 중이면 뒤로가기는 확대 화면만 닫는다(상세 화면·스크롤 위치는 그대로).
+            backButton.onClick.AddListener(() =>
+            {
+                if (ZoomOpen)
+                    zoom.Close();
+                else
+                    onBack();
+            });
 
             heroRoot.SetActive(hero != null);
+            heroAspect = hero != null && hero.texture != null && hero.texture.width > 0 ? (float)hero.texture.height / hero.texture.width : 0f;
             if (hero != null)
             {
                 bool hasTexture = hero.texture != null;
                 heroTexture.gameObject.SetActive(hasTexture);
                 heroTexture.texture = hero.texture;
+                // 큰 이미지(화면 캡처 등)를 작게 보여 줄 때 계단·끊김이 없도록 다중 샘플 축소 재질
+                heroTexture.material = theme.captureMaterial;
                 heroBackground.sprite = hero.background;
                 heroBackground.color = hero.background != null ? Color.white : theme.photoPlaceholder;
                 heroGlyph.gameObject.SetActive(!hasTexture && hero.glyph != null);
@@ -70,6 +92,7 @@ namespace Intersection.UI
                 heroGlyph.color = hero.background != null ? theme.phoneAccent : theme.photoPlaceholderGlyph;
                 heroMessage.gameObject.SetActive(!hasTexture && !string.IsNullOrEmpty(hero.message));
                 heroMessage.text = hero.message ?? string.Empty;
+                BindPreviewClick(hasTexture && text != null ? hero.texture : null, theme, text);
             }
 
             headline.text = headlineText ?? string.Empty;
@@ -89,7 +112,62 @@ namespace Intersection.UI
 
             Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            FitHero(true);
             scroll.verticalNormalizedPosition = 1f;
+        }
+
+        /// <summary>
+        /// 미리보기 이미지를 누르면 휴대전화 안 확대 열람을 연다(이미지가 있을 때만). 확대 화면은 스크롤 영역 위에 겹쳐
+        /// 처음 한 번만 만들고, 닫아도 상세 화면의 스크롤 위치는 그대로다. 열람 상태일 뿐 업무 기록은 바꾸지 않는다.
+        /// </summary>
+        void BindPreviewClick(Texture texture, UITheme theme, UIText text)
+        {
+            heroBackground.raycastTarget = texture != null;
+            var click = heroRoot.GetComponent<PreviewClick>();
+            if (texture == null)
+            {
+                if (click != null)
+                    click.Clicked = null;
+                return;
+            }
+            if (click == null)
+                click = heroRoot.AddComponent<PreviewClick>();
+            click.Clicked = () =>
+            {
+                if (zoom == null)
+                    zoom = CaptureZoomView.Create((RectTransform)scroll.transform, theme, text);
+                zoom.Open(texture);
+            };
+        }
+
+        // 화면 크기가 바뀌면 다음 레이아웃 갱신 때 다시 맞춘다(레이아웃 계산 중에 강제 재계산하지 않음).
+        void OnRectTransformDimensionsChange() => FitHero(false);
+
+        /// <summary>
+        /// 미리보기 이미지(휴대전화 화면 캡처 등)는 폭에 맞추고 원래 비율대로 높이를 정한다(늘리거나 자르지 않음).
+        /// 이미지가 없으면 빌더가 정한 기본 높이의 자리 표시.
+        /// </summary>
+        void FitHero(bool immediate)
+        {
+            if (fitting || heroRoot == null || !heroRoot.activeSelf)
+                return;
+            if (heroLayout == null)
+            {
+                heroLayout = heroRoot.GetComponent<LayoutElement>();
+                if (heroLayout == null)
+                    return;
+                heroDefaultHeight = heroLayout.preferredHeight;
+            }
+            float width = ((RectTransform)heroRoot.transform).rect.width;
+            float height = heroAspect > 0 && width > 0 ? Mathf.Round(width * heroAspect) : heroDefaultHeight;
+            if (Mathf.Approximately(heroLayout.preferredHeight, height))
+                return;
+            heroLayout.preferredHeight = height;
+            if (!immediate)
+                return;
+            fitting = true;
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            fitting = false;
         }
 
         /// <summary>
@@ -113,8 +191,75 @@ namespace Intersection.UI
                 bool mono = block.kind != FileTextKind.Text;
                 t.font = mono ? theme.monoFont : theme.regularFont;
                 t.text = block.kind == FileTextKind.Table ? TableText(block) : string.Join("\n", block.Lines());
-                blocks.Add(t.gameObject);
+                blocks.Add(block.kind == FileTextKind.Table ? TableScroller(t, theme) : t.gameObject);
             }
+        }
+
+        /// <summary>
+        /// 표는 줄바꿈하면 칸이 어긋나 읽을 수 없으므로 줄바꿈 없이 그리고, 휴대전화 폭보다 넓으면 가로로 넘긴다
+        /// (가로 휠·Shift+휠·가로 끌기·아래 막대). 세로 휠은 문서 전체 스크롤로 넘어간다.
+        /// </summary>
+        GameObject TableScroller(TMP_Text text, UITheme theme)
+        {
+            const float barHeight = 6f, barGap = 8f;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Overflow;
+            var size = text.GetPreferredValues(text.text, 100000f, 0f);
+
+            var root = new GameObject("TableScroll", typeof(RectTransform));
+            var rootRt = (RectTransform)root.transform;
+            rootRt.SetParent(documentRoot, false);
+            rootRt.SetSiblingIndex(text.transform.GetSiblingIndex());
+            root.AddComponent<LayoutElement>().preferredHeight = Mathf.Ceil(size.y) + barHeight + barGap;
+            // 휠·끌기를 받을 투명 영역
+            root.AddComponent<Image>().color = Color.clear;
+
+            var viewport = (RectTransform)new GameObject("Viewport", typeof(RectTransform), typeof(RectMask2D)).transform;
+            viewport.SetParent(rootRt, false);
+            viewport.anchorMin = Vector2.zero;
+            viewport.anchorMax = Vector2.one;
+            viewport.offsetMin = new Vector2(0, barHeight + barGap);
+            viewport.offsetMax = Vector2.zero;
+
+            var content = (RectTransform)text.transform;
+            content.SetParent(viewport, false);
+            content.anchorMin = content.anchorMax = content.pivot = new Vector2(0, 1);
+            content.anchoredPosition = Vector2.zero;
+            content.sizeDelta = new Vector2(Mathf.Ceil(size.x) + 2, Mathf.Ceil(size.y));
+
+            var bar = (RectTransform)new GameObject("Scrollbar", typeof(RectTransform)).transform;
+            bar.SetParent(rootRt, false);
+            bar.anchorMin = Vector2.zero;
+            bar.anchorMax = new Vector2(1, 0);
+            bar.pivot = new Vector2(0.5f, 0);
+            bar.sizeDelta = new Vector2(0, barHeight);
+            var track = bar.gameObject.AddComponent<Image>();
+            track.sprite = theme.roundedSprite;
+            track.type = Image.Type.Sliced;
+            track.color = new Color(theme.phoneSubText.r, theme.phoneSubText.g, theme.phoneSubText.b, 0.2f);
+            var handle = (RectTransform)new GameObject("Handle", typeof(RectTransform)).transform;
+            handle.SetParent(bar, false);
+            handle.offsetMin = handle.offsetMax = Vector2.zero;
+            var handleImage = handle.gameObject.AddComponent<Image>();
+            handleImage.sprite = theme.roundedSprite;
+            handleImage.type = Image.Type.Sliced;
+            handleImage.color = new Color(theme.phoneSubText.r, theme.phoneSubText.g, theme.phoneSubText.b, 0.8f);
+            var scrollbar = bar.gameObject.AddComponent<Scrollbar>();
+            scrollbar.handleRect = handle;
+            scrollbar.targetGraphic = handleImage;
+            scrollbar.direction = Scrollbar.Direction.LeftToRight;
+
+            var horizontal = root.AddComponent<TableScrollRect>();
+            horizontal.horizontal = true;
+            horizontal.vertical = false;
+            horizontal.movementType = ScrollRect.MovementType.Clamped;
+            horizontal.scrollSensitivity = scroll.scrollSensitivity;
+            horizontal.viewport = viewport;
+            horizontal.content = content;
+            horizontal.horizontalScrollbar = scrollbar;
+            horizontal.horizontalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
+            horizontal.horizontalNormalizedPosition = 0f;
+            return root;
         }
 
         /// <summary>표를 고정폭 글꼴에서 칸이 맞도록 공백으로 채운다(한글 등 전각 글자는 두 칸).</summary>

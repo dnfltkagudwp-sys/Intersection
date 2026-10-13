@@ -17,6 +17,8 @@ namespace Intersection.EditorTools
         public class Issue
         {
             public bool error;
+            /// <summary>오류·경고가 아닌 제작 상태 안내(예: 의도적으로 둔 임시 자산). 빌드를 막지 않는다.</summary>
+            public bool info;
             public string message;
             public Object context;
         }
@@ -29,11 +31,14 @@ namespace Intersection.EditorTools
             {
                 if (i.error)
                     Debug.LogError("[Content] " + i.message, i.context);
+                else if (i.info)
+                    Debug.Log("[Content] " + i.message, i.context);
                 else
                     Debug.LogWarning("[Content] " + i.message, i.context);
             }
-            int errors = issues.Count(i => i.error);
-            Debug.Log($"[Content] 검증 완료 — 오류 {errors}개, 경고 {issues.Count - errors}개");
+            int errors = issues.Count(i => i.error), infos = issues.Count(i => i.info);
+            Debug.Log($"[Content] 검증 완료 — 오류 {errors}개, 경고 {issues.Count - errors - infos}개" +
+                      (infos > 0 ? $", 임시 제작 자산 {infos}건" : string.Empty));
         }
 
         public static List<Issue> Run()
@@ -394,6 +399,9 @@ namespace Intersection.EditorTools
             // 진행 연동 (UI-07): 작업·효과·도달 가능성·출처와 접근 단계·검색 인덱스·진행 저장 파일
             if (config != null && config.database != null)
                 CheckProgress(config, jobs, reviews, cases, threads, photos, records, folders, requests, Error, Warn, CheckKey);
+
+            // 휴대전화 화면 캡처 제작 원본: 화면 글자 = 파일 표시 문구, 미리보기 연결, 다시 렌더링 필요 여부, 임시 자산 표시
+            CheckCaptures(noteDate, Error, Warn, (msg, ctx) => issues.Add(new Issue { info = true, message = msg, context = ctx }));
 
             // 플레이어 저장 파일: 원본에서 찾을 수 없는 참조 (실행 중에는 누락 상태로 표시되며 다른 기록으로 대체되지 않는다)
             if (config != null && config.database != null)

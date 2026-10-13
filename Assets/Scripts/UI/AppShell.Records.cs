@@ -53,7 +53,7 @@ namespace Intersection.UI
         {
             store.MarkViewed(selection);
             phone.Show(PhoneView.Screen.RecordDetail);
-            phone.RecordDetail.Show(d.title, backText, d.headline, d.hero, d.fields, Theme, Back, selection, d.document);
+            phone.RecordDetail.Show(d.title, backText, d.headline, d.hero, d.fields, Theme, Back, selection, d.document, text);
         }
 
         DetailModel BrowserDetail(BrowserRecord r) => new DetailModel
