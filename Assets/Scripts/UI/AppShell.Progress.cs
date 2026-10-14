@@ -29,13 +29,41 @@ namespace Intersection.UI
             progressStore = new ProgressStore(Path.Combine(Application.persistentDataPath, config.progressSaveFileName),
                 config.EffectiveStartStage);
             progression = new Progression(config.database, store, progressStore, text);
+            // 세이브 복원 뒤: 진행 중 작업의 완료 조건을 다시 평가한다(이미 충족된 채 종료했을 수 있다).
+            progression.AutoComplete();
             session.Stage = progression.Stage;
+            // 열람 상태가 바뀌는 모든 경로(대화방·사진·상세·원본 열기·검색 결과 열기)는 WorkStore.MarkViewed 하나를 거치므로,
+            // 호출부마다 판정을 두지 않고 업무 상태 변경 뒤 한 곳에서 완료 조건을 평가한다.
+            store.Changed += OnWorkChanged;
             topBar.Bind(OnSearchChanged, OnSearchSelected, ToggleNotifications, OnStatusClicked);
+        }
+
+        /// <summary>자동 완료로 진행이 바뀌어 다음 프레임에 화면을 다시 그려야 하는지.</summary>
+        bool progressRefreshPending;
+
+        /// <summary>
+        /// 업무 상태(열람·고정·분류·메모)가 바뀐 뒤. 완료 판정과 저장은 바로 하고(데이터만 바꿈),
+        /// 화면 갱신은 지금 진행 중인 화면 전환(원본 열기 등)을 끊지 않도록 프레임 끝으로 미룬다.
+        /// </summary>
+        void OnWorkChanged()
+        {
+            if (progression != null && progression.AutoComplete())
+                progressRefreshPending = true;
+        }
+
+        void LateUpdate()
+        {
+            // 비교 중에는 화면을 바꾸지 않고, 비교를 마친 뒤 갱신한다.
+            if (progressRefreshPending && !comparing)
+                AfterProgressChange();
         }
 
         /// <summary>진행이 바뀐 뒤: 접근 단계를 맞추고 전체 화면·알림을 다시 그린다.</summary>
         void AfterProgressChange()
         {
+            // 단계가 바뀌면 그 단계에서 열 수 있게 된 원본으로 완료 조건이 충족될 수 있다(같은 판정 경로, 이미 완료한 작업은 건너뜀).
+            progression.AutoComplete();
+            progressRefreshPending = false;
             session.Stage = progression.Stage;
             if (session.CurrentCase == null || !session.CurrentCase.IsAvailable(session.Stage))
                 session.CurrentCase = Cases().FirstOrDefault(c => c.IsAvailable(session.Stage));

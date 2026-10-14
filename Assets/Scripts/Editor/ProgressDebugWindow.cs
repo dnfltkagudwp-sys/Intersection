@@ -82,6 +82,8 @@ namespace Intersection.EditorTools
                 if (GUILayout.Button("완료(효과)", GUILayout.Width(80)))
                     shell.DebugCompleteJob(job);
                 EditorGUILayout.EndHorizontal();
+                if (job.completionConditions.Count > 0)
+                    DrawCompletion(progress, job);
             }
 
             EditorGUILayout.Space();
@@ -89,6 +91,36 @@ namespace Intersection.EditorTools
             if (GUILayout.Button("진행 초기화 (시작 단계, 작업·알림 비움)"))
                 shell.DebugResetProgress();
             EditorGUILayout.EndScrollView();
+        }
+
+        /// <summary>
+        /// 완료 조건 충족 여부 (검수용, 플레이어 화면에는 보이지 않는다). 자동 완료가 꺼져 있으면 모두 충족해도 완료되지 않는다.
+        /// </summary>
+        static void DrawCompletion(Progression progress, ProgressJobData job)
+        {
+            EditorGUI.indentLevel++;
+            bool all = job.completionConditions.All(c => progress.ConditionMet(job, c));
+            EditorGUILayout.LabelField("완료 조건",
+                $"{(all ? "모두 충족" : "미충족")} · 자동 완료 {(job.autoCompleteWhenReady ? "켜짐" : "꺼짐(잠금)")}" +
+                (progress.StateOf(job) != JobState.Running ? $" · 평가 안 함({progress.StateOf(job)})" : string.Empty));
+            foreach (var c in job.completionConditions)
+            {
+                if (c == null)
+                {
+                    EditorGUILayout.LabelField("(비어 있는 조건)");
+                    continue;
+                }
+                string target = c.kind == ProgressConditionKind.RecordGroupViewed
+                    ? c.group != null ? $"{c.group.name} {progress.GroupViewedCount(c.group)}/{c.group.minCount} (대상 {c.group.targets.Count})" : "?"
+                    : c.kind == ProgressConditionKind.RecordViewed
+                        ? (c.record != null ? c.record.name : "?") + (c.device != null ? $" @ {c.device.name}" : string.Empty)
+                        : c.kind == ProgressConditionKind.RequestViewed ? (c.request != null ? c.request.name : "?")
+                        : c.kind == ProgressConditionKind.JobCompleted ? (c.job != null ? c.job.name : "?")
+                        : c.kind == ProgressConditionKind.ReviewBatchViewed ? (c.batch != null ? c.batch.name : "?")
+                        : c.record != null ? c.record.name : string.Empty;
+                EditorGUILayout.LabelField($"{(progress.ConditionMet(job, c) ? "✓" : "·")} {c.kind}", target);
+            }
+            EditorGUI.indentLevel--;
         }
     }
 }

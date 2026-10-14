@@ -17,10 +17,12 @@ namespace Intersection.Data
         JobCompleted,
         [Tooltip("record 기록의 지금 분류가 보존 (분류 횟수나 과거 이력이 아니라 현재 상태)")]
         RecordKept,
-        [Tooltip("record 원본을 이 작업 의뢰에서 실제로 열람함 (사진은 한 장 보기, 대화방은 대화방 열기, 그 외 기록은 상세). 검색 결과·고정·비교만으로는 인정하지 않음")]
+        [Tooltip("record 원본을 실제로 열람함 (사진은 한 장 보기, 대화방은 device 기기(비우면 작업 의뢰 기기)에서 대화방 열기, 그 외 기록은 상세). 검색 결과·고정·비교만으로는 인정하지 않음")]
         RecordViewed,
         [Tooltip("batch 검토 묶음의 모든 대상 원본을 이 작업 의뢰에서 실제로 열람함 (RecordViewed와 같은 열람 기준, 상단 진행률과 같은 대상 목록)")]
         ReviewBatchViewed,
+        [Tooltip("group 열람 묶음의 대상 중 서로 다른 원본을 묶음의 minCount건 이상 실제로 열람함 (RecordViewed와 같은 열람 기준, 같은 원본은 한 건)")]
+        RecordGroupViewed,
     }
 
     [Serializable]
@@ -29,10 +31,14 @@ namespace Intersection.Data
         public ProgressConditionKind kind;
         public WorkRequestData request;
         public ProgressJobData job;
-        [Tooltip("RecordKept: 대상 기록 (사진·기록 에셋) / RecordViewed: 대상 원본 (사진·기록·대화방 에셋, 대화방은 작업 의뢰 기기의 대화방으로 판정)")]
+        [Tooltip("RecordKept: 대상 기록 (사진·기록 에셋) / RecordViewed: 대상 원본 (사진·기록·대화방 에셋, 대화방은 device 기기의 대화방으로 판정)")]
         public ContentAsset record;
+        [Tooltip("RecordViewed: 대화방을 판정할 기기. 비우면 작업 의뢰 기기 (사진·기록은 원본의 기기를 쓰며, 지정하면 그 기기와 같아야 한다)")]
+        public CaseData device;
         [Tooltip("ReviewBatchViewed: 검토 묶음")]
         public ReviewBatchData batch;
+        [Tooltip("RecordGroupViewed: 열람 묶음 (대상 목록과 최소 열람 수는 묶음에 둔다)")]
+        public ProgressRecordGroupData group;
         [Min(1)] public int minCount = 1;
         public RecordSource source = RecordSource.Local;
     }
@@ -116,6 +122,13 @@ namespace Intersection.Data
         public List<ProgressCondition> startConditions = new List<ProgressCondition>();
         public List<ProgressEffect> onStart = new List<ProgressEffect>();
         public List<ProgressEffect> onComplete = new List<ProgressEffect>();
+
+        [Header("완료")]
+        [Tooltip("진행 중인 이 작업이 완료될 수 있는 조건 (모두 만족). 시작 조건과 별개이며 열람 기준은 시작 조건과 같다. 비어 있으면 조건으로 완료되지 않는다.")]
+        public List<ProgressCondition> completionConditions = new List<ProgressCondition>();
+
+        [Tooltip("완료 조건을 모두 만족하면 자동으로 완료한다 (완료 효과 한 번 실행). 끄면 조건 충족 여부는 에디터 진행 검수 창에서만 보이고 완료되지 않는다. 다음 단계의 정식 자료가 없으면 검증 도구가 오류로 막는다.")]
+        public bool autoCompleteWhenReady;
 
         [Tooltip("다른 작업의 효과가 아니라 이후 정식 콘텐츠(또는 에디터 검수)가 완료시키는 작업. 검증 도구의 도달 가능성 검사에서 완료 경로로 인정한다.")]
         public bool completedExternally;

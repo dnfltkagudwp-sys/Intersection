@@ -15,13 +15,228 @@ namespace Intersection.EditorTools
         static readonly ProgressStage[] Stages = (ProgressStage[])Enum.GetValues(typeof(ProgressStage));
 
         /// <summary>
-        /// RecordViewed 시작 조건의 대상: 사진·기록·대화방 에셋이고, 작업 의뢰 기기에 있으며, 불변 ID가 하나로 정해지고,
-        /// 이 작업을 시작하기 전에 진행 구조상 도달할 수 있는 단계에서 열 수 있어야 한다.
+        /// RecordViewed 조건 대상의 구조 검사 (시작·완료 조건 공용). 판정 기기는 런타임과 같은 <see cref="Progression.ViewDevice"/> 규칙:
+        /// 대화방은 조건의 device(없으면 작업 의뢰 기기), 사진·기록은 원본 자신의 기기(device를 지정했으면 원본 기기와 같아야 함).
+        /// before 단계까지 열 수 있는지도 본다. 판정에 쓰는 열람 키(없으면 null)를 돌려준다.
         /// </summary>
-        static void CheckViewTarget(ProgressJobData job, ContentAsset target, List<ProgressJobData> jobs, List<ThreadData> threads,
-            List<PhotoData> photos, List<DeviceRecord> records, ProgressStage startStage, string where, Action<string, Object> error) =>
-            CheckOpenTarget(job.device, target, "시작 조건(RecordViewed)의 record", job, StageReachableBefore(job, jobs, startStage),
-                threads, photos, records, where, error);
+        static RecordRef CheckViewCondition(ProgressJobData job, ProgressCondition c, string what, ProgressStage before,
+            List<ThreadData> threads, List<PhotoData> photos, List<DeviceRecord> records, string where, Action<string, Object> error)
+        {
+            if (c.record == null)
+            {
+                error($"{what}이 비어 있습니다(삭제된 대상): {where}", job);
+                return null;
+            }
+            return CheckTargetShape(Progression.ViewDevice(job, c), c.record, what, job, threads, photos, records, where, error, before);
+        }
+
+        /// <summary>효과 목록이 연쇄 완료까지 포함해 올리는 가장 높은 접근 단계 (self의 완료는 따라가지 않는다).</summary>
+        static ProgressStage EffectsStage(IEnumerable<ProgressEffect> effects, ProgressJobData self, HashSet<ProgressJobData> visited)
+        {
+            var stage = ProgressStage.P0;
+            foreach (var e in effects.Where(e => e != null))
+            {
+                if (e.kind == ProgressEffectKind.RaiseStage && e.stage > stage)
+                    stage = e.stage;
+                else if (e.kind == ProgressEffectKind.CompleteJob && e.job != null && e.job != self && visited.Add(e.job))
+                {
+                    var s = EffectsStage(e.job.onComplete, self, visited);
+                    if (s > stage)
+                        stage = s;
+                }
+            }
+            return stage;
+        }
+
+        /// <summary>이 작업이 진행 중일 때(시작했고 아직 완료하지 않음) 진행 구조상 도달할 수 있는 최대 접근 단계.</summary>
+        static ProgressStage StageWhileRunning(ProgressJobData job, List<ProgressJobData> jobs, ProgressStage startStage)
+        {
+            var before = StageReachableBefore(job, jobs, startStage);
+            var own = EffectsStage(job.onStart, job, new HashSet<ProgressJobData>());
+            return own > before ? own : before;
+        }
+
+        /// <summary>원본을 처음 열 수 있는 접근 단계 (어느 단계에서도 열 수 없으면 null).</summary>
+        static ProgressStage? FirstAccessible(RecordRef target, ContentDatabase db, UIText text) =>
+            Stages.Where(s => RecordAccess.Check(target, db, s, text) == AccessState.Accessible).Select(s => (ProgressStage?)s).FirstOrDefault();
+
+        /// <summary>
+        /// 완료 조건·열람 묶음 대상의 구조: 사진·기록·대화방 에셋, 대화방은 기기 지정 필수, 사진·기록은 지정한 기기와 원본 기기가 같아야 한다.
+        /// 접근 단계는 작업마다 <see cref="CheckCompletionTiming"/>이 따로 본다. 판정에 쓰는 열람 키(없으면 null)를 돌려준다.
+        /// </summary>
+        static RecordRef CheckTargetShape(CaseData device, ContentAsset record, string what, Object ctx,
+            List<ThreadData> threads, List<PhotoData> photos, List<DeviceRecord> records, string where, Action<string, Object> error,
+            ProgressStage before = ProgressStage.P6)
+        {
+            if (record is ThreadData && device == null)
+            {
+                error($"{what}이 대화방인데 판정할 기기가 지정되지 않았습니다(같은 대화방이 여러 기기에 있을 수 있음): {where}", ctx);
+                return null;
+            }
+            var own = record is PhotoData p ? p.device : record is DeviceRecord r ? r.device : null;
+            CheckOpenTarget(device != null ? device : own, record, what, ctx, before, threads, photos, records, where, error);
+            return record is PhotoData || record is DeviceRecord || record is ThreadData ? Progression.TargetRef(device, record) : null;
+        }
+
+        /// <summary>
+        /// 완료 조건 대상의 접근 시점: 작업이 진행 중일 때 도달하는 단계(running)에서 열 수 있어야 한다.
+        /// 자기 작업의 완료 효과(completes)로만 열리는 자료는 순환, 그 밖의 늦은 자료는 완료 전 접근 불가로 오류.
+        /// </summary>
+        static void CheckCompletionTiming(RecordRef target, string what, Object ctx, ProgressStage running, ProgressStage completes,
+            ContentDatabase db, UIText text, string where, Action<string, Object> error)
+        {
+            if (target == null)
+                return;
+            var first = FirstAccessible(target, db, text);
+            if (first == null)
+                error($"{what}을 어느 접근 단계에서도 열 수 없습니다({RecordAccess.Check(target, db, ProgressStage.P6, text)}): {target.Key} ({where})", ctx);
+            else if (first.Value > running && completes > running && first.Value <= completes)
+                error($"{what}은 이 작업의 완료 효과로 열리는 단계({first.Value})부터 열 수 있어 완료 조건으로 쓸 수 없습니다(순환): {target.Key} ({where})", ctx);
+            else if (first.Value > running)
+                error($"{what}은 {first.Value}부터 열 수 있는데, 이 작업이 진행 중일 때 도달하는 단계는 {running}까지입니다(작업 완료 전 접근 불가): {target.Key} ({where})", ctx);
+            else if (target.kind == RecordKind.Photo)
+            {
+                var res = RecordResolver.Resolve(target, db, text);
+                var all = res.found ? PhotoQuery.DevicePhotos(db, res.device, running) : new List<PhotoData>();
+                var photo = all.FirstOrDefault(x => x.Id == target.recordId);
+                if (photo != null && !PhotoQuery.Albums(db, res.device).Any(a => PhotoQuery.AlbumPhotos(a, all).Contains(photo)))
+                    error($"{what} 사진이 어떤 앨범에도 없어 한 장 보기로 열 수 없습니다: {target.Key} ({where})", ctx);
+            }
+        }
+
+        /// <summary>
+        /// 진행 작업의 완료 조건과 자동 완료. 조건은 시작 조건과 같은 종류·같은 열람 기준이며, 대상은 작업이 진행 중일 때 열 수 있어야 한다.
+        /// 자동 완료는 완료 조건이 있어야 하고, 작업이 여는 단계에 새로 접근할 수 있는 기록이 있어야 켤 수 있다(빈 단계를 열지 않음).
+        /// </summary>
+        static void CheckCompletion(GameConfig config, ProgressJobData job, List<ProgressJobData> jobs, List<ProgressRecordGroupData> recordGroups,
+            List<CaseData> cases, List<ThreadData> threads, List<PhotoData> photos, List<DeviceRecord> records, UIText text, Action<string, Object> error)
+        {
+            var db = config.database;
+            string where = Path(job);
+            var running = StageWhileRunning(job, jobs, config.startStage);
+            var completes = EffectsStage(job.onComplete, job, new HashSet<ProgressJobData>());
+            var keys = new HashSet<string>();
+            foreach (var c in job.completionConditions)
+            {
+                if (c == null)
+                {
+                    error($"비어 있는 완료 조건이 있습니다: {where}", job);
+                    continue;
+                }
+                switch (c.kind)
+                {
+                    case ProgressConditionKind.Retired:
+                        error($"더 이상 쓰지 않는 조건(예전 단계형 튜토리얼 완료)이 완료 조건에 있습니다: {where}", job);
+                        break;
+                    case ProgressConditionKind.RequestViewed:
+                        if (c.request == null)
+                            error($"완료 조건의 요청이 비어 있습니다(삭제된 대상): {where}", job);
+                        break;
+                    case ProgressConditionKind.RecordKept:
+                        CheckRecordTarget(c.record, "완료 조건(RecordKept)의 record", job.device, where, job, error);
+                        break;
+                    case ProgressConditionKind.RecordViewed:
+                    {
+                        string what = "완료 조건(RecordViewed)의 record";
+                        // 접근 시점은 아래 CheckCompletionTiming이 진행 중 도달 단계·자기 완료 순환으로 따로 본다.
+                        var target = CheckViewCondition(job, c, what, ProgressStage.P6, threads, photos, records, where, error);
+                        if (target != null && !keys.Add(target.Key))
+                            error($"같은 원본이 완료 조건에 두 번 이상 등록돼 있습니다: {target.Key} ({where})", job);
+                        CheckCompletionTiming(target, what, job, running, completes, db, text, where, error);
+                        break;
+                    }
+                    case ProgressConditionKind.RecordGroupViewed:
+                        if (c.group == null)
+                            error($"완료 조건의 열람 묶음이 비어 있습니다(삭제된 대상): {where}", job);
+                        else if (!recordGroups.Contains(c.group))
+                            error($"완료 조건이 존재하지 않는 열람 묶음을 가리킵니다: {where}", job);
+                        else
+                        {
+                            foreach (var t in c.group.targets.Where(t => t != null && t.record != null))
+                                CheckCompletionTiming(Progression.TargetRef(t.device, t.record), $"완료 조건 열람 묶음({c.group.name})의 대상",
+                                    job, running, completes, db, text, where, error);
+                        }
+                        break;
+                    case ProgressConditionKind.ReviewBatchViewed:
+                        if (c.batch == null)
+                            error($"완료 조건의 검토 묶음이 비어 있습니다(삭제된 대상): {where}", job);
+                        break;
+                    case ProgressConditionKind.ClassifiedRecords:
+                        if (c.minCount < 1)
+                            error($"완료 조건의 최소 분류 개수는 1 이상이어야 합니다: {where}", job);
+                        break;
+                    case ProgressConditionKind.JobCompleted:
+                        if (c.job == null)
+                            error($"완료 조건의 작업이 비어 있습니다(삭제된 대상): {where}", job);
+                        else if (c.job == job)
+                            error($"작업이 자기 자신의 완료를 완료 조건으로 씁니다: {where}", job);
+                        break;
+                }
+            }
+            foreach (var g in job.completionConditions.Where(c => c != null && c.kind == ProgressConditionKind.RecordGroupViewed && c.group != null)
+                         .GroupBy(c => c.group).Where(g => g.Count() > 1))
+                error($"같은 열람 묶음이 완료 조건에 두 번 이상 있습니다: {g.Key.name} ({where})", job);
+
+            if (!job.autoCompleteWhenReady)
+                return;
+            if (job.completionConditions.Count == 0)
+            {
+                error($"완료 조건 없이 자동 완료(autoCompleteWhenReady)가 켜져 있습니다: {where}", job);
+                return;
+            }
+            if (completes <= running)
+                return;
+            // 이 작업이 여는 자료가 하나도 없으면 빈 단계가 열린다. 그 작업 의뢰 기기의 그 작업이 여는 출처(unlocksSources) 원본 중
+            // 작업 완료 전(진행 중 도달 단계)에는 열 수 없고 완료 단계부터 열 수 있는 것만 센다. 기기·출처는 RecordAccess의 실제 해석 결과로 본다.
+            var device = job.device;
+            int opened = 0;
+            if (device != null && job.unlocksSources.Count > 0)
+            {
+                var sources = new HashSet<RecordSource>(job.unlocksSources);
+                var candidates = DeviceQuery.Threads(db, device, ProgressStage.P6).Select(e => RecordRef.ForThread(device, e.thread))
+                    .Concat(photos.Where(p => p.device == device).Select(RecordRef.ForPhoto))
+                    .Concat(records.Where(r => r.device == device).Select(RecordRef.ForRecord));
+                opened = candidates.Count(r => RecordAccess.Check(r, db, completes, text, out var res) == AccessState.Accessible
+                                               && res.device == device && sources.Contains(res.source)
+                                               && RecordAccess.Check(r, db, running, text) != AccessState.Accessible);
+            }
+            if (opened == 0)
+                error($"자동 완료가 켜져 있지만 이 작업이 여는 단계({completes})에 이 의뢰({(device != null ? device.name : "?")})의 여는 출처({string.Join("·", job.unlocksSources)}) 정식 기록이 하나도 없습니다 — 빈 단계가 열리지 않도록 그 단계의 콘텐츠를 연결한 뒤 켜세요: {where}", job);
+        }
+
+        /// <summary>열람 묶음: 대상 목록·최소 열람 수·같은 대상 중복·기기와 원본 조합.</summary>
+        static void CheckRecordGroups(List<ProgressRecordGroupData> recordGroups, List<ProgressJobData> jobs, List<ThreadData> threads,
+            List<PhotoData> photos, List<DeviceRecord> records, Action<string, Object> error, Action<string, Object> warn)
+        {
+            foreach (var group in recordGroups)
+            {
+                string where = Path(group);
+                if (group.targets.Count == 0)
+                    error($"열람 묶음에 대상이 없습니다: {where}", group);
+                if (group.minCount < 1 || group.minCount > group.targets.Count)
+                    error($"열람 묶음의 최소 열람 수({group.minCount})는 1 이상, 대상 수({group.targets.Count}) 이하여야 합니다: {where}", group);
+                var pairs = new HashSet<(CaseData, ContentAsset)>();
+                var keys = new HashSet<string>();
+                foreach (var t in group.targets)
+                {
+                    if (t == null || t.record == null)
+                    {
+                        error($"열람 묶음의 대상이 비어 있습니다(삭제된 대상): {where}", group);
+                        continue;
+                    }
+                    if (!pairs.Add((t.device, t.record)))
+                    {
+                        error($"같은 대상이 열람 묶음에 두 번 이상 등록돼 있습니다: {t.record.name} ({where})", group);
+                        continue;
+                    }
+                    var target = CheckTargetShape(t.device, t.record, $"열람 묶음 대상({t.record.name})", group, threads, photos, records, where, error);
+                    if (target != null && !keys.Add(target.Key))
+                        error($"열람 묶음의 서로 다른 대상이 같은 원본(RecordRef.Key)을 가리킵니다: {target.Key} ({where})", group);
+                }
+                if (!jobs.Any(j => j.startConditions.Concat(j.completionConditions).Any(c => c != null && c.kind == ProgressConditionKind.RecordGroupViewed && c.group == group)))
+                    warn($"어떤 진행 작업도 쓰지 않는 열람 묶음입니다: {where}", group);
+            }
+        }
 
         /// <summary>
         /// 실제로 열어야 하는 대상(RecordViewed·검토 묶음): 사진·기록·대화방 에셋이고, 지정한 의뢰 기기에 있으며, 불변 ID가 하나로 정해지고,
@@ -136,7 +351,7 @@ namespace Intersection.EditorTools
             return stage;
         }
 
-        static void CheckProgress(GameConfig config, List<ProgressJobData> jobs, List<ReviewBatchData> reviews, List<CaseData> cases, List<ThreadData> threads,
+        static void CheckProgress(GameConfig config, List<ProgressJobData> jobs, List<ReviewBatchData> reviews, List<ProgressRecordGroupData> recordGroups, List<CaseData> cases, List<ThreadData> threads,
             List<PhotoData> photos, List<DeviceRecord> records, List<FolderData> folders, List<WorkRequestData> requests,
             Action<string, Object> error, Action<string, Object> warn, Action<string, string, Object> checkKey)
         {
@@ -193,7 +408,15 @@ namespace Intersection.EditorTools
                                 error($"시작 조건의 요청이 비어 있습니다(삭제된 대상): {where}", job);
                             break;
                         case ProgressConditionKind.RecordViewed:
-                            CheckViewTarget(job, c.record, jobs, threads, photos, records, config.startStage, where, error);
+                            // 시작 전에 도달할 수 있는 단계에서 열 수 있어야 한다(완료 조건과 같은 대상 해석 규칙).
+                            CheckViewCondition(job, c, "시작 조건(RecordViewed)의 record", StageReachableBefore(job, jobs, config.startStage),
+                                threads, photos, records, where, error);
+                            break;
+                        case ProgressConditionKind.RecordGroupViewed:
+                            if (c.group == null)
+                                error($"시작 조건의 열람 묶음이 비어 있습니다(삭제된 대상): {where}", job);
+                            else if (!recordGroups.Contains(c.group))
+                                error($"시작 조건이 존재하지 않는 열람 묶음을 가리킵니다: {where}", job);
                             break;
                         case ProgressConditionKind.ReviewBatchViewed:
                             if (c.batch == null)
@@ -215,6 +438,8 @@ namespace Intersection.EditorTools
                             break;
                     }
                 }
+
+                CheckCompletion(config, job, jobs, recordGroups, cases, threads, photos, records, text, error);
 
                 foreach (var e in job.AllEffects)
                 {
@@ -251,6 +476,8 @@ namespace Intersection.EditorTools
                     }
                 }
             }
+
+            CheckRecordGroups(recordGroups, jobs, threads, photos, records, error, warn);
 
             // ── 검토 묶음: 상단 진행률·팝오버·진행 판정이 함께 쓰는 대상 목록
             var groupIds = new Dictionary<string, string>();
@@ -379,8 +606,9 @@ namespace Intersection.EditorTools
                 var completers = jobs.Where(o => o != job && o.AllEffects.Any(e => e != null && e.kind == ProgressEffectKind.CompleteJob && e.job == job)).ToList();
                 bool needed = jobs.Any(o => o.startConditions.Any(c => c != null && c.kind == ProgressConditionKind.JobCompleted && c.job == job))
                               || job.onComplete.Any(e => e != null);
-                if (needed && !job.completedExternally && completers.Count == 0)
-                    error($"작업을 완료시키는 경로가 없습니다 (다른 작업의 완료 효과도, completedExternally도 없음): {Path(job)}", job);
+                bool selfCompletes = job.autoCompleteWhenReady && job.completionConditions.Count > 0;
+                if (needed && !job.completedExternally && !selfCompletes && completers.Count == 0)
+                    error($"작업을 완료시키는 경로가 없습니다 (다른 작업의 완료 효과도, completedExternally도, 자동 완료도 없음): {Path(job)}", job);
                 foreach (var c in job.startConditions.Where(c => c != null && c.kind == ProgressConditionKind.JobCompleted && c.job != null))
                 {
                     var dep = c.job;

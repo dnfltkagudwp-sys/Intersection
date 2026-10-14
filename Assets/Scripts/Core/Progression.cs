@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Intersection.Data;
@@ -94,6 +95,61 @@ namespace Intersection.Core
             return job.startConditions.All(c => c != null && IsMet(job, c));
         }
 
+        /// <summary>
+        /// 진행 중인 작업의 완료 조건을 모두 만족했는지. 완료 조건이 없거나, 진행 중이 아니거나, 기기에 접근할 수 없으면 false.
+        /// 열람 기준은 시작 조건과 같다(저장된 열람 상태 + 지금 접근 가능한 원본). 이미 완료한 작업은 되돌리지 않는다.
+        /// </summary>
+        public bool CompletionMet(ProgressJobData job) =>
+            job != null && job.completionConditions.Count > 0 && StateOf(job) == JobState.Running
+            && job.device != null && job.device.IsAvailable(Stage)
+            && job.completionConditions.All(c => c != null && IsMet(job, c));
+
+        /// <summary>조건 하나의 충족 여부 (에디터 진행 검수 창용, 판정은 시작·완료 조건과 같다).</summary>
+        public bool ConditionMet(ProgressJobData job, ProgressCondition c) => c != null && IsMet(job, c);
+
+        /// <summary>
+        /// 자동 완료가 켜진 진행 중 작업 중 완료 조건을 모두 만족한 것을 완료한다(작업마다 Complete 한 트랜잭션, 완료 효과 한 번).
+        /// 완료가 다른 작업을 준비 상태로 만들 수 있어 바뀐 것이 없을 때까지 반복한다. 무엇이든 완료했으면 true.
+        /// 열람 상태가 바뀐 뒤·세이브 복원 뒤·진행이 바뀐 뒤 같은 경로로 부른다. 이미 완료한 작업은 다시 완료하지 않는다.
+        /// </summary>
+        public bool AutoComplete()
+        {
+            bool any = false;
+            for (int guard = 0; guard <= db.jobs.Count; guard++)
+            {
+                var ready = db.jobs
+                    .Where(j => j != null && j.autoCompleteWhenReady && CompletionMet(j))
+                    .OrderBy(j => j.device.order).ThenBy(j => j.order)
+                    .FirstOrDefault();
+                if (ready == null || !Complete(ready))
+                    break;
+                any = true;
+            }
+            return any;
+        }
+
+        /// <summary>
+        /// 열람 묶음에서 실제로 연 서로 다른 원본 수. 같은 원본(RecordRef.Key)은 한 번만 세고,
+        /// 누락·중복·현재 접근 불가 원본은 열람 이력이 있어도 세지 않는다.
+        /// </summary>
+        public int GroupViewedCount(ProgressRecordGroupData group)
+        {
+            if (group == null)
+                return 0;
+            var keys = new HashSet<string>();
+            foreach (var t in group.targets)
+            {
+                var target = t != null ? TargetRef(t.device, t.record) : null;
+                if (target != null && Opened(target))
+                    keys.Add(target.Key);
+            }
+            return keys.Count;
+        }
+
+        /// <summary>실제로 원본을 연 기록(WorkStore viewed)이면서 지금 접근 가능하고 하나로 정해지는지.</summary>
+        bool Opened(RecordRef target) =>
+            target != null && work.IsViewed(target.Key) && RecordAccess.Check(target, db, Stage, text) == AccessState.Accessible;
+
         bool IsMet(ProgressJobData job, ProgressCondition c)
         {
             switch (c.kind)
@@ -112,10 +168,11 @@ namespace Intersection.Core
                 {
                     // 실제로 원본을 연 기록(WorkStore의 viewed)만 인정한다. 검색 결과·고정·비교 슬롯은 viewed를 남기지 않는다.
                     // 원본이 지금 접근 가능하고 하나로 정해질 때만 인정한다(누락·중복·접근 불가 원본은 저장 이력이 있어도 불인정).
-                    var target = ViewTarget(job, c.record);
-                    return target != null && work.IsViewed(target.Key)
-                           && RecordAccess.Check(target, db, Stage, text) == AccessState.Accessible;
+                    return Opened(ViewTarget(job, c));
                 }
+                case ProgressConditionKind.RecordGroupViewed:
+                    // 서로 다른 원본 수만 센다. 비교·고정·분류·검색 노출은 열람 상태를 만들지 않는다.
+                    return c.group != null && c.group.targets.Count > 0 && GroupViewedCount(c.group) >= Math.Max(1, c.group.minCount);
                 case ProgressConditionKind.ReviewBatchViewed:
                     // 상단 진행률·검토 팝오버와 같은 대상 목록·같은 열람 기준을 쓴다.
                     return c.batch != null && Review(c.batch).Complete;
@@ -129,13 +186,34 @@ namespace Intersection.Core
         }
 
         /// <summary>
-        /// RecordViewed 조건의 열람 키. 대화방은 같은 원본이 여러 기기에 있으므로 작업 의뢰 기기의 대화방
+        /// RecordViewed 조건의 열람 키. 대화방은 같은 원본이 여러 기기에 있으므로 조건의 device 기기(비우면 작업 의뢰 기기)의 대화방
         /// (<see cref="RecordRef.ForThread"/>)으로 정하고, 그 외에는 <see cref="RecordRef.ForAsset"/>과 같다. 지원하지 않으면 null.
         /// </summary>
-        public static RecordRef ViewTarget(ProgressJobData job, ContentAsset record) =>
-            record is ThreadData thread
-                ? (job != null && job.device != null ? RecordRef.ForThread(job.device, thread) : null)
-                : RecordRef.ForAsset(record);
+        public static RecordRef ViewTarget(ProgressJobData job, ProgressCondition c) =>
+            c == null ? null : TargetRef(ViewDevice(job, c), c.record);
+
+        /// <summary>
+        /// RecordViewed 조건 대상을 판정할 기기 (런타임 판정과 검증 도구가 함께 쓰는 규칙). 대화방은 조건의 device, 없으면 작업 의뢰 기기.
+        /// 사진·기록은 조건의 device(지정했을 때만, 원본 기기와 같아야 함) — 비우면 null이고 원본 자신의 기기로 판정한다.
+        /// </summary>
+        public static CaseData ViewDevice(ProgressJobData job, ProgressCondition c) =>
+            c == null ? null
+            : c.record is ThreadData ? (c.device != null ? c.device : job?.device)
+            : c.device;
+
+        /// <summary>
+        /// 기기와 원본 에셋으로 정한 열람 키. 대화방은 그 기기의 대화방(기기가 없으면 null), 사진·기록은 원본 자신의 기기
+        /// (<see cref="RecordRef.ForAsset"/>, 지정한 기기와 다르면 null — 다른 기기의 원본으로 대신 인정하지 않는다).
+        /// </summary>
+        public static RecordRef TargetRef(CaseData device, ContentAsset record)
+        {
+            if (record is ThreadData thread)
+                return device != null ? RecordRef.ForThread(device, thread) : null;
+            var target = RecordRef.ForAsset(record);
+            if (target != null && device != null && target.deviceId != device.Id)
+                return null;
+            return target;
+        }
 
         // ───────────── 검토 묶음 (온보딩) ─────────────
 

@@ -70,10 +70,11 @@ namespace Intersection.EditorTools
             var tutorials = Find<TutorialData>();
             var jobs = Find<ProgressJobData>();
             var reviews = Find<ReviewBatchData>();
+            var recordGroups = Find<ProgressRecordGroupData>();
 
             // 에셋 ID
             var allAssets = people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums)
-                .Concat(records).Concat(folders).Concat(requests).Concat(tutorials).Concat(jobs).Concat(reviews).ToList();
+                .Concat(records).Concat(folders).Concat(requests).Concat(tutorials).Concat(jobs).Concat(reviews).Concat(recordGroups).ToList();
             foreach (var a in allAssets.Where(a => string.IsNullOrEmpty(a.Id)))
                 Error($"ID가 비어 있습니다: {Path(a)}", a);
             foreach (var g in allAssets.Where(a => !string.IsNullOrEmpty(a.Id)).GroupBy(a => a.Id).Where(g => g.Count() > 1))
@@ -398,7 +399,7 @@ namespace Intersection.EditorTools
 
             // 진행 연동 (UI-07): 작업·효과·도달 가능성·출처와 접근 단계·검색 인덱스·진행 저장 파일
             if (config != null && config.database != null)
-                CheckProgress(config, jobs, reviews, cases, threads, photos, records, folders, requests, Error, Warn, CheckKey);
+                CheckProgress(config, jobs, reviews, recordGroups, cases, threads, photos, records, folders, requests, Error, Warn, CheckKey);
 
             // 휴대전화 화면 캡처 제작 원본: 화면 글자 = 파일 표시 문구, 미리보기 연결, 다시 렌더링 필요 여부, 임시 자산 표시
             CheckCaptures(noteDate, Error, Warn, (msg, ctx) => issues.Add(new Issue { info = true, message = msg, context = ctx }));
