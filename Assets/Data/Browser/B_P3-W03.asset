@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df4bf7357f26ac54eba4aa45e3b93e5c, type: 3}
+  m_Name: B_P3-W03
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.BrowserRecord
+  id: c5169ae1a8bd410c993f708b631d5854
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  time:
+    dayOffset: 0
+    hour: 15
+    minute: 42
+  sortKey: 0
+  source: 2
+  availableFrom: 3
+  evidenceRef: 
+  integrityKey: integrity.original
+  authorNote: "P3-W03 \u2014 \uC77C\uBC18. \uC0AC\uAC74 \uB2F9\uC77C \uC624\uD6C4\uC758 \uD3C9\uBC94\uD55C \uAE30\uB85D"
+  kind: 0
+  title: "\uB3C4\uC11C\uAD00 \uBC18\uB0A9 \uC5F0\uC7A5"
+  url: 

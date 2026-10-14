@@ -29,5 +29,15 @@ namespace Intersection.Data
 
         [Tooltip("Manual 앨범에 들어갈 사진")]
         public List<PhotoData> photos = new List<PhotoData>();
+
+        /// <summary>화면에 보이는 앨범 이름 (현재 언어).</summary>
+        public string Title => ContentText.Get(Id, ContentText.Field.Title, title);
+
+        public override IEnumerable<ContentField> ContentFields()
+        {
+            var list = new List<ContentField>();
+            ContentText.Add(list, Id, ContentText.Field.Title, title);
+            return list;
+        }
     }
 }

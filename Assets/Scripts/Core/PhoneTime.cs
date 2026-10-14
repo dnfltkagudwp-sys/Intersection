@@ -71,9 +71,9 @@ namespace Intersection.Core
         public string SinceDeath(RelativeTime t)
         {
             if (t.dayOffset < 0)
-                return text.Format(UIKeys.DeathBefore, ("n", (-t.dayOffset).ToString(culture)));
+                return text.FormatCount(UIKeys.DeathBefore, -t.dayOffset, ("n", (-t.dayOffset).ToString(culture)));
             if (t.dayOffset > 0)
-                return text.Format(UIKeys.DeathAfter, ("n", t.dayOffset.ToString(culture)));
+                return text.FormatCount(UIKeys.DeathAfter, t.dayOffset, ("n", t.dayOffset.ToString(culture)));
             return text.Get(UIKeys.DeathDayOf);
         }
 

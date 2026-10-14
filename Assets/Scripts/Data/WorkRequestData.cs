@@ -24,5 +24,19 @@ namespace Intersection.Data
 
         [Tooltip("증거 마스터표 ID (예: T01). 화면에 표시하지 않는다.")]
         public string evidenceRef;
+
+        /// <summary>화면에 보이는 요청 제목 (현재 언어).</summary>
+        public string Title => ContentText.Get(Id, ContentText.Field.Title, title);
+
+        /// <summary>화면에 보이는 요청 본문 (현재 언어).</summary>
+        public string Body => ContentText.Get(Id, ContentText.Field.Body, body);
+
+        public override System.Collections.Generic.IEnumerable<ContentField> ContentFields()
+        {
+            var list = new System.Collections.Generic.List<ContentField>();
+            ContentText.Add(list, Id, ContentText.Field.Title, title);
+            ContentText.Add(list, Id, ContentText.Field.Body, body);
+            return list;
+        }
     }
 }

@@ -441,6 +441,12 @@ namespace Intersection.EditorTools
 
                 CheckCompletion(config, job, jobs, recordGroups, cases, threads, photos, records, text, error);
 
+                // 준비 효과: 시작 조건을 처음 모두 만족했을 때 한 번. 알림만 허용(작업 시작·단계 변경은 플레이어가 직접 한다).
+                if (job.onReady.Count > 0 && !job.startConditions.Any(c => c != null))
+                    error($"시작 조건 없이 준비 효과(onReady)가 있습니다 — 준비 효과는 시작 조건을 처음 모두 만족했을 때 실행됩니다: {where}", job);
+                foreach (var e in job.onReady.Where(e => e != null && e.kind != ProgressEffectKind.Notify))
+                    error($"준비 효과(onReady)에는 업무 알림(Notify)만 쓸 수 있습니다({e.kind}) — 작업 시작·단계 변경은 플레이어가 상단에서 직접 합니다: {where}", job);
+
                 foreach (var e in job.AllEffects)
                 {
                     if (e == null)

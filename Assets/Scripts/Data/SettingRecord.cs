@@ -33,5 +33,21 @@ namespace Intersection.Data
 
         [Tooltip("대화 알림을 바꾸는 기록이면 지정. 검증 도구가 대화의 알림 끔 상태와 맞는지 확인한다.")]
         public MuteChange muteChange;
+
+        public string CategoryLabel => ContentText.Get(Id, ContentText.Field.CategoryLabel, categoryLabel);
+        /// <summary>항목 표시명 원문(현재 언어). {contact} 토큰은 RecordQuery.SettingItemLabel이 바꾼다.</summary>
+        public string ItemLabel => ContentText.Get(Id, ContentText.Field.ItemLabel, itemLabel);
+        public string ValueBefore => ContentText.Get(Id, ContentText.Field.ValueBefore, valueBefore);
+        public string ValueAfter => ContentText.Get(Id, ContentText.Field.ValueAfter, valueAfter);
+
+        public override System.Collections.Generic.IEnumerable<ContentField> ContentFields()
+        {
+            var list = new System.Collections.Generic.List<ContentField>();
+            ContentText.Add(list, Id, ContentText.Field.CategoryLabel, categoryLabel);
+            ContentText.Add(list, Id, ContentText.Field.ItemLabel, itemLabel);
+            ContentText.Add(list, Id, ContentText.Field.ValueBefore, valueBefore);
+            ContentText.Add(list, Id, ContentText.Field.ValueAfter, valueAfter);
+            return list;
+        }
     }
 }

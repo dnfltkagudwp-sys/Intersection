@@ -30,16 +30,16 @@ namespace Intersection.UI
             {
                 nav.openPhotoId = null;
                 phone.Show(PhoneView.Screen.PhotoGrid);
-                phone.PhotoGrid.Show(album.title, text.Get(UIKeys.PhotosBack), photos, Theme, text.Get(UIKeys.PhotosEmpty),
+                phone.PhotoGrid.Show(album.Title, text.Get(UIKeys.PhotosBack), photos, Theme, text.Get(UIKeys.PhotosEmpty),
                     Back, OpenPhoto, SavedScroll(nav, album.Id));
-                ShowPhotoCollectionPanel(album.title, device, photos.Count);
+                ShowPhotoCollectionPanel(album.Title, device, photos.Count);
                 return;
             }
 
             var photo = photos[index];
             store.MarkViewed(RecordRef.ForPhoto(photo));
             phone.Show(PhoneView.Screen.PhotoDetail);
-            phone.PhotoDetail.Show(photo, album.title, time.DateLabel(photo.takenAt), time.Time(photo.takenAt),
+            phone.PhotoDetail.Show(photo, album.Title, time.DateLabel(photo.takenAt), time.Time(photo.takenAt),
                 index > 0, index < photos.Count - 1, Theme, Back, () => StepPhoto(-1), () => StepPhoto(1));
             ShowPhotoPanel(device, photo);
         }
@@ -116,7 +116,7 @@ namespace Intersection.UI
         /// <summary>파일명·기록 코드·촬영 시각·출처는 휴대전화가 아니라 업무 패널에만 표시한다. 증거 ID는 표시하지 않는다.</summary>
         void ShowPhotoPanel(CaseData device, PhotoData photo) => Present(() =>
         {
-            workPanel.Show(photo.fileName, new List<WorkPanelView.Row>
+            workPanel.Show(photo.FileName, new List<WorkPanelView.Row>
             {
                 Row(UIKeys.PanelRecordId, RecordCode.Format(text, UIKeys.RecordPrefixPhoto, photo.Id, device.Id), Theme.monoFont),
                 Row(UIKeys.PanelOwner, OwnerName(device), Theme.regularFont),

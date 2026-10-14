@@ -22,10 +22,25 @@ namespace Intersection.Data
     {
         public const char CellSeparator = '|';
 
+        [SerializeField, Tooltip("불변 블록 ID. 자동 발급되며 손으로 수정하지 않는다. 번역 테이블이 이 ID로 블록을 찾으므로 블록을 중간에 넣거나 순서를 바꿔도 번역이 따라간다.")]
+        string id;
+
         public FileTextKind kind;
 
         [TextArea(2, 12), Tooltip("화면에 그대로 보이는 문구. 표는 한 줄 = 한 행, 칸은 '|'로 구분한다.")]
         public string text;
+
+        public string Id => id;
+
+        public bool EnsureId()
+        {
+            if (!string.IsNullOrEmpty(id))
+                return false;
+            id = ContentAsset.NewId();
+            return true;
+        }
+
+        public void RegenerateId() => id = ContentAsset.NewId();
 
         public bool IsEmpty => string.IsNullOrWhiteSpace(text);
 
@@ -47,6 +62,13 @@ namespace Intersection.Data
         /// <summary>토큰({date:N})을 화면 표기로 바꾼 사본. 렌더링과 검색은 이 사본을 쓴다.</summary>
         public FileTextBlock Expanded(Func<int, string> date) =>
             TextTokens.HasTokens(text) ? new FileTextBlock { kind = kind, text = TextTokens.Expand(text, date) } : this;
+
+        /// <summary>현재 언어의 문구로 바꾼 사본 (번역이 없으면 자기 자신). 소유는 파일 기록 ID.</summary>
+        public FileTextBlock Localized(string ownerId)
+        {
+            string value = ContentText.Get(ownerId, ContentText.Field.Block(id), text);
+            return ReferenceEquals(value, text) ? this : new FileTextBlock { id = id, kind = kind, text = value };
+        }
     }
 
     /// <summary>
@@ -74,15 +96,18 @@ namespace Intersection.Data
 
         public bool HasVisibleText => visibleText != null && visibleText.Any(b => b != null && !b.IsEmpty);
 
-        /// <summary>미리보기로 직접 그릴 블록(토큰 변환 후). 이미지가 있으면(전사본) 또는 비어 있으면 null.</summary>
+        /// <summary>미리보기로 직접 그릴 블록(현재 언어, 토큰 변환 후). 이미지가 있으면(전사본) 또는 비어 있으면 null.</summary>
         public IReadOnlyList<FileTextBlock> RenderedDocument(Func<int, string> date) =>
-            preview == null && HasVisibleText ? visibleText.Where(b => b != null && !b.IsEmpty).Select(b => b.Expanded(date)).ToList() : null;
+            preview == null && HasVisibleText
+                ? visibleText.Where(b => b != null && !b.IsEmpty).Select(b => b.Localized(Id)).Where(b => !b.IsEmpty).Select(b => b.Expanded(date)).ToList()
+                : null;
 
-        /// <summary>플레이어가 미리보기에서 읽을 수 있는 문구 한 줄씩 (토큰 변환 후, 전역 검색 대상).</summary>
+        /// <summary>플레이어가 미리보기에서 읽을 수 있는 문구 한 줄씩 (현재 언어, 토큰 변환 후, 전역 검색 대상).</summary>
         public IEnumerable<string> VisibleLines(Func<int, string> date) =>
-            visibleText == null ? Enumerable.Empty<string>() : visibleText.Where(b => b != null).SelectMany(b => b.Expanded(date).DisplayLines());
+            visibleText == null ? Enumerable.Empty<string>() : visibleText.Where(b => b != null).SelectMany(b => b.Localized(Id).Expanded(date).DisplayLines());
 
-        public string FileName
+        /// <summary>경로의 마지막 이름 (원문). 폴더 구조·정렬 키가 아니라 표시에는 FileName을 쓴다.</summary>
+        string RawFileName
         {
             get
             {
@@ -91,6 +116,55 @@ namespace Intersection.Data
                 int i = path.LastIndexOf('/');
                 return i < 0 ? path : path.Substring(i + 1);
             }
+        }
+
+        /// <summary>화면에 보이는 파일 이름 (현재 언어). 폴더 경로(FolderPath)는 위치 구조라 번역하지 않는다.</summary>
+        public string FileName => ContentText.Get(Id, ContentText.Field.FileName, RawFileName);
+
+        public override IEnumerable<ContentField> ContentFields()
+        {
+            var list = new List<ContentField>();
+            ContentText.Add(list, Id, ContentText.Field.FileName, RawFileName);
+            if (visibleText != null)
+            {
+                foreach (var b in visibleText)
+                {
+                    if (b != null && !b.IsEmpty)
+                        ContentText.Add(list, Id, ContentText.Field.Block(b.Id), b.text);
+                }
+            }
+            return list;
+        }
+
+        public override bool EnsureIds()
+        {
+            bool changed = base.EnsureIds();
+            if (visibleText == null)
+                return changed;
+            var seen = new HashSet<string>();
+            foreach (var b in visibleText)
+            {
+                if (b == null)
+                    continue;
+                changed |= b.EnsureId();
+                // 인스펙터에서 블록을 복제하면 ID가 함께 복사된다. 뒤에 있는 복제본에만 새 ID를 준다.
+                if (!seen.Add(b.Id))
+                {
+                    b.RegenerateId();
+                    seen.Add(b.Id);
+                    changed = true;
+                }
+            }
+            return changed;
+        }
+
+        public override void RegenerateIds()
+        {
+            base.RegenerateIds();
+            if (visibleText == null)
+                return;
+            foreach (var b in visibleText)
+                b?.RegenerateId();
         }
 
         /// <summary>파일이 들어 있는 폴더 경로 (위치 최상위면 빈 문자열).</summary>

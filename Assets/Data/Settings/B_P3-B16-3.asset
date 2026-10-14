@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcdf53c0d9782604f9fff89f80db184f, type: 3}
+  m_Name: B_P3-B16-3
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.SettingRecord
+  id: 50aa4e00a1e047a284016698fd94c081
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  time:
+    dayOffset: 0
+    hour: 20
+    minute: 22
+  sortKey: 0
+  source: 2
+  availableFrom: 3
+  evidenceRef: B16
+  integrityKey: integrity.original
+  authorNote: "P3-B16-3 \u2014 \uC0AC\uAC74 \uB2F9\uC77C 20:22. \uC5B4\uB5A4 \uACC4\uC815\uC778\uC9C0 \uC5C6\uC74C"
+  settingKey: account.onDevice
+  categoryLabel: "\uACC4\uC815"
+  itemLabel: "\uC774 \uAE30\uAE30\uC758 \uACC4\uC815"
+  linkedThread: {fileID: 0}
+  valueBefore: "\uC5F0\uACB0\uB428"
+  valueAfter: "\uC5F0\uACB0 \uD574\uC81C"
+  muteChange: 0

@@ -28,5 +28,6 @@ MonoBehaviour:
   mediaAssetId: 
   preview: {fileID: 2800000, guid: d6ea51e4344e99647abaf7b61d0e7e1b, type: 3}
   visibleText:
-  - kind: 0
+  - id: 5b9229dd79e847349bb9a0f9862bb9c5
+    kind: 0
     text: "nrn.closet \xB7 14\uC8FC\n\uC88B\uC544\uC694 51\uAC1C\nnrn.closet \uC694\uC998\uC740 \uC154\uCE20\uC7AC\uD0B7 \uD558\uB098\uB85C \uC9C0\uB0B4\uC694."

@@ -95,11 +95,11 @@ namespace Intersection.EditorTools
         {
             var config = AssetDatabase.FindAssets("t:" + nameof(GameConfig))
                 .Select(g => AssetDatabase.LoadAssetAtPath<GameConfig>(AssetDatabase.GUIDToAssetPath(g))).FirstOrDefault(c => c != null);
-            if (spec.record == null || spec.style == null || config == null || config.strings == null)
+            if (spec.record == null || spec.style == null || config == null || config.ActiveStrings == null)
                 return string.Empty;
-            var culture = CultureInfo.GetCultureInfo(string.IsNullOrEmpty(config.cultureName) ? "ko-KR" : config.cultureName);
+            var culture = config.Culture;
             var t = spec.record.time;
-            return new DateTime(2000, 1, 1, t.hour, t.minute, 0).ToString(new UIText(config.strings).Get(spec.style.clockFormatKey), culture);
+            return new DateTime(2000, 1, 1, t.hour, t.minute, 0).ToString(new UIText(config.ActiveStrings).Get(spec.style.clockFormatKey), culture);
         }
 
         // ───────────────────────── 렌더링

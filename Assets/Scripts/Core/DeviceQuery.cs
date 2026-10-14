@@ -54,7 +54,7 @@ namespace Intersection.Core
         public static string DisplayName(ThreadData thread, CaseData device)
         {
             if (thread.IsGroup)
-                return thread.groupTitle;
+                return thread.GroupTitle;
             var other = thread.participants.FirstOrDefault(p => p != null && p != device.owner);
             return ContactName(other, device);
         }
@@ -64,8 +64,9 @@ namespace Intersection.Core
             var saved = device.SavedNameOf(person);
             if (!string.IsNullOrEmpty(saved))
                 return saved;
-            if (!string.IsNullOrEmpty(device.unsavedContactLabel))
-                return device.unsavedContactLabel;
+            string unsaved = device.UnsavedContactLabel;
+            if (!string.IsNullOrEmpty(unsaved))
+                return unsaved;
             return person != null ? person.phoneNumber : string.Empty;
         }
 
@@ -74,8 +75,9 @@ namespace Intersection.Core
         {
             if (message == null)
                 return string.Empty;
-            if (!string.IsNullOrEmpty(message.body))
-                return message.body.Replace("\r", "").Replace('\n', ' ');
+            string body = message.Body;
+            if (!string.IsNullOrEmpty(body))
+                return body.Replace("\r", "").Replace('\n', ' ');
             switch (message.attachment)
             {
                 case AttachmentKind.Image: return text.Get(UIKeys.PreviewImage);
@@ -92,11 +94,10 @@ namespace Intersection.Core
                 case AttachmentKind.Image:
                     return text.Get(UIKeys.AttachmentImage);
                 case AttachmentKind.Location:
-                    return string.IsNullOrEmpty(message.attachmentLabel)
-                        ? text.Get(UIKeys.AttachmentLocation)
-                        : message.attachmentLabel;
+                    string label = message.AttachmentLabel;
+                    return string.IsNullOrEmpty(label) ? text.Get(UIKeys.AttachmentLocation) : label;
                 default:
-                    return message.body;
+                    return message.Body;
             }
         }
 

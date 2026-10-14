@@ -40,9 +40,15 @@ namespace Intersection.Data
         [Tooltip("로컬 자료 인덱싱이 끝난 단계. 이 단계 전에는 상단 바에 인덱싱 중으로 표시된다.")]
         public ProgressStage localIndexedFrom = ProgressStage.P0;
 
+        /// <summary>의뢰 표시명 (현재 언어): 표시명이 있으면 그것, 없으면 소유자 이름.</summary>
         public string DisplayName =>
-            !string.IsNullOrEmpty(displayNameOverride) ? displayNameOverride : owner != null ? owner.fullName : name;
+            !string.IsNullOrEmpty(displayNameOverride) ? ContentText.Get(Id, ContentText.Field.DisplayName, displayNameOverride)
+            : owner != null ? owner.FullName : name;
 
+        /// <summary>주소록에 없는 상대 표시 문구 (현재 언어).</summary>
+        public string UnsavedContactLabel => ContentText.Get(Id, ContentText.Field.UnsavedContactLabel, unsavedContactLabel);
+
+        /// <summary>이 기기 주소록의 저장명 (현재 언어). 없으면 null.</summary>
         public string SavedNameOf(PersonData person)
         {
             if (person == null)
@@ -50,9 +56,22 @@ namespace Intersection.Data
             foreach (var c in contacts)
             {
                 if (c != null && c.person == person && !string.IsNullOrEmpty(c.savedName))
-                    return c.savedName;
+                    return ContentText.Get(Id, ContentText.Field.ContactName(person.Id), c.savedName);
             }
             return null;
+        }
+
+        public override IEnumerable<ContentField> ContentFields()
+        {
+            var list = new List<ContentField>();
+            ContentText.Add(list, Id, ContentText.Field.DisplayName, displayNameOverride);
+            ContentText.Add(list, Id, ContentText.Field.UnsavedContactLabel, unsavedContactLabel);
+            foreach (var c in contacts)
+            {
+                if (c != null && c.person != null)
+                    ContentText.Add(list, Id, ContentText.Field.ContactName(c.person.Id), c.savedName);
+            }
+            return list;
         }
 
         public bool IsAvailable(ProgressStage stage) => stage >= availableFrom;

@@ -250,8 +250,8 @@ namespace Intersection.UI
             {
                 title = text.Get(UIKeys.FullViewTitle),
                 count = filtered
-                    ? text.Format(UIKeys.FullViewCountFiltered, ("shown", shown.Count.ToString(time.Culture)), ("total", total))
-                    : text.Format(UIKeys.FullViewCount, ("total", total)),
+                    ? text.FormatCount(UIKeys.FullViewCountFiltered, ordered.Count, ("shown", shown.Count.ToString(time.Culture)), ("total", total))
+                    : text.FormatCount(UIKeys.FullViewCount, ordered.Count, ("total", total)),
                 filters = FilterKeys.Select(k => text.Get(k)).ToArray(),
                 filterIndex = (int)workFilter,
                 onFilter = SetWorkFilter,

@@ -72,8 +72,8 @@ namespace Intersection.Core
                 {
                     yield return new Doc
                     {
-                        hit = Hit(RecordRef.ForRequest(q), device, null, q.title, RecordSource.Local, null, null, q.order),
-                        fields = new[] { q.title, q.body },
+                        hit = Hit(RecordRef.ForRequest(q), device, null, q.Title, RecordSource.Local, null, null, q.order),
+                        fields = new[] { q.Title, q.Body },
                     };
                 }
 
@@ -90,7 +90,7 @@ namespace Intersection.Core
                     {
                         var r = RecordRef.ForMessage(device, thread, m);
                         string title = r.kind == RecordKind.LocationShare
-                            ? (string.IsNullOrEmpty(m.attachmentLabel) ? text.Get(UIKeys.MapsPlaceUnknown) : m.attachmentLabel)
+                            ? (string.IsNullOrEmpty(m.AttachmentLabel) ? text.Get(UIKeys.MapsPlaceUnknown) : m.AttachmentLabel)
                             : entry.displayName;
                         yield return new Doc
                         {
@@ -104,24 +104,24 @@ namespace Intersection.Core
                 {
                     yield return new Doc
                     {
-                        hit = Hit(RecordRef.ForPhoto(p), device, AppKind.Photos, p.fileName, p.source, p.serviceKey, p.takenAt, p.sortKey),
+                        hit = Hit(RecordRef.ForPhoto(p), device, AppKind.Photos, p.FileName, p.source, p.serviceKey, p.takenAt, p.sortKey),
                         // 사진 안에서 읽을 수 있는 글자(visibleText 전사본)도 검색한다. 결과는 그 사진 한 장 보기로 연다.
-                        fields = new[] { p.fileName, Label(p.serviceKey, text) }.Concat(p.VisibleLines()).Concat(Dates(p.takenAt, time)),
+                        fields = new[] { p.FileName, Label(p.serviceKey, text) }.Concat(p.VisibleLines()).Concat(Dates(p.takenAt, time)),
                     };
                 }
 
                 foreach (var b in RecordQuery.For(db.browser, device, stage))
-                    yield return RecordDoc(b, device, AppKind.Browser, b.title, time, b.title, b.url);
+                    yield return RecordDoc(b, device, AppKind.Browser, b.Title, time, b.Title, b.url);
                 foreach (var m in RecordQuery.For(db.maps, device, stage))
                     yield return RecordDoc(m, device, AppKind.Maps, RecordResolver.MapTitle(m, text), time,
-                        m.placeLabel, m.routeFrom, m.routeTo, m.routeNote);
+                        m.PlaceLabel, m.RouteFrom, m.RouteTo, m.RouteNote);
                 foreach (var f in RecordQuery.For(db.files, device, stage))
                     yield return RecordDoc(f, device, AppKind.Files, f.FileName, time,
                         new[] { f.FileName, f.FolderPath }.Concat(f.VisibleLines(time.NoteDate)).ToArray());
                 foreach (var s in RecordQuery.For(db.settings, device, stage))
                 {
                     string item = RecordQuery.SettingItemLabel(s, device);
-                    yield return RecordDoc(s, device, AppKind.Settings, item, time, item, s.categoryLabel, s.valueBefore, s.valueAfter);
+                    yield return RecordDoc(s, device, AppKind.Settings, item, time, item, s.CategoryLabel, s.ValueBefore, s.ValueAfter);
                 }
             }
         }

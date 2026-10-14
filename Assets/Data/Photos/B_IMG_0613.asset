@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f3af5f01e154384381ac7ae8f6350bc, type: 3}
+  m_Name: B_IMG_0613
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.PhotoData
+  id: fab83017d07e440c909d3a4edda83135
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  fileName: IMG_0613.jpg
+  takenAt:
+    dayOffset: -183
+    hour: 20
+    minute: 30
+  sortKey: 0
+  isScreenshot: 0
+  source: 1
+  serviceKey: service.autoBackup
+  availableFrom: 3
+  evidenceRef: 
+  mediaAssetId: 
+  image: {fileID: 0}
+  integrityKey: integrity.cloudOnly
+  authorNote: "P3-G02 \u2014 \uC77C\uBC18. \uCC45\uC0C1 \uC704 \uB178\uD2B8\uBD81\xB7\uC2A4\uD0E0\uB4DC\xB7\uD3BC\uCE5C \uACF5\uCC45(\uAE00\uC528 \uD310\uB3C5 \uBD88\uAC00). \uC774\uBBF8\uC9C0 \uC81C\uC791 \uC804 \uC911\uB9BD \uC790\uB9AC \uD45C\uC2DC"
+  visibleText: 

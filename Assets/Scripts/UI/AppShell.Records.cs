@@ -59,7 +59,7 @@ namespace Intersection.UI
         DetailModel BrowserDetail(BrowserRecord r) => new DetailModel
         {
             title = BrowserKind(r),
-            headline = r.title,
+            headline = r.Title,
             hero = new PhoneDetailView.Hero { glyph = Theme.pageGlyph, message = text.Get(UIKeys.BrowserPageUnavailable) },
             fields = new List<(string, string)>
             {
@@ -73,12 +73,12 @@ namespace Intersection.UI
             var fields = new List<(string, string)>();
             if (r.kind == MapRecordKind.Route)
             {
-                fields.Add((text.Get(UIKeys.MapsFieldFrom), r.routeFrom));
-                fields.Add((text.Get(UIKeys.MapsFieldTo), r.routeTo));
-                fields.Add((text.Get(UIKeys.MapsFieldVia), r.routeNote));
+                fields.Add((text.Get(UIKeys.MapsFieldFrom), r.RouteFrom));
+                fields.Add((text.Get(UIKeys.MapsFieldTo), r.RouteTo));
+                fields.Add((text.Get(UIKeys.MapsFieldVia), r.RouteNote));
             }
-            else if (!string.IsNullOrEmpty(r.placeLabel))
-                fields.Add((text.Get(UIKeys.MapsFieldPlace), r.placeLabel));
+            else if (!string.IsNullOrEmpty(r.PlaceLabel))
+                fields.Add((text.Get(UIKeys.MapsFieldPlace), r.PlaceLabel));
             fields.Add((text.Get(UIKeys.FieldDateTime), MapTimeText(r)));
             return new DetailModel { title = MapSectionTitle(r.kind), headline = MapTitle(r), hero = MapHero, fields = fields };
         }
@@ -116,14 +116,14 @@ namespace Intersection.UI
             string item = RecordQuery.SettingItemLabel(s, device);
             return new DetailModel
             {
-                title = s.categoryLabel,
+                title = s.CategoryLabel,
                 headline = item,
                 hero = null,
                 fields = new List<(string, string)>
                 {
                     (text.Get(UIKeys.SettingsFieldItem), item),
-                    (text.Get(UIKeys.SettingsFieldBefore), s.valueBefore),
-                    (text.Get(UIKeys.SettingsFieldAfter), s.valueAfter),
+                    (text.Get(UIKeys.SettingsFieldBefore), s.ValueBefore),
+                    (text.Get(UIKeys.SettingsFieldAfter), s.ValueAfter),
                     (text.Get(UIKeys.FieldDateTime), PhoneDateTime(s.time)),
                 },
             };
@@ -191,14 +191,14 @@ namespace Intersection.UI
             if (open != null)
             {
                 ShowRecordDetail(BrowserDetail(open), appTitle, RecordRef.ForRecord(open));
-                ShowRecordPanel(open, open.title, UIKeys.RecordPrefixWeb, device);
+                ShowRecordPanel(open, open.Title, UIKeys.RecordPrefixWeb, device);
                 return;
             }
 
             var items = new List<PhoneListView.Item>();
             AddDateSections(items, RecordQuery.Newest(records), r => r.time, r => new PhoneListView.Item
             {
-                title = r.title,
+                title = r.Title,
                 subtitle = BrowserKind(r),
                 trailing = time.Time(r.time),
                 icon = r.kind == BrowserRecordKind.Search ? Theme.searchGlyph : Theme.pageGlyph,
@@ -241,7 +241,7 @@ namespace Intersection.UI
                 ShowRecordDetail(new DetailModel
                 {
                     title = text.Get(UIKeys.MapsSectionShared),
-                    headline = PlaceLabel(openPin.message.attachmentLabel),
+                    headline = PlaceLabel(openPin.message.AttachmentLabel),
                     hero = MapHero,
                     fields = new List<(string, string)>
                     {
@@ -249,7 +249,7 @@ namespace Intersection.UI
                         (text.Get(UIKeys.FieldDateTime), PhoneDateTime(openPin.message.time)),
                     },
                 }, appTitle, RecordRef.ForMessage(openPin.entry.device, openPin.entry.thread, openPin.message));
-                ShowRecordPanel(PlaceLabel(openPin.message.attachmentLabel), UIKeys.RecordPrefixMap, openPin.message.Id, device,
+                ShowRecordPanel(PlaceLabel(openPin.message.AttachmentLabel), UIKeys.RecordPrefixMap, openPin.message.Id, device,
                     SourceText(openPin.entry.state.source, openPin.entry.state.serviceKey),
                     UIKeys.PanelRecordTime, time.SinceDeathWithTime(openPin.message.time), openPin.entry.state.integrityKey,
                     RecordRef.ForMessage(openPin.entry.device, openPin.entry.thread, openPin.message));
@@ -268,7 +268,7 @@ namespace Intersection.UI
                     items.Add(new PhoneListView.Item
                     {
                         title = MapTitle(r),
-                        subtitle = r.kind == MapRecordKind.Route ? r.routeNote : null,
+                        subtitle = r.kind == MapRecordKind.Route ? r.RouteNote : null,
                         trailing = r.kind == MapRecordKind.LocationHistory ? MapTimeText(r) : time.ListLabel(r.time),
                         icon = icon,
                         selection = RecordRef.ForRecord(r),
@@ -285,7 +285,7 @@ namespace Intersection.UI
                 {
                     items.Add(new PhoneListView.Item
                     {
-                        title = PlaceLabel(p.message.attachmentLabel),
+                        title = PlaceLabel(p.message.AttachmentLabel),
                         subtitle = SharedLabel(p, device),
                         trailing = time.ListLabel(p.message.time),
                         icon = Theme.pinGlyph,
@@ -311,8 +311,8 @@ namespace Intersection.UI
 
         string MapTitle(MapRecord r) =>
             r.kind == MapRecordKind.Route
-                ? text.Format(UIKeys.MapsRouteFormat, ("from", PlaceLabel(r.routeFrom)), ("to", PlaceLabel(r.routeTo)))
-                : PlaceLabel(r.placeLabel);
+                ? text.Format(UIKeys.MapsRouteFormat, ("from", PlaceLabel(r.RouteFrom)), ("to", PlaceLabel(r.RouteTo)))
+                : PlaceLabel(r.PlaceLabel);
 
         /// <summary>장소명이 정해지지 않았으면 중립 표기를 쓴다.</summary>
         string PlaceLabel(string label) => string.IsNullOrEmpty(label) ? text.Get(UIKeys.MapsPlaceUnknown) : label;
@@ -398,7 +398,7 @@ namespace Intersection.UI
             ShowCollectionPanel(UIKeys.PanelTitleFiles, device, contents.files.Count);
         }
 
-        string ItemCount(int n) => text.Format(UIKeys.FilesItemCount, ("count", n.ToString(time.Culture)));
+        string ItemCount(int n) => text.FormatCount(UIKeys.FilesItemCount, n, ("count", n.ToString(time.Culture)));
 
         static bool IsImageFile(string name)
         {
@@ -452,8 +452,8 @@ namespace Intersection.UI
                     items.Add(new PhoneListView.Item
                     {
                         title = RecordQuery.SettingItemLabel(s, device),
-                        subtitle = s.categoryLabel,
-                        trailing = s.valueAfter,
+                        subtitle = s.CategoryLabel,
+                        trailing = s.ValueAfter,
                         selection = RecordRef.ForRecord(s),
                         onClick = () => OpenRecordDetail(AppKind.Settings, RecordRef.ForRecord(s)),
                     });
@@ -467,7 +467,7 @@ namespace Intersection.UI
                     items.Add(new PhoneListView.Item
                     {
                         title = RecordQuery.SettingItemLabel(s, device),
-                        subtitle = text.Format(UIKeys.SettingsChangeFormat, ("before", s.valueBefore), ("after", s.valueAfter)),
+                        subtitle = text.Format(UIKeys.SettingsChangeFormat, ("before", s.ValueBefore), ("after", s.ValueAfter)),
                         trailing = time.ListLabel(s.time),
                         selection = RecordRef.ForRecord(s),
                         onClick = () => OpenRecordDetail(AppKind.Settings, RecordRef.ForRecord(s)),

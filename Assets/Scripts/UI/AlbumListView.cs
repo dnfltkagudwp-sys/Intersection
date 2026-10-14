@@ -30,7 +30,7 @@ namespace Intersection.UI
                 var photos = PhotoQuery.AlbumPhotos(album, devicePhotos);
                 var a = album;
                 var row = Instantiate(rowPrefab, content);
-                row.Bind(album.title,
+                row.Bind(album.Title,
                     text.Format(UIKeys.PhotosAlbumCount, ("count", photos.Count.ToString(time.Culture))),
                     photos.Count > 0 ? photos[photos.Count - 1] : null,
                     theme.chevronGlyph, theme, () => onOpen(a));

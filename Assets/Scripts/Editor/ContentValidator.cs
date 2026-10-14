@@ -43,6 +43,21 @@ namespace Intersection.EditorTools
 
         public static List<Issue> Run()
         {
+            // 원문(데이터 에셋)을 검사한다. 플레이 중 다른 언어를 쓰고 있었어도 검사 동안만 원문으로 바꿨다가 되돌린다.
+            var shownLanguage = ContentText.Current;
+            ContentText.Use(null);
+            try
+            {
+                return RunChecks();
+            }
+            finally
+            {
+                ContentText.Use(shownLanguage);
+            }
+        }
+
+        static List<Issue> RunChecks()
+        {
             var issues = new List<Issue>();
             void Error(string msg, Object ctx = null) => issues.Add(new Issue { error = true, message = msg, context = ctx });
             void Warn(string msg, Object ctx = null) => issues.Add(new Issue { error = false, message = msg, context = ctx });
@@ -79,6 +94,10 @@ namespace Intersection.EditorTools
                 Error($"ID가 비어 있습니다: {Path(a)}", a);
             foreach (var g in allAssets.Where(a => !string.IsNullOrEmpty(a.Id)).GroupBy(a => a.Id).Where(g => g.Count() > 1))
                 Error($"중복 ID {g.Key}: {string.Join(", ", g.Select(Path))}", g.First());
+
+            // 콘텐츠 현지화: 번역 키가 실제 원문을 가리키는지, 하위 블록 ID (번역 누락은 오류가 아님)
+            CheckLocalization(config, allAssets, noteDate, Error, Warn);
+            CheckStringLocalization(config, Error, Warn);
 
             // 설정
             if (config != null)
@@ -415,13 +434,13 @@ namespace Intersection.EditorTools
                     || !photos.All(db.photos.Contains) || !albums.All(db.albums.Contains)
                     || !browser.All(db.browser.Contains) || !maps.All(db.maps.Contains) || !files.All(db.files.Contains)
                     || !folders.All(db.folders.Contains) || !settings.All(db.settings.Contains)
-                    || !jobs.All(db.jobs.Contains) || !reviews.All(db.reviews.Contains))
+                    || !jobs.All(db.jobs.Contains) || !reviews.All(db.reviews.Contains) || !recordGroups.All(db.recordGroups.Contains))
                     Warn("ContentDatabase가 최신이 아닙니다. Intersection/Content/Refresh Content Database를 실행하세요.", db);
                 if (db.people.Any(p => p == null) || db.cases.Any(c => c == null) || db.threads.Any(t => t == null)
                     || db.photos.Any(p => p == null) || db.albums.Any(a => a == null)
                     || db.browser.Any(x => x == null) || db.maps.Any(x => x == null) || db.files.Any(x => x == null)
                     || db.folders.Any(x => x == null) || db.settings.Any(x => x == null)
-                    || db.jobs.Any(x => x == null) || db.reviews.Any(x => x == null))
+                    || db.jobs.Any(x => x == null) || db.reviews.Any(x => x == null) || db.recordGroups.Any(x => x == null))
                     Error("ContentDatabase에 삭제된 에셋 참조가 남아 있습니다.", db);
             }
 

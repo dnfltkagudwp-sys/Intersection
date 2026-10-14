@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d887e3de658b1f449a09cf815396727d, type: 3}
+  m_Name: Group_P3_AccountOrDeletion
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ProgressRecordGroupData
+  id: e80af4bec7974a7da17d174c4d6af52a
+  minCount: 1
+  targets:
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    record: {fileID: 11400000, guid: 9df48040792d9f147a0ae2827eab5a4c, type: 2}
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    record: {fileID: 11400000, guid: 066631e64171ad046aed2478a9e3ead2, type: 2}
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    record: {fileID: 11400000, guid: a1f11272b6dd85341b9b2d14fd259a0c, type: 2}
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    record: {fileID: 11400000, guid: a37c487010cd25744a7a40ad797b27eb, type: 2}
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    record: {fileID: 11400000, guid: 9456952a80e5e6f49bfd3c87ef9c61d8, type: 2}
+  authorNote: "P3 \uBCF5\uAD6C \uC2DC\uC791 \uC870\uAC74(GameDesign P3 \uD589 \xB7 P3 \uC6D0\uACE0 v0.2 8\uC808): B09 2\uC870\uAC01(B_P3-B09-1 \uBC29\uBB38, B_P3-B09-2 \uAC80\uC0C9)\uACFC B16 3\uD589(B_P3-B16-1~3) \uC911 \uC11C\uB85C \uB2E4\uB978 \uC6D0\uBCF8 1\uAC74 \uC774\uC0C1 \uC2E4\uC81C \uC0C1\uC138 \uC5F4\uB78C. \uAC19\uC740 \uC6D0\uBCF8 \uBC18\uBCF5\uC740 1\uAC74."

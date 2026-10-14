@@ -27,6 +27,51 @@ namespace Intersection.Data
         [Tooltip("날짜·시각 표기에 쓰는 로케일")]
         public string cultureName = "ko-KR";
 
+        [Header("표시 언어")]
+        [Tooltip("콘텐츠 원문(데이터 에셋)의 언어. 이 언어로 표시할 때는 번역 테이블을 쓰지 않는다.")]
+        public string contentSourceLanguage = "ko";
+
+        [Tooltip("지금 표시할 언어. 같은 코드의 UI·콘텐츠 테이블과 문화권을 함께 쓰며, 콘텐츠 번역이 없는 값은 원문으로 보인다.")]
+        public string contentLanguage = "ko";
+
+        [Tooltip("언어별 콘텐츠 번역 테이블 (원문 언어는 넣지 않는다). UI 공통 문구는 strings가 담당한다.")]
+        public System.Collections.Generic.List<ContentLocaleTable> contentTables = new System.Collections.Generic.List<ContentLocaleTable>();
+
+        [Tooltip("원문 언어 외의 UI 문자열 테이블. contentLanguage와 같은 언어 코드를 골라 UI와 콘텐츠를 함께 전환한다.")]
+        public System.Collections.Generic.List<StringTable> localizedStrings = new System.Collections.Generic.List<StringTable>();
+
+        /// <summary>지금 언어의 번역 테이블. 원문 언어이거나 테이블이 없으면 null(원문 그대로).</summary>
+        public ContentLocaleTable ActiveContentTable
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(contentLanguage) || contentLanguage == contentSourceLanguage || contentTables == null)
+                    return null;
+                foreach (var t in contentTables)
+                {
+                    if (t != null && t.language == contentLanguage)
+                        return t;
+                }
+                return null;
+            }
+        }
+
+        /// <summary>현재 표시 언어의 UI 문자열 테이블. 번역 테이블이 없으면 기본(strings) 테이블로 대체한다.</summary>
+        public StringTable ActiveStrings
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(contentLanguage) || contentLanguage == contentSourceLanguage || localizedStrings == null)
+                    return strings;
+                foreach (var table in localizedStrings)
+                {
+                    if (table != null && table.language == contentLanguage)
+                        return table;
+                }
+                return strings;
+            }
+        }
+
         [Header("진행")]
         public ProgressStage startStage = ProgressStage.P0;
 
@@ -88,7 +133,10 @@ namespace Intersection.Data
             {
                 try
                 {
-                    return CultureInfo.GetCultureInfo(cultureName);
+                    string activeCulture = ActiveStrings != null && !string.IsNullOrEmpty(ActiveStrings.cultureName)
+                        ? ActiveStrings.cultureName
+                        : cultureName;
+                    return CultureInfo.GetCultureInfo(activeCulture);
                 }
                 catch (CultureNotFoundException)
                 {

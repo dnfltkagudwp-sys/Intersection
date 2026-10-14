@@ -16,6 +16,12 @@ MonoBehaviour:
   caseMonth: 11
   caseDay: 14
   cultureName: ko-KR
+  contentSourceLanguage: ko
+  contentLanguage: ko
+  contentTables:
+  - {fileID: 11400000, guid: 40c2f6b7fbc843838f1b9225293d2d22, type: 2}
+  localizedStrings:
+  - {fileID: 11400000, guid: 6f9f8b0e2a4e4fc48dd6bcb6e5ec0c01, type: 2}
   startStage: 0
   useDevStartStage: 0
   devStartStage: 1

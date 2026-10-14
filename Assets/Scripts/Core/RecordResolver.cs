@@ -63,7 +63,7 @@ namespace Intersection.Core
                     if (state == null || m == null)
                         return Missing(result);
                     string title = r.kind == RecordKind.LocationShare
-                        ? (string.IsNullOrEmpty(m.attachmentLabel) ? text.Get(UIKeys.MapsPlaceUnknown) : m.attachmentLabel)
+                        ? (string.IsNullOrEmpty(m.AttachmentLabel) ? text.Get(UIKeys.MapsPlaceUnknown) : m.AttachmentLabel)
                         : DeviceQuery.DisplayText(m, text).Replace('\n', ' ');
                     Fill(result, title, state.source, state.serviceKey, state.integrityKey);
                     result.body = text.Format(UIKeys.SelectionMessageContext, ("name", DeviceQuery.DisplayName(t, result.device)));
@@ -75,13 +75,13 @@ namespace Intersection.Core
                     var p = Single(db.photos.Where(x => x != null && x.Id == r.recordId && x.device == result.device), result);
                     if (p == null)
                         return Missing(result);
-                    Fill(result, p.fileName, p.source, p.serviceKey, p.integrityKey);
+                    Fill(result, p.FileName, p.source, p.serviceKey, p.integrityKey);
                     SetTime(result, p.takenAt, null);
                     return result;
                 }
                 case RecordKind.Browser:
                     return FromRecord(Single(db.browser.Where(x => x != null && x.Id == r.recordId && x.device == result.device), result),
-                        result, b => b.title);
+                        result, b => b.Title);
                 case RecordKind.Map:
                 {
                     var m = Single(db.maps.Where(x => x != null && x.Id == r.recordId && x.device == result.device), result);
@@ -101,8 +101,8 @@ namespace Intersection.Core
                     var q = Single(db.requests.Where(x => x != null && x.Id == r.recordId && x.device == result.device), result);
                     if (q == null)
                         return Missing(result);
-                    Fill(result, q.title, RecordSource.Local, null, null);
-                    result.body = q.body;
+                    Fill(result, q.Title, RecordSource.Local, null, null);
+                    result.body = q.Body;
                     return result;
                 }
                 default:
@@ -114,8 +114,8 @@ namespace Intersection.Core
         {
             string Place(string s) => string.IsNullOrEmpty(s) ? text.Get(UIKeys.MapsPlaceUnknown) : s;
             return r.kind == MapRecordKind.Route
-                ? text.Format(UIKeys.MapsRouteFormat, ("from", Place(r.routeFrom)), ("to", Place(r.routeTo)))
-                : Place(r.placeLabel);
+                ? text.Format(UIKeys.MapsRouteFormat, ("from", Place(r.RouteFrom)), ("to", Place(r.RouteTo)))
+                : Place(r.PlaceLabel);
         }
 
         public static string PrefixFor(RecordKind kind)

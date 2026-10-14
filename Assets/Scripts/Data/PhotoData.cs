@@ -52,12 +52,27 @@ namespace Intersection.Data
                                  "실제 이미지가 없는 사진에는 채우지 않는다. 작가 메모·증거 ID·내부 ID·역할명·정답 설명을 넣지 않는다.")]
         public string visibleText;
 
-        /// <summary>이미지에 적힌 글자 한 줄씩 (전역 검색 대상, 빈 줄 제외).</summary>
+        /// <summary>업무 패널·검색에 보이는 파일명. 카메라가 붙인 구조적 이름(IMG_0412.jpg)이라 번역하지 않고 원문 그대로다.</summary>
+        public string FileName => fileName;
+
+        /// <summary>이미지 안 글자 전사본 (현재 언어). 이미지가 언어별로 다르면 그 언어 이미지의 전사본을 번역 값으로 둔다.</summary>
+        public string VisibleText => ContentText.Get(Id, ContentText.Field.VisibleText, visibleText);
+
+        /// <summary>현지화 대상은 이미지 안 글자 전사본뿐이다(파일명은 구조적 이름).</summary>
+        public override System.Collections.Generic.IEnumerable<ContentField> ContentFields()
+        {
+            var list = new System.Collections.Generic.List<ContentField>();
+            ContentText.Add(list, Id, ContentText.Field.VisibleText, visibleText);
+            return list;
+        }
+
+        /// <summary>이미지에 적힌 글자 한 줄씩 (현재 언어, 전역 검색 대상, 빈 줄 제외).</summary>
         public System.Collections.Generic.IEnumerable<string> VisibleLines()
         {
-            if (string.IsNullOrWhiteSpace(visibleText))
+            string source = VisibleText;
+            if (string.IsNullOrWhiteSpace(source))
                 yield break;
-            foreach (var line in visibleText.Replace("\r", string.Empty).Split('\n'))
+            foreach (var line in source.Replace("\r", string.Empty).Split('\n'))
             {
                 string l = line.Trim();
                 if (l.Length > 0)

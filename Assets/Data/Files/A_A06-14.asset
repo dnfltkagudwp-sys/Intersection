@@ -28,5 +28,6 @@ MonoBehaviour:
   mediaAssetId: 
   preview: {fileID: 2800000, guid: 0158d51ba1e5f974bb2ff854a677904a, type: 3}
   visibleText:
-  - kind: 0
+  - id: 52170829ac0146ed84fdd21a569d26c7
+    kind: 0
     text: "\uB313\uAE00\nrami.pic \uC804\uC5D0 \uBCF4\uB358 \uB370 \uC5C6\uC5B4\uC84C\uB358\uB370 \uC5EC\uAE30\uC784?\n2\uC8FC\n\uC228\uACA8\uC9C4 \uB313\uAE00\uC785\uB2C8\uB2E4\nhyunn_o \uC774\uB7F0 \uAC70 \uC2E0\uACE0 \uC548 \uB418\uB098\n1\uC8FC\n\uC228\uACA8\uC9C4 \uB313\uAE00 2\uAC1C \uBCF4\uAE30"

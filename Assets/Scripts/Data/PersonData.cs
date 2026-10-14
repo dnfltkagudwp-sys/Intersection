@@ -17,5 +17,15 @@ namespace Intersection.Data
 
         [Tooltip("전화번호. 저장되지 않은 상대의 표시 문구가 비어 있으면 대신 표시된다.")]
         public string phoneNumber;
+
+        /// <summary>화면에 보이는 인물 이름 (현재 언어). 전화번호는 번역하지 않는다.</summary>
+        public string FullName => ContentText.Get(Id, ContentText.Field.FullName, fullName);
+
+        public override System.Collections.Generic.IEnumerable<ContentField> ContentFields()
+        {
+            var list = new System.Collections.Generic.List<ContentField>();
+            ContentText.Add(list, Id, ContentText.Field.FullName, fullName);
+            return list;
+        }
     }
 }

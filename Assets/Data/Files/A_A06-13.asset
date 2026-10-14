@@ -28,5 +28,6 @@ MonoBehaviour:
   mediaAssetId: 
   preview: {fileID: 2800000, guid: 734625389d95c95488e869c32ac95d37, type: 3}
   visibleText:
-  - kind: 0
+  - id: b0d7823994b44e5589bfb8d6d9ccf963
+    kind: 0
     text: "mildcase_12\n\uAC8C\uC2DC\uBB3C 1\n\uD314\uB85C\uC6CC 9\n\uD314\uB85C\uC789 0\n\uADF8\uB54C\uADF8\uB54C\n\uB514\uC5E0 \uD655\uC778 \uC548 \uD568\n\uD314\uB85C\uC6B0\n\uBA54\uC2DC\uC9C0\n\uC544\uC9C1 \uC0AC\uC9C4\uC774 \uC5C6\uC2B5\uB2C8\uB2E4"

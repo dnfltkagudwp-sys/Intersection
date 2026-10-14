@@ -508,7 +508,7 @@ namespace Intersection.UI
             {
                 var q = request;
                 var item = Instantiate(appItemPrefab, requestListRoot);
-                item.Bind(null, q.title, null, false, true, Theme.accentSoft, Color.clear, () => OpenRequest(q));
+                item.Bind(null, q.Title, null, false, true, Theme.accentSoft, Color.clear, () => OpenRequest(q));
                 requestItems.Add(item);
             }
         }
@@ -542,7 +542,7 @@ namespace Intersection.UI
                     continue;
                 yield return new WorkPanelView.Row
                 {
-                    label = guide.targetLabel,
+                    label = guide.TargetLabel,
                     value = text.Get(UIKeys.GuideStateKey(store.ClassOf(target.Key))),
                     font = Theme.regularFont,
                 };
@@ -563,7 +563,7 @@ namespace Intersection.UI
                     continue;
                 if (!store.IsViewed(RecordRef.ForRequest(guide.request).Key) || store.ClassOf(target.Key) == Classification.Keep)
                     continue;
-                line = guide.hint;
+                line = guide.Hint;
                 break;
             }
             workPanel.ShowTutorial(line);

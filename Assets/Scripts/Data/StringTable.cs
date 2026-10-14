@@ -20,6 +20,12 @@ namespace Intersection.Data
             public string value;
         }
 
+        [Tooltip("언어 코드 (예: ko, en)")]
+        public string language = "ko";
+
+        [Tooltip("날짜·시각 표기에 쓸 문화권 이름 (예: ko-KR, en-US)")]
+        public string cultureName = "ko-KR";
+
         public List<Entry> entries = new List<Entry>();
 
         Dictionary<string, string> map;

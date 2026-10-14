@@ -1,0 +1,591 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a2a5cc54e83c884ab1c09284e415746, type: 3}
+  m_Name: Strings_en
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.StringTable
+  language: en
+  cultureName: en-US
+  entries:
+  - key: format.time
+    value: "h:mm tt"
+  - key: format.statusClock
+    value: "h:mm"
+  - key: format.monthDay
+    value: "MMM d"
+  - key: format.fullDate
+    value: "MMM d, yyyy"
+  - key: format.noteDate
+    value: "M'/'d"
+  - key: format.weekday
+    value: "dddd"
+  - key: date.today
+    value: "Today"
+  - key: date.yesterday
+    value: "Yesterday"
+  - key: chat.separator
+    value: "{date} {time}"
+  - key: death.before
+    value: "{n} days before death"
+  - key: death.before.one
+    value: "{n} day before death"
+  - key: death.dayOf
+    value: "Day of death"
+  - key: death.after
+    value: "{n} days after death"
+  - key: death.after.one
+    value: "{n} day after death"
+  - key: death.withTime
+    value: "{day} · {time}"
+  - key: death.range
+    value: "{from} – {to}"
+  - key: brand.title
+    value: "DIGITAL LEGACY OPERATIONS SYSTEM"
+  - key: brand.subtitle
+    value: "SECURE OPERATIONS CONSOLE"
+  - key: top.caseStatus
+    value: "Case: {case} · {status}"
+  - key: top.index.done
+    value: "Local indexing complete"
+  - key: top.index.running
+    value: "Indexing local data"
+  - key: top.session
+    value: "Secure session"
+  - key: top.searchPlaceholder
+    value: "Search records"
+  - key: top.notifications
+    value: "Notifications"
+  - key: side.cases
+    value: "ACTIVE CASES"
+  - key: side.phone
+    value: "PHONE"
+  - key: case.status.local
+    value: "Phone · Local"
+  - key: case.status.waiting
+    value: "Awaiting device access"
+  - key: phone.deviceLabel
+    value: "{owner}'s phone"
+  - key: phone.originalBadge
+    value: "ORIGINAL VIEW"
+  - key: toolbar.selectRecord
+    value: "Select Record"
+  - key: app.messages
+    value: "Messages"
+  - key: app.photos
+    value: "Photos"
+  - key: app.browser
+    value: "Browser"
+  - key: app.maps
+    value: "Maps"
+  - key: app.files
+    value: "Files"
+  - key: app.messages.title
+    value: "Messages"
+  - key: messages.searchPlaceholder
+    value: "Search"
+  - key: messages.empty
+    value: "No messages"
+  - key: preview.image
+    value: "Photo"
+  - key: preview.location
+    value: "Location"
+  - key: chat.back
+    value: "Messages"
+  - key: chat.backUnread
+    value: "{count}"
+  - key: chat.inputPlaceholder
+    value: "Text Message"
+  - key: chat.attachment.image
+    value: "Photo"
+  - key: chat.attachment.location
+    value: "Location"
+  - key: panel.header
+    value: "WORK RECORD"
+  - key: panel.current
+    value: "CURRENT RECORD"
+  - key: panel.title.messageList
+    value: "Message Threads"
+  - key: panel.title.thread
+    value: "Conversation with {name}"
+  - key: panel.row.recordId
+    value: "Record ID"
+  - key: panel.row.owner
+    value: "Device Owner"
+  - key: panel.row.source
+    value: "Source"
+  - key: panel.sourceFormat
+    value: "{source} · {service}"
+  - key: panel.row.period
+    value: "Record Period"
+  - key: panel.row.integrity
+    value: "Integrity"
+  - key: panel.row.threadCount
+    value: "Threads"
+  - key: panel.threadCountValue
+    value: "{count}"
+  - key: panel.memo
+    value: "Work Note"
+  - key: panel.memoPlaceholder
+    value: "Add a note about this record"
+  - key: source.local
+    value: "Local"
+  - key: source.cloud
+    value: "Cloud"
+  - key: source.linked
+    value: "Linked"
+  - key: source.recovered
+    value: "Recovered"
+  - key: service.sms
+    value: "Text (SMS)"
+  - key: integrity.original
+    value: "Original intact"
+  - key: record.codeFormat
+    value: "{prefix}-{code}"
+  - key: record.prefix.thread
+    value: "MSG"
+  - key: search.section.threads
+    value: "Threads"
+  - key: search.section.messages
+    value: "Messages"
+  - key: search.empty
+    value: "No results"
+  - key: app.photos.title
+    value: "Albums"
+  - key: photos.albumCount
+    value: "{count}"
+  - key: photos.back
+    value: "Albums"
+  - key: photos.empty
+    value: "No photos"
+  - key: panel.title.albums
+    value: "Photo Albums"
+  - key: panel.row.photoCount
+    value: "Photos"
+  - key: panel.photoCountValue
+    value: "{count}"
+  - key: panel.row.takenAt
+    value: "Taken"
+  - key: record.prefix.photo
+    value: "PHO"
+  - key: service.camera
+    value: "Camera"
+  - key: service.messageSave
+    value: "Saved from Messages"
+  - key: death.timeRange
+    value: "{day} · {start} – {end}"
+  - key: list.empty
+    value: "No items"
+  - key: field.datetime
+    value: "Date & Time"
+  - key: field.kind
+    value: "Type"
+  - key: panel.row.time
+    value: "Recorded"
+  - key: panel.row.recordCount
+    value: "Items"
+  - key: panel.recordCountValue
+    value: "{count}"
+  - key: app.browser.title
+    value: "History"
+  - key: browser.kind.search
+    value: "Search"
+  - key: browser.kind.visit
+    value: "Visit"
+  - key: browser.pageUnavailable
+    value: "No saved page content"
+  - key: panel.title.browser
+    value: "Browser History"
+  - key: record.prefix.web
+    value: "WEB"
+  - key: app.maps.title
+    value: "Maps"
+  - key: maps.section.searches
+    value: "Recent Searches"
+  - key: maps.section.routes
+    value: "Routes"
+  - key: maps.section.shared
+    value: "Shared Locations"
+  - key: maps.section.history
+    value: "Location History"
+  - key: maps.routeFormat
+    value: "{from} → {to}"
+  - key: maps.sharedSent
+    value: "Sent location · {name}"
+  - key: maps.sharedReceived
+    value: "Received location · {name}"
+  - key: maps.placeUnknown
+    value: "Location"
+  - key: maps.field.place
+    value: "Place"
+  - key: maps.field.from
+    value: "From"
+  - key: maps.field.to
+    value: "To"
+  - key: maps.field.via
+    value: "Route"
+  - key: maps.field.shared
+    value: "Shared"
+  - key: maps.periodFormat
+    value: "{date} {start} – {end}"
+  - key: panel.title.maps
+    value: "Map Records"
+  - key: record.prefix.map
+    value: "MAP"
+  - key: app.files.title
+    value: "Files"
+  - key: files.location.local
+    value: "On This Device"
+  - key: files.location.cloud
+    value: "Cloud"
+  - key: files.location.linked
+    value: "Linked Account"
+  - key: files.location.recovered
+    value: "Recovered Items"
+  - key: files.itemCount
+    value: "{count} items"
+  - key: files.itemCount.one
+    value: "{count} item"
+  - key: files.previewUnavailable
+    value: "No preview"
+  - key: files.field.name
+    value: "Name"
+  - key: files.field.modified
+    value: "Modified"
+  - key: files.field.where
+    value: "Location"
+  - key: panel.title.files
+    value: "Files"
+  - key: record.prefix.file
+    value: "FIL"
+  - key: app.settings
+    value: "Settings"
+  - key: app.settings.title
+    value: "Settings"
+  - key: settings.section.current
+    value: "Current Settings"
+  - key: settings.section.history
+    value: "Change History"
+  - key: settings.changeFormat
+    value: "{before} → {after}"
+  - key: settings.field.item
+    value: "Item"
+  - key: settings.field.before
+    value: "Before"
+  - key: settings.field.after
+    value: "After"
+  - key: panel.title.settings
+    value: "Settings Record"
+  - key: record.prefix.setting
+    value: "SET"
+  - key: toolbar.selectEnd
+    value: "Done Selecting"
+  - key: panel.action.pin
+    value: "Pin to Workbench"
+  - key: panel.action.unpin
+    value: "Unpin"
+  - key: panel.action.keep
+    value: "Retain"
+  - key: panel.action.delete
+    value: "Delete"
+  - key: panel.row.viewed
+    value: "Viewed"
+  - key: panel.viewed.yes
+    value: "Viewed"
+  - key: panel.viewed.no
+    value: "Not viewed"
+  - key: class.unclassified
+    value: "Unclassified"
+  - key: class.keep
+    value: "Retain"
+  - key: class.delete
+    value: "Delete"
+  - key: panel.missing
+    value: "Original record not found"
+  - key: panel.missingDuplicate
+    value: "Duplicate original ID"
+  - key: panel.missingBody
+    value: "No original matches the saved ID, so this item was not linked to another record. It will reconnect if the original is restored."
+  - key: panel.missingDuplicateBody
+    value: "More than one original uses this ID, so the record cannot be identified and was not linked elsewhere. It will reconnect when the originals are resolved."
+  - key: panel.pinnedMeta
+    value: "{owner} · {code}"
+  - key: selection.messageContext
+    value: "Conversation with {name}"
+  - key: side.requests
+    value: "FAMILY REQUESTS"
+  - key: record.prefix.request
+    value: "REQ"
+  - key: guide.state.unclassified
+    value: "Unclassified"
+  - key: guide.state.keep
+    value: "Marked to retain"
+  - key: guide.state.delete
+    value: "Delete candidate"
+  - key: toolbar.pickHint
+    value: "Select a record"
+  - key: toolbar.picked
+    value: "{kind} selected"
+  - key: panel.heading.picked
+    value: "SELECTED RECORD"
+  - key: panel.heading.work
+    value: "WORKBENCH"
+  - key: panel.heading.request
+    value: "FAMILY REQUEST"
+  - key: panel.backToCurrent
+    value: "< Current View"
+  - key: panel.classLabel
+    value: "Disposition"
+  - key: panel.workList
+    value: "Pinned Records · {count}"
+  - key: panel.workEmpty
+    value: "No pinned, classified, or noted records"
+  - key: kind.thread
+    value: "Thread"
+  - key: kind.message
+    value: "Message"
+  - key: kind.attachment
+    value: "Photo Attachment"
+  - key: kind.locationShare
+    value: "Shared Location"
+  - key: kind.photo
+    value: "Photo"
+  - key: kind.browser
+    value: "Browser Record"
+  - key: kind.map
+    value: "Location Record"
+  - key: kind.file
+    value: "File"
+  - key: kind.setting
+    value: "Settings Record"
+  - key: kind.request
+    value: "Family Request"
+  - key: panel.openSource
+    value: "Open Original"
+  - key: panel.openSourceMessage
+    value: "Open Original Message"
+  - key: panel.sourceMissing
+    value: "Cannot open: original not found"
+  - key: panel.sourceDuplicate
+    value: "Cannot open: duplicate original ID"
+  - key: panel.sourceUnavailable
+    value: "This original is not currently accessible"
+  - key: panel.compareAdd
+    value: "Add to Compare"
+  - key: panel.compareRemove
+    value: "Remove from Compare"
+  - key: panel.compareFull
+    value: "Remove one record before adding another"
+  - key: panel.compareMissing
+    value: "Cannot open or compare: original not found"
+  - key: panel.compareDuplicate
+    value: "Cannot open or compare: duplicate original ID"
+  - key: panel.compareUnavailable
+    value: "Cannot open or compare: original is not currently accessible"
+  - key: panel.compareSlotEmpty
+    value: "Empty"
+  - key: panel.compareSlotRemove
+    value: "×"
+  - key: compare.title
+    value: "Compare Records"
+  - key: compare.close
+    value: "Close Compare"
+  - key: compare.row.kind
+    value: "Record Type"
+  - key: compare.kindFormat
+    value: "{kind} · {app}"
+  - key: compare.app.work
+    value: "Work Record"
+  - key: list.compareAdd
+    value: "+ Compare"
+  - key: list.compareOn
+    value: "Comparing"
+  - key: panel.fullViewOpen
+    value: "Open Workbench"
+  - key: fullView.title
+    value: "Workbench"
+  - key: fullView.count
+    value: "{total} items"
+  - key: fullView.count.one
+    value: "{total} item"
+  - key: fullView.countFiltered
+    value: "Showing {shown} of {total} items"
+  - key: fullView.countFiltered.one
+    value: "Showing {shown} of {total} item"
+  - key: fullView.noMatch
+    value: "No records match these filters"
+  - key: fullView.filter.all
+    value: "All"
+  - key: fullView.filter.pinned
+    value: "Pinned"
+  - key: fullView.filter.keep
+    value: "Retain"
+  - key: fullView.filter.delete
+    value: "Delete"
+  - key: fullView.filter.memo
+    value: "Notes"
+  - key: fullView.filter.allCases
+    value: "All Cases"
+  - key: list.memoMark
+    value: "NOTE"
+  - key: dropdown.arrow
+    value: "▼"
+  - key: toolbar.workRecords
+    value: "Workbench · {count}"
+  - key: panel.pinnedEmpty
+    value: "No pinned records"
+  - key: workbench.close
+    value: "Close Workbench"
+  - key: workbench.noSelection
+    value: "No Record Selected"
+  - key: workbench.noSelectionBody
+    value: "Select a record from the list to view its details and actions here."
+  - key: workbench.compareStart
+    value: "Start Compare"
+  - key: workbench.slots0
+    value: "Records to compare · 0/2"
+  - key: workbench.slots1
+    value: "Records to compare · 1/2 · Select one more"
+  - key: workbench.slots2
+    value: "Records to compare · 2/2 · Ready"
+  - key: panel.compareStatus1
+    value: "Compare · 1/2 · Select one more"
+  - key: panel.compareStatus2
+    value: "Compare · 2/2 · Start"
+  - key: status.localReady
+    value: "Local data available"
+  - key: globalSearch.title
+    value: "Search Records"
+  - key: globalSearch.hint
+    value: "Search records that are currently accessible"
+  - key: globalSearch.empty
+    value: "No matching records"
+  - key: globalSearch.count
+    value: "{count} results"
+  - key: globalSearch.count.one
+    value: "{count} result"
+  - key: globalSearch.group
+    value: "{case} · {app}"
+  - key: globalSearch.meta
+    value: "{app} · {source} · {date} · {since}"
+  - key: globalSearch.metaNoTime
+    value: "{app} · {source}"
+  - key: globalSearch.close
+    value: "Close Search"
+  - key: notifications.title
+    value: "Work Notifications"
+  - key: notifications.markAll
+    value: "Mark All Read"
+  - key: notifications.empty
+    value: "No notifications"
+  - key: panel.unavailable
+    value: "Record Currently Unavailable"
+  - key: panel.unavailableBody
+    value: "This record is not accessible at the current stage. Its saved work state will be preserved."
+  - key: job.inventory.action
+    value: "Retrieve Linked Data"
+  - key: job.inventory.notReady
+    value: "Reviewing local records"
+  - key: job.inventory.running
+    value: "Indexing linked data"
+  - key: job.inventory.done
+    value: "Linked data review complete"
+  - key: job.inventory.shortRunning
+    value: "Indexing linked data"
+  - key: job.inventory.shortDone
+    value: "Local · Linked"
+  - key: job.recovery.action
+    value: "Recover Deleted Data"
+  - key: job.recovery.notReady
+    value: "Reviewing linked data"
+  - key: job.recovery.running
+    value: "Preparing deleted data recovery"
+  - key: job.recovery.done
+    value: "Recovered data available"
+  - key: job.recovery.shortRunning
+    value: "Preparing recovery"
+  - key: job.recovery.shortDone
+    value: "Local · Linked · Recovered"
+  - key: notify.linkedDone
+    value: "Case: {caseDisplayName} — Linked data review complete"
+  - key: notify.backupIndexed
+    value: "New backup data indexed"
+  - key: notify.recoveryDone
+    value: "Case: {caseDisplayName} — Recovered data review complete"
+  - key: notify.unclassified
+    value: "{count} items not classified for retention or deletion"
+  - key: top.requestNeeded
+    value: "Family request must be reviewed"
+  - key: top.guideState
+    value: "{target} · {state}"
+  - key: top.review
+    value: "{title} · {done}/{total}"
+  - key: review.groupCount
+    value: "{done}/{total}"
+  - key: review.continue
+    value: "Continue Review"
+  - key: review.local.title
+    value: "Initial Local Review"
+  - key: review.local.done
+    value: "Initial local review complete"
+  - key: review.local.doneBody
+    value: "Reviewed all {total} designated records on this device."
+  - key: review.local.doneBody.one
+    value: "Reviewed the {total} designated record on this device."
+  - key: review.group.recentPhotos
+    value: "Recent Photos"
+  - key: review.group.recentMessages
+    value: "Recent Messages"
+  - key: review.group.recentSearches
+    value: "Recent Searches"
+  - key: review.group.recentSettings
+    value: "Recent Settings Changes"
+  - key: summary.heading
+    value: "LINKED DATA SUMMARY"
+  - key: summary.count
+    value: "{count} newly indexed records"
+  - key: summary.count.one
+    value: "{count} newly indexed record"
+  - key: summary.rowCount
+    value: "{count}"
+  - key: summary.open
+    value: "View Linked Data"
+  - key: summary.later
+    value: "View Later"
+  - key: summary.empty
+    value: "No new records became accessible."
+  - key: summary.app.messages
+    value: "Messages & Attachments"
+  - key: summary.app.photos
+    value: "Photos & Screenshots"
+  - key: summary.app.browser
+    value: "Browser History"
+  - key: summary.app.maps
+    value: "Map Records"
+  - key: summary.app.files
+    value: "Files"
+  - key: summary.app.settings
+    value: "Settings Records"
+  - key: zoom.out
+    value: "−"
+  - key: zoom.in
+    value: "+"
+  - key: zoom.fit
+    value: "Fit to Screen"
+  - key: zoom.percent
+    value: "{n}%"
+  - key: zoom.fitWidth
+    value: "Fit Width"
+  - key: service.autoBackup
+    value: "Auto Backup"
+  - key: integrity.cloudOnly
+    value: "Cloud only"
+  - key: notify.recoveryReady
+    value: "Deleted data indexes found. Additional recovery can now begin."

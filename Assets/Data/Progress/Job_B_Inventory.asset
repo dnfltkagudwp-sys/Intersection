@@ -42,6 +42,7 @@ MonoBehaviour:
     group: {fileID: 0}
     minCount: 1
     source: 0
+  onReady: []
   onStart:
   - id: 06a3c67612de4e93b5f3dfdb635cdcf0
     kind: 1
@@ -56,12 +57,18 @@ MonoBehaviour:
     job: {fileID: 0}
     templateKey: 
     caseToken: {fileID: 0}
-  - id: e22e0902fd484a38ab9e103a3264ef72
+  - id: b29368384bfb49669f82e491b29335f5
     kind: 2
     stage: 0
     job: {fileID: 0}
-    templateKey: notify.backupIndexed
-    caseToken: {fileID: 0}
+    templateKey: notify.linkedDone
+    caseToken: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  - id: 241d39f8b7ab478aaff87d0eaf65b252
+    kind: 3
+    stage: 0
+    job: {fileID: 0}
+    templateKey: notify.linkedDone
+    caseToken: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
   completionConditions:
   - kind: 7
     request: {fileID: 0}
@@ -110,4 +117,4 @@ MonoBehaviour:
     source: 0
   autoCompleteWhenReady: 0
   completedExternally: 1
-  authorNote: "\uC815\uC2DD \uAE30\uC900(GameDesign \uC5C5\uBB34 \uC9C4\uD589 \uC870\uAC74 P1): B \uC720\uC871 \uC694\uCCAD \uC5F4\uB78C + \uB85C\uCEEC 1\uCC28 \uAC80\uD1A0 \uBB36\uC74C(Review_B_LocalFirst) 12\uAC74 \uC2E4\uC81C \uC5F4\uB78C \u2192 \uC0C1\uB2E8 `\uC5F0\uB3D9 \uB370\uC774\uD130 \uC870\uD68C \uC2DC\uC791`. \uC2DC\uC791\uD558\uBA74 A \uC778\uBCA4\uD1A0\uB9AC \uC644\uB8CC(P2 + A \uC5F0\uB3D9 \uC644\uB8CC \uC54C\uB9BC + A \uC5F0\uB3D9 \uACB0\uACFC \uC694\uC57D). \uBD84\uB958\xB7\uACE0\uC815\xB7\uBA54\uBAA8\xB7\uBE44\uAD50\uB294 \uC4F0\uC9C0 \uC54A\uC74C.\n\uC644\uB8CC \uC870\uAC74(P2): A06 \uACC4\uC815 \uC870\uC0AC \uC790\uB8CC \uC11C\uB85C \uB2E4\uB978 2\uAC74(Group_P2_AccountResearch) + A07 + A08(A \uAE30\uAE30 Thread_A04_C) + D01-01 + B06(B_IMG_0786) \uC2E4\uC81C \uC5F4\uB78C. \uC644\uB8CC\uD558\uBA74 P3 + `\uC0C8 \uBC31\uC5C5 \uB370\uC774\uD130 \uC778\uB371\uC2F1 \uC644\uB8CC` \uC54C\uB9BC. P3 \uC815\uC2DD \uCF58\uD150\uCE20(B \uD074\uB77C\uC6B0\uB4DC)\uAC00 \uC5C6\uC5B4 autoCompleteWhenReady\uB294 \uAEBC \uB460 \u2014 \uC5F0\uACB0 \uB4A4 \uCF1C\uBA74 \uCF54\uB4DC \uC218\uC815 \uC5C6\uC774 \uC790\uB3D9 \uC644\uB8CC."
+  authorNote: "\uC815\uC2DD \uAE30\uC900(GameDesign \uC5C5\uBB34 \uC9C4\uD589 \uC870\uAC74 P1): B \uC720\uC871 \uC694\uCCAD \uC5F4\uB78C + \uB85C\uCEEC 1\uCC28 \uAC80\uD1A0 \uBB36\uC74C(Review_B_LocalFirst) 12\uAC74 \uC2E4\uC81C \uC5F4\uB78C \u2192 \uC0C1\uB2E8 `\uC5F0\uB3D9 \uB370\uC774\uD130 \uC870\uD68C \uC2DC\uC791`. \uC2DC\uC791\uD558\uBA74 A \uC778\uBCA4\uD1A0\uB9AC \uC644\uB8CC(P2 + A \uC5F0\uB3D9 \uC644\uB8CC \uC54C\uB9BC + A \uC5F0\uB3D9 \uACB0\uACFC \uC694\uC57D). \uBD84\uB958\xB7\uACE0\uC815\xB7\uBA54\uBAA8\xB7\uBE44\uAD50\uB294 \uC4F0\uC9C0 \uC54A\uC74C.\n\uC644\uB8CC \uC870\uAC74(P2): A06 \uACC4\uC815 \uC870\uC0AC \uC790\uB8CC \uC11C\uB85C \uB2E4\uB978 2\uAC74(Group_P2_AccountResearch) + A07 + A08(A \uAE30\uAE30 Thread_A04_C) + D01-01 + B06(B_IMG_0786) \uC2E4\uC81C \uC5F4\uB78C. \uC644\uB8CC \uD6A8\uACFC: P3 + \uC5C5\uBB34 \uC54C\uB9BC `\uC724\uC11C\uD558 \uC758\uB8B0 \u2014 \uC5F0\uB3D9 \uB370\uC774\uD130 \uD655\uC778 \uC644\uB8CC`(notify.linkedDone) + \uC724\uC11C\uD558 \uC5F0\uB3D9 \uACB0\uACFC \uC694\uC57D 18\uAC74(\uC0AC\uC9C4 3\xB7\uBE0C\uB77C\uC6B0\uC800 5\xB7\uD30C\uC77C 5\xB7\uC124\uC815 5). P3 \uCF58\uD150\uCE20 18\uAC74\uC740 \uC5F0\uACB0\uB428. autoCompleteWhenReady\uB294 P3 \uC6D0\uACE0 16\uC808 6\uBC88 \uAC80\uC218 \uC804\uC774\uB77C \uC544\uC9C1 \uAEBC \uB460."

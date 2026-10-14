@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcdf53c0d9782604f9fff89f80db184f, type: 3}
+  m_Name: B_P3-S02
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.SettingRecord
+  id: 867f544f61b9443fa4b14b7839c917c0
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  time:
+    dayOffset: -30
+    hour: 22
+    minute: 15
+  sortKey: 0
+  source: 2
+  availableFrom: 3
+  evidenceRef: 
+  integrityKey: integrity.original
+  authorNote: "P3-S02 \u2014 \uC77C\uBC18"
+  settingKey: notify.quietHours
+  categoryLabel: "\uC54C\uB9BC"
+  itemLabel: "\uBC29\uD574 \uAE08\uC9C0 \uC2DC\uAC04"
+  linkedThread: {fileID: 0}
+  valueBefore: "\uB054"
+  valueAfter: 23:00~07:00
+  muteChange: 0

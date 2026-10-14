@@ -41,6 +41,15 @@ namespace Intersection.Data
 
         public string Id => id;
 
+        /// <summary>이 메시지가 들어 있는 대화 (번역 키의 소유 ID). 저장하지 않고 대화의 AllMessages가 꺼낼 때 채운다.</summary>
+        [NonSerialized] internal ThreadData owner;
+
+        /// <summary>말풍선 본문 (현재 언어).</summary>
+        public string Body => ContentText.Get(owner != null ? owner.Id : null, ContentText.Field.MessageText(id), body);
+
+        /// <summary>첨부 표시 문구 (현재 언어).</summary>
+        public string AttachmentLabel => ContentText.Get(owner != null ? owner.Id : null, ContentText.Field.MessageAttachmentLabel(id), attachmentLabel);
+
         public bool EnsureId()
         {
             if (!string.IsNullOrEmpty(id))
@@ -126,6 +135,21 @@ namespace Intersection.Data
 
         public bool IsGroup => !string.IsNullOrEmpty(groupTitle);
 
+        /// <summary>단체방 제목 (현재 언어).</summary>
+        public string GroupTitle => ContentText.Get(Id, ContentText.Field.GroupTitle, groupTitle);
+
+        public override IEnumerable<ContentField> ContentFields()
+        {
+            var list = new List<ContentField>();
+            ContentText.Add(list, Id, ContentText.Field.GroupTitle, groupTitle);
+            foreach (var m in AllMessages)
+            {
+                ContentText.Add(list, Id, ContentText.Field.MessageText(m.Id), m.body);
+                ContentText.Add(list, Id, ContentText.Field.MessageAttachmentLabel(m.Id), m.attachmentLabel);
+            }
+            return list;
+        }
+
         public IEnumerable<MessageData> AllMessages
         {
             get
@@ -136,8 +160,11 @@ namespace Intersection.Data
                         continue;
                     foreach (var m in s.messages)
                     {
-                        if (m != null)
-                            yield return m;
+                        if (m == null)
+                            continue;
+                        // 메시지는 대화를 거쳐서만 꺼내므로 여기서 소유 대화를 알려 준다(번역 키의 소유 ID).
+                        m.owner = this;
+                        yield return m;
                     }
                 }
             }

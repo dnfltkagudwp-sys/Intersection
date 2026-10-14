@@ -129,6 +129,44 @@ namespace Intersection.Core
         }
 
         /// <summary>
+        /// 아직 시작하지 않은 작업 중 시작 조건을 모두 만족한 작업의 준비 효과(onReady)를 실행한다. 효과는 불변 효과 ID로 한 번만
+        /// 실행된다(이미 실행된 효과는 건너뜀). 이미 시작·완료한 작업은 대상이 아니다. 실행할 것이 있으면 한 트랜잭션으로 처리해
+        /// 전부 반영됐을 때만 한 번 저장하고, 무엇이든 실행했으면 true.
+        /// </summary>
+        public bool ApplyReady()
+        {
+            var due = db.jobs
+                .Where(j => j != null && StateOf(j) == JobState.NotStarted
+                            && j.onReady.Any(ReadyPending) && ConditionsMet(j))
+                .OrderBy(j => j.device.order).ThenBy(j => j.order)
+                .ToList();
+            if (due.Count == 0)
+                return false;
+            return store.Transact(() =>
+            {
+                foreach (var job in due)
+                    Apply(job, job.onReady.Where(ReadyPending).ToList());
+            });
+        }
+
+        /// <summary>
+        /// 아직 실행하지 않은 준비 효과. 준비 효과는 업무 알림만 쓴다(효과 ID로 한 번만 만들어지는 효과). 다른 종류는 검증 도구가 오류로 잡고
+        /// 실행 중에도 건너뛴다 — 작업 시작·단계 변경은 플레이어가 상단에서 직접 한다.
+        /// </summary>
+        bool ReadyPending(ProgressEffect e) => e != null && e.kind == ProgressEffectKind.Notify && !store.HasFired(e.Id);
+
+        /// <summary>
+        /// 진행 평가 한 번: 자동 완료 → 준비 효과. 열람 상태 변경·세이브 복원·진행 변경 뒤 같은 경로로 부른다.
+        /// 여러 번 불러도 이미 완료한 작업·이미 실행한 효과는 다시 처리하지 않는다. 무엇이든 바뀌었으면 true.
+        /// </summary>
+        public bool Evaluate()
+        {
+            bool changed = AutoComplete();
+            changed |= ApplyReady();
+            return changed;
+        }
+
+        /// <summary>
         /// 열람 묶음에서 실제로 연 서로 다른 원본 수. 같은 원본(RecordRef.Key)은 한 번만 세고,
         /// 누락·중복·현재 접근 불가 원본은 열람 이력이 있어도 세지 않는다.
         /// </summary>

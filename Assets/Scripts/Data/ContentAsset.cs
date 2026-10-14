@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Intersection.Data
@@ -30,6 +31,12 @@ namespace Intersection.Data
         /// 내부 항목(구간·메시지 등)을 가진 에셋은 그 ID도 함께 새로 발급한다.
         /// </summary>
         public virtual void RegenerateIds() => id = NewId();
+
+        /// <summary>
+        /// 이 에셋이 화면에 보여주는 현지화 대상 원문 (비어 있지 않은 것만). 키는 표시용 접근자가 쓰는 것과 같다.
+        /// 검증 도구가 번역 테이블의 키가 실제 필드를 가리키는지, 언어별 누락이 얼마인지 계산할 때 쓴다.
+        /// </summary>
+        public virtual IEnumerable<ContentField> ContentFields() => System.Array.Empty<ContentField>();
 
         protected virtual void OnValidate()
         {

@@ -1,0 +1,452 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f77e1ef1a99b73c47857af4efdeabf3c, type: 3}
+  m_Name: Content_en
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ContentLocaleTable
+  language: en
+  entries:
+  - key: e3f9e1f774044fc0956381a332b0bf36:title
+    value: "Library hours"
+  - key: 49ea62601ba2471faf73a8279105ba52:title
+    value: "Last city bus"
+  - key: 40d61385062142d3abf8f6bb4bbd87c0:title
+    value: "Recent posts from outfit community account"
+  - key: 168e81f879e7445eb9653fea61a041e3:title
+    value: "Public profile and campus event"
+  - key: ef2f5bc7de4d4f269aab907137a5ea0d:title
+    value: "Cafe near the back gate"
+  - key: da20e9eab49a4e319bd7fdad519ecc3e:title
+    value: "Other social media using same handle"
+  - key: e71b01c371e64fe5a8767262133d9fc3:title
+    value: "Department event photos"
+  - key: 676e82d139f54608a65f90c77454f6f9:title
+    value: "How to save public social media photos"
+  - key: 8d1178215ee146c3ac49c59174cd1dc0:title
+    value: "Rin's Closet"
+  - key: b989944bad024199b8bcdf372f451c68:title
+    value: "Kang Na-rin Rin's Closet"
+  - key: 11447c3bf58f456c93485e93dddc942b:title
+    value: "Reserve a library seat"
+  - key: 24ab03acc1d2470595ec408a32702f56:title
+    value: "How to wash fall clothes"
+  - key: 47154c323158416b920534f4c9fba0e7:title
+    value: "When to report stalking"
+  - key: 3ba0c0d5ef864a4a9b16ffe2aeef5e4b:title
+    value: "Report someone who keeps following me"
+  - key: 0c72f06592ac48dab8fad2c68c202d91:title
+    value: "Can I report someone taking secret photos"
+  - key: 829081a55b1247e7a808aa0199944d42:title
+    value: "What evidence is needed for stalking"
+  - key: 3e37a8785fa44562a8a63704d5b4954b:title
+    value: "Will the other person know if I call police"
+  - key: dcf1f644ae1f4bb287b121100dd319db:title
+    value: "How to book campus counseling"
+  - key: 65d829e37a8e4712a69a6d032072313b:title
+    value: "daylog_041"
+  - key: 6b5732bec7e44d95ac2760848ee478c4:title
+    value: "daylog_041"
+  - key: 19c9504714cc4e65b0d71436755ea8a2:title
+    value: "Remove pilling from knitwear"
+  - key: 711ad93d27b44b92ab1686cb8ceb3681:title
+    value: "Final presentation schedule"
+  - key: c5169ae1a8bd410c993f708b631d5854:title
+    value: "Extend library loan"
+  - key: e2be6c3ce0b544f5b8a950005ba1cf81:contact:1fc961f0c98449acb7b254dc36f55e8b:savedName
+    value: "Manager Park Do-hyeon"
+  - key: e2be6c3ce0b544f5b8a950005ba1cf81:contact:a7990ce505e845819354b4f02d90a3bb:savedName
+    value: "Lee Jun-ho"
+  - key: e2be6c3ce0b544f5b8a950005ba1cf81:contact:e1c8a37418564adeb1b237c813c6838d:savedName
+    value: "Mom"
+  - key: e2be6c3ce0b544f5b8a950005ba1cf81:contact:e957dd2c141e4ab280fc98d1dedaac71:savedName
+    value: "Han Ji-woo"
+  - key: e2be6c3ce0b544f5b8a950005ba1cf81:contact:ec0a1336cb2a405da5277a18c3ffe0f9:savedName
+    value: "Choi Min-seo"
+  - key: e2be6c3ce0b544f5b8a950005ba1cf81:contact:f68bc3c9dec1481c8ecbd9d364eca804:savedName
+    value: "Jeong Yu-jin"
+  - key: e2be6c3ce0b544f5b8a950005ba1cf81:unsavedContactLabel
+    value: "Unsaved Number"
+  - key: f9c52c892fa14518a1a813b641e795e6:contact:0468def9f21d4a55a5ce5cc55c216f83:savedName
+    value: "Da-yeon"
+  - key: f9c52c892fa14518a1a813b641e795e6:contact:29527967b2b947e3877498f527dd32d8:savedName
+    value: "Mom"
+  - key: f9c52c892fa14518a1a813b641e795e6:contact:74d376153b274d439562995dc7bf88d2:savedName
+    value: "Oh Se-rin"
+  - key: f9c52c892fa14518a1a813b641e795e6:contact:78033337daa14b0b80cda674d2181c91:savedName
+    value: "Ha-eun"
+  - key: f9c52c892fa14518a1a813b641e795e6:contact:acb53c4d41fc4bcb925cc1b50433854e:savedName
+    value: "Im Ga-ram"
+  - key: f9c52c892fa14518a1a813b641e795e6:contact:b6c31488ac244ee3aa8ab1d3f4308869:savedName
+    value: "Kang Na-rin"
+  - key: f9c52c892fa14518a1a813b641e795e6:contact:b98806f82d634a34be6e93c0cfcc48cd:savedName
+    value: "Bae Jun-yeong"
+  - key: f9c52c892fa14518a1a813b641e795e6:contact:e3e736caf0b94ea3a2df1ce990161d47:savedName
+    value: "Ji-su"
+  - key: f9c52c892fa14518a1a813b641e795e6:contact:f68bc3c9dec1481c8ecbd9d364eca804:savedName
+    value: "Jeong Yu-jin"
+  - key: f9c52c892fa14518a1a813b641e795e6:unsavedContactLabel
+    value: "Unknown Number"
+  - key: 094ac2f1ee17461c850553485e9b5b1c:fileName
+    value: "shot_1741.png"
+  - key: 292f5a4570c842269426bfc3f1670de9:fileName
+    value: "shot_1742.png"
+  - key: 1769baeac14e45a9ad09096874f89726:fileName
+    value: "capture_1743.png"
+  - key: 0414285f35ce49608e04edc01cf6106a:fileName
+    value: "shot_1750.png"
+  - key: 2fe9c6f2bd3840faafae840df7284dcb:fileName
+    value: "capture_1751.png"
+  - key: 9225b08eae0d4f10b7ab877ea2d6accd:fileName
+    value: "shot_1754.png"
+  - key: 490b8eaf0e0644c3b89602f6d11bdd57:fileName
+    value: "shot_1771.png"
+  - key: cdd1d266e7f34f4989a6b0d5ca18c52f:fileName
+    value: "shot_1773.png"
+  - key: a3273fa71aa74cd2b3f4e6a727872736:fileName
+    value: "capture_1780.png"
+  - key: fce619090a8347f4bca6ec7067c283e6:fileName
+    value: "shot_1782.png"
+  - key: 04d84191944143c49a271c3d539357c5:fileName
+    value: "shot_1788.png"
+  - key: ef1b405ea56e4d30af2a0f203ff54577:fileName
+    value: "capture_1790.png"
+  - key: 681b00d9f78b4785869fc7e10406c4a7:fileName
+    value: "shot_1793.png"
+  - key: 4ea3f0c4ff71440082991b1e5dcce57a:fileName
+    value: "shot_1760.png"
+  - key: 5c71a12c341843e581031f1a31841298:fileName
+    value: "shot_1762.png"
+  - key: 9cb8b0ded0f5421ab6a9475b9f8ca9f3:fileName
+    value: "shot_1763.png"
+  - key: b5781bac56e64ecd8fae46134f37d790:fileName
+    value: "capture_1764.png"
+  - key: 5efd7b79a7c64deeb277201a0dea9256:fileName
+    value: "capture_1766.png"
+  - key: 1131175bffe946a5be5945ae5f026010:fileName
+    value: "compare.xlsx"
+  - key: 1131175bffe946a5be5945ae5f026010:visibleText:0b5e20c1051243b497ed15e9d4771227
+    value: "Account|First|Last|Status|Target|Notes\n(URL only)|Around {date:-209}|-|Won't open|Yu-jin|Link Yu-jin received. Handle unknown\n@daylog_041|{date:-180}|{date:-150}|Deleted|Yu-jin|Reportedly gone {date:-145}\n(new URL)|{date:-150}|-|Not seen|Yu-jin|Yu-jin says another account appeared\n@smallroom_08|{date:-127}|{date:-76}|Suspended|Kang Na-rin?|Rin's Closet = probably Kang Na-rin\n(truncated account)|{date:-127}|{date:-127}|Suspended|Unknown|Only saw photos\n@mildcase_12|{date:-118}|{date:-90}|Active|Unknown|No photos"
+  - key: 1131175bffe946a5be5945ae5f026010:visibleText:19437eb7cec749f5b96dc69e0eefbb1d
+    value: "Same crop?\nSimilar upload times\nSimilar wording?\nNew account after deletion\nSame pattern as Yu-jin?\nCheck intervals again"
+  - key: 1131175bffe946a5be5945ae5f026010:visibleText:33099d941160490899119b3649eff858
+    value: "Accounts"
+  - key: 1131175bffe946a5be5945ae5f026010:visibleText:625d6f2cb8e64c8482074816a146b6ad
+    value: "Compare"
+  - key: 1131175bffe946a5be5945ae5f026010:visibleText:cea7d494f05e44899a616f19f916fb28
+    value: "Account|Posted|Time|Photo|Text\n@daylog_041|{date:-181}|Night?|Sticker, cropped above knees|Last one / one more\n@smallroom_08|{date:-128}|After midnight?|Sticker|Same handle\n(truncated account)|?|?|Sticker|Deleted yesterday's / reposted\n@mildcase_12|?|Around 1 AM|-|Like last time / no requests"
+  - key: 1131175bffe946a5be5945ae5f026010:visibleText:ea2ae39aabc2462eaa4e7b186675bef7
+    value: "Posts"
+  - key: 1131175bffe946a5be5945ae5f026010:visibleText:ecd28fb81f4245b39ecbb7039f639fe1
+    value: "|daylog|smallroom|truncated account|mildcase\nBio|Day by day / DMs ignored|A place to collect / No DMs|Not seen|Whenever / DMs unchecked\nCover|Sticker|Sticker|Sticker|-\nText|Short fragments|Short fragments|Short fragments|Short fragments\nTime|Night|Night|?|Night\nAfter disappearance|(new URL) immediately|?|?|-"
+  - key: 92b04905f3c14a39a92cf32343bc8950:fileName
+    value: "Principles_of_Marketing_Team_2_Final.pptx"
+  - key: 92b04905f3c14a39a92cf32343bc8950:visibleText:ffaff6d3c6a8430a839b70f6f6a1ebb2
+    value: "Factors in Return Visits to Cafes near Campus\nPrinciples of Marketing · Team 2\n1. Research Overview\n2. Survey Results\n3. Recommendations"
+  - key: cbe1c54e18ed4abfbb8b32e2392cdafa:fileName
+    value: "Principles_of_Marketing_Team_2_Final_1.pptx"
+  - key: cbe1c54e18ed4abfbb8b32e2392cdafa:visibleText:1cda76a681774abd83b0c52acd951191
+    value: "Factors in Return Visits to Cafes near Campus\nPrinciples of Marketing · Team 2\n1. Research Overview\n2. Survey Results\n3. Recommendations\n4. References"
+  - key: 0fe833b174f049a8a7ac2675de242faa:fileName
+    value: "Reading_Room_Seat_Guide.pdf"
+  - key: 0fe833b174f049a8a7ac2675de242faa:visibleText:2665ede9d5c94d359151b23fdea25ee9
+    value: "Reading Room Seat Guide\nCheck in within 30 minutes of seat assignment\nExtend every 2 hours\nRelease your seat when leaving"
+  - key: 3043f4ba4d8a402bbd1f4be97affb55b:fileName
+    value: "Order_Confirmation.pdf"
+  - key: 3043f4ba4d8a402bbd1f4be97affb55b:visibleText:81deb024b3064d1db885880a6799928b
+    value: "Your order is complete\n2 items\nPayment total KRW 31,500\nEstimated delivery: 2–3 days"
+  - key: d80f8bc24f8042f795f2dfe18c3cccf4:fileName
+    value: "Study_Schedule.txt"
+  - key: d80f8bc24f8042f795f2dfe18c3cccf4:visibleText:1558f78717b54699a9e107bb7c9a3f0c
+    value: "Mon · Wed · Fri, 9:00 AM\nCentral Library, 4F Seminar Room\nShare materials by the day before"
+  - key: eb587087ebb340c2a23a9e7206f00f62:placeLabel
+    value: "Cafe"
+  - key: e803db9a3cde44198ec100eeb0ffce94:routeFrom
+    value: "Campus"
+  - key: e803db9a3cde44198ec100eeb0ffce94:routeNote
+    value: "Walking"
+  - key: e803db9a3cde44198ec100eeb0ffce94:routeTo
+    value: "Cafe"
+  - key: 1e3a2db989ea4e4b968983d7d400e49b:routeFrom
+    value: "Back Gate"
+  - key: 1e3a2db989ea4e4b968983d7d400e49b:routeTo
+    value: "Bus Stop"
+  - key: 2a0f84820a374f1498ccc1d3afd765f5:routeFrom
+    value: "Campus"
+  - key: 2a0f84820a374f1498ccc1d3afd765f5:routeNote
+    value: "Main Road"
+  - key: 2a0f84820a374f1498ccc1d3afd765f5:routeTo
+    value: "Bus Stop"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:04b14243ca7145e3a5909b2a9c21ef6f:text
+    value: "Why would I go there?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:1010b481e3574c9888cd339f51f5fe22:text
+    value: "I'm not letting it slide this time."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:278d9c0584df4ce092c7eb3aa8ef8157:text
+    value: "Then how long are you going to keep avoiding it?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:29df94d2ced0488ebb7a4c03ee578cea:text
+    value: "What?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:2f7119679fd94c068f1d314f550ef17f:text
+    value: "Forget it.\nYou'll find out soon enough."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:3225f2f8057b4ba9aad0baa6ee2706b2:text
+    value: "You know what I'm talking about."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:33223f94050e4b7a9e38a0581296baa2:text
+    value: "Forget it."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:3d4605f60fc74d0cb1c474583c13d8d0:text
+    value: "Deleting it doesn't make it go away."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:3f3cb9038ecc4acbb4101f414b2b0264:text
+    value: "What are you talking about all of a sudden?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:4a624861dea14357b870297f6f198903:text
+    value: "Let's talk here.\nCome if you're coming."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:501f8bea59ed4e6ea427f7ab3c3986d1:text
+    value: "I honestly don't even know what you're talking about.\nStop contacting me."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:57d79eafd3c74614a87fce23efe24a7c:text
+    value: "What is it?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:5f338b0a6a424225850a0e78ed64eb6b:text
+    value: "I need to talk to you."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:6279ef966e6240dda4a41af59354750b:text
+    value: "Why would I meet you?\nStop following me."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:67fc76527e054c119ff072551ce81d1d:text
+    value: "I don't know.\nAnd stop contacting me."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:6da1179d6e774fca9d2b4fe562df8025:text
+    value: "No."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:6df8002851754ece8607ad46b76d2928:text
+    value: "Let's meet for a minute and talk."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:775f8a80528c48eaadb49eec62ed5692:text
+    value: "Where did you see that?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:7cd5d8aac3774c808c3ad792b57f1921:text
+    value: "Are you seriously going to keep pretending you don't know?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:7d43dc8156f54cc58a243ccc0320520a:text
+    value: "Do you know how terrifying you are?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:8caf4883778d4b45889486fe8f6b4abb:text
+    value: "Are you still going to deny it after seeing this?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:9abd9651069d4a499bc6352182441ce9:text
+    value: "Found it."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:aab421a5c825457191f03175c5fdd69b:text
+    value: "Fine. Keep doing that."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:ac0cfd1bc4ee4eacab4d17a626aabb4b:text
+    value: "Come see it yourself."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:b406f52451ce47b3bb2590e8ab3dd1c2:text
+    value: "What am I supposed to have deleted?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:b4136f6ebb3a4470b94c40945b616511:text
+    value: "Okay."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:b57ce5fed7874e7e81b7f833ba36cdb9:text
+    value: "Ask what?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:d06e40cdb9a340b3bd02fc33d9129a7f:text
+    value: "What is wrong with you lately?\nIf you keep this up, I'm reporting you."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:e3f8452687f040d59db340cb35ed6c1d:text
+    value: "I don't want to say it here."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:e4fb33d84c264b86a820795b3822a91d:text
+    value: "What did you find?"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:eb320ff2978d42c0872e4c9927710115:text
+    value: "I just want to ask a few things.\nAnswer me."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:f31df3c59d534c339a85195ce4942548:text
+    value: "..."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:f44a0b5f33e94a458aa4ba0b596307a4:text
+    value: "I've checked almost everything."
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:fd9d47d27a8b4ad898073630b38208e1:text
+    value: "Where?"
+  - key: e7ff801140884941a9f3ac0fc5a62ad4:message:3ecd7bbb9e2f46cc89785d5dc533254c:text
+    value: "It was posted again. Different URL this time."
+  - key: e7ff801140884941a9f3ac0fc5a62ad4:message:55360aa0b06f4c16a8c517df5c4425a6:text
+    value: "I just need to check a few more."
+  - key: e7ff801140884941a9f3ac0fc5a62ad4:message:5a6441e50bbf4787a2f60d9e5cc13d65:text
+    value: "They said they can't look into it any further because the account is gone. You still have the screenshots, right?"
+  - key: e7ff801140884941a9f3ac0fc5a62ad4:message:5f6d7c36ae724352847360283fb385f1:text
+    value: "I said I don't want to. Let's just stop."
+  - key: e7ff801140884941a9f3ac0fc5a62ad4:message:a3cf3c27fd0044178d4ffddcafdfe9e7:text
+    value: "I reported it, but I think they deleted it and made another account."
+  - key: e7ff801140884941a9f3ac0fc5a62ad4:message:bb7d23e877094d228c61a706ace4684a:text
+    value: "You said you understood, but you keep looking."
+  - key: e7ff801140884941a9f3ac0fc5a62ad4:message:c5553dd460f243cda2aa5c2e87c9a267:text
+    value: "You still have the screenshots and photos I sent before, right?"
+  - key: e7ff801140884941a9f3ac0fc5a62ad4:message:d1547d920da64275a86629c9b27061ae:text
+    value: "Just delete all the screenshots and photos. I don't even want you to have them."
+  - key: e7ff801140884941a9f3ac0fc5a62ad4:message:d745590145454310a7cd12f084551fd7:text
+    value: "I'll screenshot this. Let's include it with the report."
+  - key: e7ff801140884941a9f3ac0fc5a62ad4:message:d9524d457a5c46f98aeedbe8f66130c4:text
+    value: "I really don't want to talk about this anymore."
+  - key: e7ff801140884941a9f3ac0fc5a62ad4:message:fd16a01c70494b1b835db2d9cb14bd4a:text
+    value: "Did they accept the last report too?"
+  - key: c084b1c48b3a4a83a4d7e439cacd4b05:message:048719005c074346b84d655d178f9c34:text
+    value: "I'll come over after I finish my assignment."
+  - key: c084b1c48b3a4a83a4d7e439cacd4b05:message:b59a8517a51a49c0a3b460ddb13cae19:text
+    value: "Can you come over for dinner this weekend?"
+  - key: 5c5342e82614489ba1766a41b3f831bb:groupTitle
+    value: "Data Analysis Team Project"
+  - key: 5c5342e82614489ba1766a41b3f831bb:message:6464c50207184ef0a629a0d6eddd6b8a:text
+    value: "The presentation order changed. Check the materials."
+  - key: 8d3edf77b4004b478a00f79139c2f579:message:f4d22bbc987b4cc88163e1e7335b734f:text
+    value: "Can you cover next Friday's shift?"
+  - key: 4c29f5583ec34b8cbf699725202710ed:message:8da304eee3d3423ba54db7e01fca0462:text
+    value: "The game got patched. Want to play this weekend?"
+  - key: eb423115cc3749fb9d70fb2caff98aca:message:2f8e7bf091ac4780b47e55350892a40e:text
+    value: "Can you walk with me to the main gate after class today?"
+  - key: eb423115cc3749fb9d70fb2caff98aca:message:529f9962c1e441aea8406b44d3d717c0:text
+    value: "Yeah. Text me when you're done."
+  - key: eb423115cc3749fb9d70fb2caff98aca:message:5c82e60613454b4cafaca189cc23651e:text
+    value: "I think I saw the same person by the back gate today."
+  - key: eb423115cc3749fb9d70fb2caff98aca:message:5e0b7dff58eb43fab56daadc37dae105:text
+    value: "I saw them again today. At the bus stop this time."
+  - key: eb423115cc3749fb9d70fb2caff98aca:message:6ebf8aeca749427aa6ed9631c4a5c987:text
+    value: "What kind of person?"
+  - key: eb423115cc3749fb9d70fb2caff98aca:message:6fab3540903f41e98031968119b0932c:text
+    value: "If it keeps happening, keep a record."
+  - key: eb423115cc3749fb9d70fb2caff98aca:message:b5ae82570a1f4be797f8af1868613853:text
+    value: "I think they found my account too. I took down my public photos."
+  - key: 998dfe0f12654973981f80666d3a5677:message:2e01a84871844780887c8255cf310586:text
+    value: "Yeah. I was glad when you said you went to school nearby too."
+  - key: 998dfe0f12654973981f80666d3a5677:message:3415f81b7967450fb591435893f223e8:text
+    value: "Can I send you pics of the shirt from the comments here?"
+  - key: 998dfe0f12654973981f80666d3a5677:message:5bdaa256d1e447c5805328fe86076969:text
+    value: "Sounds good. I'll get there around five."
+  - key: 998dfe0f12654973981f80666d3a5677:message:6648407da13e4393a280a8b442dd125b:text
+    value: "The blue one looks better. The embroidery on the sleeves is cute too."
+  - key: 998dfe0f12654973981f80666d3a5677:message:af9328617e2746e8843b98261b3205fc:text
+    value: "Yesterday was fun. Let's hang out again."
+  - key: 998dfe0f12654973981f80666d3a5677:message:d73e151afc474febb5d2249eb99d007b:text
+    value: "Want to meet at the cafe for a bit after class? We can check the color in person."
+  - key: 998dfe0f12654973981f80666d3a5677:message:ebcfaf5c00d04e8eb5be687f487911f9:text
+    value: "Should I wear this today? I didn't post this photo publicly, so take a look."
+  - key: 1d79b84d878f43eb97c664e362419dd0:message:4bec7ab691874f6da0cd04c846116c5c:text
+    value: "Yeah, see you then."
+  - key: 1d79b84d878f43eb97c664e362419dd0:message:b59395528b794705a1df64b576e83d4c:text
+    value: "Do you have any photos from the last meetup?"
+  - key: 1d79b84d878f43eb97c664e362419dd0:message:bd6e2655c6284f02a29eebb6fe758456:text
+    value: "Yeah, I have one group photo. I'll send it."
+  - key: 1d79b84d878f43eb97c664e362419dd0:message:bdd9a863b1bc4aad8fd194f4539bd77f:text
+    value: "Thanks. See you at the next meetup."
+  - key: 7bea2e98b01b45cfbfbf38e8c2ac5202:message:bb532ff7666a40c4b0d4420204b7d714:text
+    value: "Are you coming home this week?"
+  - key: 7bea2e98b01b45cfbfbf38e8c2ac5202:message:c04fb2278910419ea4380aef8f8001f4:text
+    value: "I'll stop by after I finish my assignment."
+  - key: 7f29db685f3c4ecbaf2fe68444ec3a90:groupTitle
+    value: "Principles of Marketing · Team 2"
+  - key: 7f29db685f3c4ecbaf2fe68444ec3a90:message:7f97cec8f6e943a9862e3b18a81434d5:text
+    value: "Please merge the materials by Friday."
+  - key: 507e632f52584cdca8aeac3ba7e46acc:message:5615073635f04d76a3323e86f65a76a0:text
+    value: "Let's try it next week."
+  - key: 507e632f52584cdca8aeac3ba7e46acc:message:facdf4b35da14fbd946341a4d5df40df:text
+    value: "Have you tried the new restaurant?"
+  - key: 827d4d1b0e4546c190b23c1aa691938e:message:5a7adc63867b419487416fff79ddf9e4:text
+    value: "I'll sort them out and send them."
+  - key: 827d4d1b0e4546c190b23c1aa691938e:message:e69dd0254ff54475aff778b16c342db2:text
+    value: "Send me the photos from last time."
+  - key: 9d820e0d26994486bde25c984c5551c7:groupTitle
+    value: "Film Photography Club Notices"
+  - key: 9d820e0d26994486bde25c984c5551c7:message:f193ed62b4f5471ba73e3b6b63eef7c4:text
+    value: "This week's meeting location has changed."
+  - key: ea65202788ae45dfad454775ed9c3d62:fullName
+    value: "Seo Ji-hun"
+  - key: a7990ce505e845819354b4f02d90a3bb:fullName
+    value: "Lee Jun-ho"
+  - key: e1c8a37418564adeb1b237c813c6838d:fullName
+    value: "Kim Hye-suk"
+  - key: 1fc961f0c98449acb7b254dc36f55e8b:fullName
+    value: "Park Do-hyeon"
+  - key: ec0a1336cb2a405da5277a18c3ffe0f9:fullName
+    value: "Choi Min-seo"
+  - key: e957dd2c141e4ab280fc98d1dedaac71:fullName
+    value: "Han Ji-woo"
+  - key: 17aa4928247a4cd59f798706bdf654c6:fullName
+    value: "Yun Seo-ha"
+  - key: acb53c4d41fc4bcb925cc1b50433854e:fullName
+    value: "Im Ga-ram"
+  - key: e3e736caf0b94ea3a2df1ce990161d47:fullName
+    value: "Yun Ji-su"
+  - key: 78033337daa14b0b80cda674d2181c91:fullName
+    value: "Song Ha-eun"
+  - key: 0468def9f21d4a55a5ce5cc55c216f83:fullName
+    value: "Kim Da-yeon"
+  - key: 29527967b2b947e3877498f527dd32d8:fullName
+    value: "Lee Jeong-ran"
+  - key: 74d376153b274d439562995dc7bf88d2:fullName
+    value: "Oh Se-rin"
+  - key: b98806f82d634a34be6e93c0cfcc48cd:fullName
+    value: "Bae Jun-yeong"
+  - key: f68bc3c9dec1481c8ecbd9d364eca804:fullName
+    value: "Jeong Yu-jin"
+  - key: b6c31488ac244ee3aa8ab1d3f4308869:fullName
+    value: "Kang Na-rin"
+  - key: 6badc425c2f0434bba3a306b27fc0735:title
+    value: "Recents"
+  - key: 2c99f5a88f76455baf27a5bd124cf690:title
+    value: "Screenshots"
+  - key: d2c4b4cf9599437686f9206c55495c3c:title
+    value: "Recents"
+  - key: ed7c339ea72e40779fa3795d4a5341a4:title
+    value: "Screenshots"
+  - key: ee835c82d12e4f069189f9fa85321194:categoryLabel
+    value: "Social Media Account"
+  - key: ee835c82d12e4f069189f9fa85321194:itemLabel
+    value: "Profile Visibility"
+  - key: ee835c82d12e4f069189f9fa85321194:valueAfter
+    value: "Private"
+  - key: ee835c82d12e4f069189f9fa85321194:valueBefore
+    value: "Public"
+  - key: 8254124c617e42e59ef314c0a7662ec9:categoryLabel
+    value: "Messages"
+  - key: 8254124c617e42e59ef314c0a7662ec9:itemLabel
+    value: "Notifications from {contact}"
+  - key: 8254124c617e42e59ef314c0a7662ec9:valueAfter
+    value: "Off"
+  - key: 8254124c617e42e59ef314c0a7662ec9:valueBefore
+    value: "On"
+  - key: 71b7f5cd052146388f37838caea816d8:categoryLabel
+    value: "Cloud"
+  - key: 71b7f5cd052146388f37838caea816d8:itemLabel
+    value: "Backup Folders"
+  - key: 71b7f5cd052146388f37838caea816d8:valueAfter
+    value: "Selected Folders"
+  - key: 71b7f5cd052146388f37838caea816d8:valueBefore
+    value: "All Folders"
+  - key: e0ebd03c72304bbc82a3f2356ab65c94:categoryLabel
+    value: "Cloud"
+  - key: e0ebd03c72304bbc82a3f2356ab65c94:itemLabel
+    value: "Trash"
+  - key: e0ebd03c72304bbc82a3f2356ab65c94:valueAfter
+    value: "Empty"
+  - key: e0ebd03c72304bbc82a3f2356ab65c94:valueBefore
+    value: "Contains Items"
+  - key: 50aa4e00a1e047a284016698fd94c081:categoryLabel
+    value: "Account"
+  - key: 50aa4e00a1e047a284016698fd94c081:itemLabel
+    value: "Account on This Device"
+  - key: 50aa4e00a1e047a284016698fd94c081:valueAfter
+    value: "Disconnected"
+  - key: 50aa4e00a1e047a284016698fd94c081:valueBefore
+    value: "Connected"
+  - key: 4998cb37154a43f28b9786f045e907f1:categoryLabel
+    value: "Cloud"
+  - key: 4998cb37154a43f28b9786f045e907f1:itemLabel
+    value: "Photo Auto Backup"
+  - key: 4998cb37154a43f28b9786f045e907f1:valueAfter
+    value: "Always"
+  - key: 4998cb37154a43f28b9786f045e907f1:valueBefore
+    value: "Wi-Fi Only"
+  - key: 867f544f61b9443fa4b14b7839c917c0:categoryLabel
+    value: "Notifications"
+  - key: 867f544f61b9443fa4b14b7839c917c0:itemLabel
+    value: "Do Not Disturb Schedule"
+  - key: 867f544f61b9443fa4b14b7839c917c0:valueAfter
+    value: "11:00 PM–7:00 AM"
+  - key: 867f544f61b9443fa4b14b7839c917c0:valueBefore
+    value: "Off"
+  - key: 24fbf992fb4647079768d28e0d008d8d:body
+    value: "Please retain any photos that include family members. Review and dispose of the remaining personal records as appropriate."
+  - key: 24fbf992fb4647079768d28e0d008d8d:title
+    value: "Family Request"
+  - key: 08966864b12940cdab968e4acf816322:body
+    value: "To protect their privacy, please clear the personal accounts and online traces. We will review family photos separately."
+  - key: 08966864b12940cdab968e4acf816322:title
+    value: "Family Request"
+  - key: 77a22cba56e043b9bed441dbe7ec6e10:hint
+    value: "Classify records to be kept as Retain."
+  - key: 77a22cba56e043b9bed441dbe7ec6e10:targetLabel
+    value: "Family Photo"

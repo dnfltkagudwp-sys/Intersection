@@ -36,7 +36,9 @@ namespace Intersection.UI
 
         void Awake()
         {
-            text = new UIText(config.strings);
+            // 콘텐츠 원문 언어면 번역 테이블 없이 에셋 원문 그대로 보인다.
+            ContentText.Use(config.ActiveContentTable);
+            text = new UIText(config.ActiveStrings);
             time = new PhoneTime(config, text);
             session = new SessionState(config.EffectiveStartStage);
             foreach (var label in GetComponentsInChildren<LocalizedText>(true))
@@ -60,6 +62,9 @@ namespace Intersection.UI
             if (cam != null && cam.TryGetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>(out var data))
                 data.renderPostProcessing = Theme.uiPostProcessing;
         }
+
+        // 도메인 리로드를 끈 에디터에서는 정적 값이 플레이 뒤에도 남는다. 에디터 도구(검증·캡처 렌더러)가 원문을 쓰도록 되돌린다.
+        void OnDestroy() => ContentText.Use(null);
 
         void Start()
         {
@@ -331,7 +336,7 @@ namespace Intersection.UI
             });
         }, RecordRef.ForThread(device, entry.thread));
 
-        static string OwnerName(CaseData device) => device.owner != null ? device.owner.fullName : device.DisplayName;
+        static string OwnerName(CaseData device) => device.owner != null ? device.owner.FullName : device.DisplayName;
 
         /// <summary>"로컬 · 문자(SMS)"처럼 출처와 확정된 생성 경로. 경로가 없으면 출처만.</summary>
         string SourceText(RecordSource source, string serviceKey) =>

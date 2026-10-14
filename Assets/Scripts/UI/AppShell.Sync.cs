@@ -133,7 +133,7 @@ namespace Intersection.UI
                     var target = RecordRef.ForAsset(guide.target);
                     var guideRequest = guide.request;
                     statusAction = () => OpenRequestFromTop(guideRequest);
-                    return Link(text.Format(UIKeys.TopGuideState, ("target", guide.targetLabel),
+                    return Link(text.Format(UIKeys.TopGuideState, ("target", guide.TargetLabel),
                         ("state", text.Get(UIKeys.GuideStateKey(store.ClassOf(target.Key))))), 0f);
                 }
                 return new TopBarView.Status { text = text.Get(next.notReadyKey), style = TopBarView.StatusStyle.Plain };
@@ -213,7 +213,7 @@ namespace Intersection.UI
             var next = review.pending.FirstOrDefault();
             reviewPopover.Show(
                 review.Complete ? text.Get(batch.doneTitleKey) : ReviewTitle(batch, review),
-                review.Complete ? text.Format(batch.doneBodyKey, ("total", review.Total.ToString(time.Culture))) : null,
+                review.Complete ? text.FormatCount(batch.doneBodyKey, review.Total, ("total", review.Total.ToString(time.Culture))) : null,
                 rows, text.Get(UIKeys.ReviewContinue),
                 next != null ? () => OpenReviewTarget(next) : (System.Action)null,
                 new ReviewPopoverView.Palette
@@ -339,7 +339,7 @@ namespace Intersection.UI
             summaryView.Show(text.Get(UIKeys.SummaryHeading),
                 text.Format(effect != null && !string.IsNullOrEmpty(effect.templateKey) ? effect.templateKey : job.doneKey,
                     ("caseDisplayName", tokenCase.DisplayName)),
-                text.Format(UIKeys.SummaryCount, ("count", records.Count.ToString(time.Culture))),
+                text.FormatCount(UIKeys.SummaryCount, records.Count, ("count", records.Count.ToString(time.Culture))),
                 text.Get(UIKeys.SummaryEmpty), rows,
                 text.Get(UIKeys.SummaryOpen), openFirst,
                 text.Get(UIKeys.SummaryLater), CloseSummary);

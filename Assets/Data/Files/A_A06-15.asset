@@ -28,5 +28,6 @@ MonoBehaviour:
   mediaAssetId: 
   preview: {fileID: 2800000, guid: d4407743fccf1cc40994667e5097d5b2, type: 3}
   visibleText:
-  - kind: 0
+  - id: f3edccbe96bf49c69d2641c77b078ea2
+    kind: 0
     text: "\uC2E0\uACE0 \uB0B4\uC5ED\n\u2026case_12\n\uACC4\uC815 \xB7 \uC811\uC218\uB428\n\uCC98\uB9AC \uC911\n1\uC77C\n\uAC8C\uC2DC\uBB3C\n\uCC98\uB9AC \uC644\uB8CC"

@@ -35,5 +35,20 @@ namespace Intersection.Data
 
         [Tooltip("위치 기록의 마지막 시각 (time = 시작)")]
         public RelativeTime endTime;
+
+        public string PlaceLabel => ContentText.Get(Id, ContentText.Field.PlaceLabel, placeLabel);
+        public string RouteFrom => ContentText.Get(Id, ContentText.Field.RouteFrom, routeFrom);
+        public string RouteTo => ContentText.Get(Id, ContentText.Field.RouteTo, routeTo);
+        public string RouteNote => ContentText.Get(Id, ContentText.Field.RouteNote, routeNote);
+
+        public override System.Collections.Generic.IEnumerable<ContentField> ContentFields()
+        {
+            var list = new System.Collections.Generic.List<ContentField>();
+            ContentText.Add(list, Id, ContentText.Field.PlaceLabel, placeLabel);
+            ContentText.Add(list, Id, ContentText.Field.RouteFrom, routeFrom);
+            ContentText.Add(list, Id, ContentText.Field.RouteTo, routeTo);
+            ContentText.Add(list, Id, ContentText.Field.RouteNote, routeNote);
+            return list;
+        }
     }
 }

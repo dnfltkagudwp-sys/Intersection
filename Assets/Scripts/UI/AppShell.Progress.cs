@@ -29,25 +29,25 @@ namespace Intersection.UI
             progressStore = new ProgressStore(Path.Combine(Application.persistentDataPath, config.progressSaveFileName),
                 config.EffectiveStartStage);
             progression = new Progression(config.database, store, progressStore, text);
-            // 세이브 복원 뒤: 진행 중 작업의 완료 조건을 다시 평가한다(이미 충족된 채 종료했을 수 있다).
-            progression.AutoComplete();
+            // 세이브 복원 뒤: 진행 중 작업의 완료 조건과 아직 시작하지 않은 작업의 준비 효과를 다시 평가한다(이미 충족된 채 종료했을 수 있다).
+            progression.Evaluate();
             session.Stage = progression.Stage;
             // 열람 상태가 바뀌는 모든 경로(대화방·사진·상세·원본 열기·검색 결과 열기)는 WorkStore.MarkViewed 하나를 거치므로,
-            // 호출부마다 판정을 두지 않고 업무 상태 변경 뒤 한 곳에서 완료 조건을 평가한다.
+            // 호출부마다 판정을 두지 않고 업무 상태 변경 뒤 한 곳에서 완료 조건·준비 효과를 평가한다.
             store.Changed += OnWorkChanged;
             topBar.Bind(OnSearchChanged, OnSearchSelected, ToggleNotifications, OnStatusClicked);
         }
 
-        /// <summary>자동 완료로 진행이 바뀌어 다음 프레임에 화면을 다시 그려야 하는지.</summary>
+        /// <summary>자동 완료·준비 알림으로 진행이 바뀌어 다음 프레임에 화면을 다시 그려야 하는지.</summary>
         bool progressRefreshPending;
 
         /// <summary>
-        /// 업무 상태(열람·고정·분류·메모)가 바뀐 뒤. 완료 판정과 저장은 바로 하고(데이터만 바꿈),
+        /// 업무 상태(열람·고정·분류·메모)가 바뀐 뒤. 완료·준비 판정과 저장은 바로 하고(데이터만 바꿈),
         /// 화면 갱신은 지금 진행 중인 화면 전환(원본 열기 등)을 끊지 않도록 프레임 끝으로 미룬다.
         /// </summary>
         void OnWorkChanged()
         {
-            if (progression != null && progression.AutoComplete())
+            if (progression != null && progression.Evaluate())
                 progressRefreshPending = true;
         }
 
@@ -61,8 +61,8 @@ namespace Intersection.UI
         /// <summary>진행이 바뀐 뒤: 접근 단계를 맞추고 전체 화면·알림을 다시 그린다.</summary>
         void AfterProgressChange()
         {
-            // 단계가 바뀌면 그 단계에서 열 수 있게 된 원본으로 완료 조건이 충족될 수 있다(같은 판정 경로, 이미 완료한 작업은 건너뜀).
-            progression.AutoComplete();
+            // 단계가 바뀌면 그 단계에서 열 수 있게 된 원본으로 완료·시작 조건이 충족될 수 있다(같은 판정 경로, 이미 완료한 작업·실행한 효과는 건너뜀).
+            progression.Evaluate();
             progressRefreshPending = false;
             session.Stage = progression.Stage;
             if (session.CurrentCase == null || !session.CurrentCase.IsAvailable(session.Stage))
@@ -173,7 +173,7 @@ namespace Intersection.UI
                 })
                 .ToList();
             searchView.Show(text.Get(UIKeys.SearchTitle),
-                text.Format(UIKeys.SearchCount, ("count", hits.Count.ToString(time.Culture))),
+                text.FormatCount(UIKeys.SearchCount, hits.Count, ("count", hits.Count.ToString(time.Culture))),
                 text.Get(UIKeys.GlobalSearchEmpty), groups, resetScroll);
         }
 

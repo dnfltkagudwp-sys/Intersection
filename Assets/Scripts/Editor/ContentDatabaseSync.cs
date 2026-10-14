@@ -58,8 +58,9 @@ namespace Intersection.EditorTools
             var tutorials = Load<TutorialData>();
             var jobs = Load<ProgressJobData>();
             var reviews = Load<ReviewBatchData>();
+            var recordGroups = Load<ProgressRecordGroupData>();
             FixDuplicateAssetIds(people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums)
-                .Concat(browser).Concat(maps).Concat(files).Concat(folders).Concat(settings).Concat(requests).Concat(tutorials).Concat(jobs).Concat(reviews));
+                .Concat(browser).Concat(maps).Concat(files).Concat(folders).Concat(settings).Concat(requests).Concat(tutorials).Concat(jobs).Concat(reviews).Concat(recordGroups));
             FixDuplicateInnerIds(threads);
 
             foreach (var db in Load<ContentDatabase>())
@@ -68,12 +69,14 @@ namespace Intersection.EditorTools
                     && db.photos.SequenceEqual(photos) && db.albums.SequenceEqual(albums)
                     && db.browser.SequenceEqual(browser) && db.maps.SequenceEqual(maps) && db.files.SequenceEqual(files)
                     && db.folders.SequenceEqual(folders) && db.settings.SequenceEqual(settings)
-                    && db.requests.SequenceEqual(requests) && db.tutorials.SequenceEqual(tutorials) && db.jobs.SequenceEqual(jobs) && db.reviews.SequenceEqual(reviews))
+                    && db.requests.SequenceEqual(requests) && db.tutorials.SequenceEqual(tutorials) && db.jobs.SequenceEqual(jobs) && db.reviews.SequenceEqual(reviews)
+                    && db.recordGroups.SequenceEqual(recordGroups))
                     continue;
                 db.requests = requests;
                 db.tutorials = tutorials;
                 db.jobs = jobs;
                 db.reviews = reviews;
+                db.recordGroups = recordGroups;
                 db.people = people;
                 db.cases = cases;
                 db.threads = threads;

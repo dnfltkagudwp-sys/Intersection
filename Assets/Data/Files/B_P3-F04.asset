@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b94c0e0a1ae5044b84d156e93a7bf87, type: 3}
+  m_Name: B_P3-F04
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.FileRecord
+  id: 3043f4ba4d8a402bbd1f4be97affb55b
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  time:
+    dayOffset: -9
+    hour: 18
+    minute: 22
+  sortKey: 0
+  source: 1
+  availableFrom: 3
+  evidenceRef: 
+  integrityKey: integrity.original
+  authorNote: "P3-F04 \u2014 \uC77C\uBC18. B-F12 \uC11C\uC810 \uACB0\uC81C\uC640 \uAC19\uC740 \uB0A0"
+  path: "Download/\uC8FC\uBB38\uD655\uC778\uC11C.pdf"
+  mediaAssetId: 
+  preview: {fileID: 0}
+  visibleText:
+  - id: 81deb024b3064d1db885880a6799928b
+    kind: 0
+    text: "\uC8FC\uBB38\uC774 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4\n\uC0C1\uD488 2\uAC74\n\uACB0\uC81C \uAE08\uC561 31,500\uC6D0\n\uBC30\uC1A1 \uC608\uC815 2~3\uC77C"

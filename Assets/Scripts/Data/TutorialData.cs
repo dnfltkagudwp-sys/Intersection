@@ -24,5 +24,19 @@ namespace Intersection.Data
 
         [Tooltip("이 단계부터는 안내 줄을 다시 띄우지 않는다 (재분류해도 돌아오지 않음). 요청 패널 상태 줄은 계속 현재 분류를 보여준다.")]
         public ProgressStage hintUntil = ProgressStage.P1;
+
+        /// <summary>요청 패널 상태 줄의 대상 이름 (현재 언어).</summary>
+        public string TargetLabel => ContentText.Get(Id, ContentText.Field.TargetLabel, targetLabel);
+
+        /// <summary>하단 안내 한 줄 (현재 언어).</summary>
+        public string Hint => ContentText.Get(Id, ContentText.Field.Hint, hint);
+
+        public override System.Collections.Generic.IEnumerable<ContentField> ContentFields()
+        {
+            var list = new System.Collections.Generic.List<ContentField>();
+            ContentText.Add(list, Id, ContentText.Field.TargetLabel, targetLabel);
+            ContentText.Add(list, Id, ContentText.Field.Hint, hint);
+            return list;
+        }
     }
 }

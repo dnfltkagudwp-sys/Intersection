@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a2a5cc54e83c884ab1c09284e415746, type: 3}
   m_Name: Strings_ko
   m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.StringTable
+  language: ko
+  cultureName: ko-KR
   entries:
   - key: format.time
     value: tt h:mm
@@ -565,3 +567,9 @@ MonoBehaviour:
     value: "{n}%"
   - key: zoom.fitWidth
     value: "\uB108\uBE44 \uB9DE\uCDA4"
+  - key: service.autoBackup
+    value: "자동 백업"
+  - key: integrity.cloudOnly
+    value: "클라우드에만 있음"
+  - key: notify.recoveryReady
+    value: "삭제된 데이터 인덱스가 확인되었습니다. 추가 복구 작업을 시작할 수 있습니다."

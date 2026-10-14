@@ -143,7 +143,7 @@ namespace Intersection.Core
         /// <summary>설정 항목 표시명. {contact}는 이 기기 주소록 기준 대화 상대 표시명.</summary>
         public static string SettingItemLabel(SettingRecord s, CaseData device) =>
             s.linkedThread == null
-                ? s.itemLabel
-                : (s.itemLabel ?? string.Empty).Replace("{contact}", DeviceQuery.DisplayName(s.linkedThread, device));
+                ? s.ItemLabel
+                : (s.ItemLabel ?? string.Empty).Replace("{contact}", DeviceQuery.DisplayName(s.linkedThread, device));
     }
 }

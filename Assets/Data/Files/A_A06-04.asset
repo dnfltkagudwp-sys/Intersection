@@ -28,5 +28,6 @@ MonoBehaviour:
   mediaAssetId: 
   preview: {fileID: 2800000, guid: 070eb8a2207578f49a3ad97dc12722fc, type: 3}
   visibleText:
-  - kind: 0
+  - id: d0ac1619c1d3482bb7695764707ceab2
+    kind: 0
     text: "smallroom_08\n\uAC8C\uC2DC\uBB3C 2\n\uD314\uB85C\uC6CC 17\n\uD314\uB85C\uC789 0\n\uBAA8\uC544\uB450\uB294 \uACF3\n\uB514\uC5E0 X\n\uD314\uB85C\uC6B0\n\uBA54\uC2DC\uC9C0"
