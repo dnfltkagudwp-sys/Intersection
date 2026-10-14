@@ -26,7 +26,7 @@ MonoBehaviour:
   availableFrom: 3
   evidenceRef: 
   mediaAssetId: 
-  image: {fileID: 0}
+  image: {fileID: 2800000, guid: 3e657e1f0bdf4b31be922e871cbbe417, type: 3}
   integrityKey: integrity.cloudOnly
-  authorNote: "P3-G01 \u2014 \uC77C\uBC18. \uBE44 \uAC20 \uB4A4 \uCEA0\uD37C\uC2A4 \uBCA4\uCE58\uC640 \uC811\uC740 \uC6B0\uC0B0(\uC0AC\uB78C\xB7\uAE00\uC790 \uC5C6\uC74C). \uC774\uBBF8\uC9C0 \uC81C\uC791 \uC804 \uC911\uB9BD \uC790\uB9AC \uD45C\uC2DC"
+  authorNote: "P3-G01 \u2014 \uC77C\uBC18. \uBE44 \uAC20 \uB4A4 \uCEA0\uD37C\uC2A4 \uBCA4\uCE58\uC640 \uC811\uC740 \uC6B0\uC0B0(\uC0AC\uB78C\xB7\uAE00\uC790 \uC5C6\uC74C). \uC815\uC2DD \uC774\uBBF8\uC9C0 \uC5F0\uACB0 \uC644\uB8CC(2026-10-14, Art/Photos/Originals/B_IMG_0371.png 896\xD71200, \uC0AC\uB78C\xB7\uAE00\uC790\xB7\uB85C\uACE0 \uC5C6\uC74C)"
   visibleText: 

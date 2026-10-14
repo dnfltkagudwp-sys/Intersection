@@ -307,9 +307,13 @@ namespace Intersection.EditorTools
                 error($"{what}은 {availableFrom}부터 열 수 있는데, 이 작업을 시작하기 전에 도달할 수 있는 단계는 {before}까지입니다: {where}", job);
         }
 
+        /// <summary>완료 조건을 모두 만족하면 스스로 완료되는 작업.</summary>
+        static bool SelfCompletes(ProgressJobData j) => j.autoCompleteWhenReady && j.completionConditions.Count > 0;
+
         /// <summary>
         /// 이 작업을 시작하지 않고 도달할 수 있는 최대 접근 단계. 다른 작업 중 시작할 수 있는 것의 시작 효과와,
-        /// 완료될 수 있는 것(completedExternally 또는 시작 가능한 다른 작업이 완료시킴)의 완료 효과만 반영한다.
+        /// 완료될 수 있는 것(completedExternally, 완료 조건으로 자동 완료, 또는 시작 가능한 다른 작업이 완료시킴)의 완료 효과만 반영한다.
+        /// 자동 완료 작업은 완료 조건 대상의 접근 시점을 CheckCompletion이 따로 검사하므로 여기서는 시작하면 완료될 수 있다고 본다.
         /// </summary>
         static ProgressStage StageReachableBefore(ProgressJobData self, List<ProgressJobData> jobs, ProgressStage startStage)
         {
@@ -333,7 +337,7 @@ namespace Intersection.EditorTools
                             if (e.kind == ProgressEffectKind.CompleteJob && e.job != null && e.job != self) completed.Add(e.job);
                         }
                     }
-                    if (started.Contains(j) && !completed.Contains(j) && j.completedExternally)
+                    if (started.Contains(j) && !completed.Contains(j) && (j.completedExternally || SelfCompletes(j)))
                     {
                         completed.Add(j);
                         changed = true;
@@ -417,6 +421,19 @@ namespace Intersection.EditorTools
                                 error($"시작 조건의 열람 묶음이 비어 있습니다(삭제된 대상): {where}", job);
                             else if (!recordGroups.Contains(c.group))
                                 error($"시작 조건이 존재하지 않는 열람 묶음을 가리킵니다: {where}", job);
+                            else
+                            {
+                                // 개별 RecordViewed와 같은 기준: 각 대상을 이 작업 시작 전에 도달할 수 있는 단계에서 열 수 있어야 한다.
+                                var before = StageReachableBefore(job, jobs, config.startStage);
+                                foreach (var t in c.group.targets)
+                                {
+                                    if (t == null || t.record == null)
+                                        error($"시작 조건 열람 묶음({c.group.name})의 대상이 비어 있습니다(삭제된 대상): {where}", job);
+                                    else
+                                        CheckTargetShape(t.device, t.record, $"시작 조건 열람 묶음({c.group.name})의 대상({t.record.name})", job,
+                                            threads, photos, records, where, error, before);
+                                }
+                            }
                             break;
                         case ProgressConditionKind.ReviewBatchViewed:
                             if (c.batch == null)
@@ -612,14 +629,14 @@ namespace Intersection.EditorTools
                 var completers = jobs.Where(o => o != job && o.AllEffects.Any(e => e != null && e.kind == ProgressEffectKind.CompleteJob && e.job == job)).ToList();
                 bool needed = jobs.Any(o => o.startConditions.Any(c => c != null && c.kind == ProgressConditionKind.JobCompleted && c.job == job))
                               || job.onComplete.Any(e => e != null);
-                bool selfCompletes = job.autoCompleteWhenReady && job.completionConditions.Count > 0;
+                bool selfCompletes = SelfCompletes(job);
                 if (needed && !job.completedExternally && !selfCompletes && completers.Count == 0)
                     error($"작업을 완료시키는 경로가 없습니다 (다른 작업의 완료 효과도, completedExternally도, 자동 완료도 없음): {Path(job)}", job);
                 foreach (var c in job.startConditions.Where(c => c != null && c.kind == ProgressConditionKind.JobCompleted && c.job != null))
                 {
                     var dep = c.job;
                     var depCompleters = jobs.Where(o => o != job && o.AllEffects.Any(e => e != null && e.kind == ProgressEffectKind.CompleteJob && e.job == dep)).ToList();
-                    if (!dep.completedExternally && depCompleters.Count > 0 && depCompleters.All(o => o == job))
+                    if (!dep.completedExternally && !SelfCompletes(dep) && depCompleters.Count > 0 && depCompleters.All(o => o == job))
                         error($"교착: {Path(job)}은 {Path(dep)} 완료를 기다리지만, 그 작업은 이 작업이 시작돼야만 완료됩니다.", job);
                 }
             }
