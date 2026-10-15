@@ -86,9 +86,90 @@ namespace Intersection.UI
 
         void StartJob(ProgressJobData job)
         {
-            if (comparing || !progression.Start(job))
+            if (comparing || presenting || !progression.Start(job))
                 return;
+            // 진행 데이터(시작·자동 완료·단계·알림·요약 기록)는 Start가 이미 한 트랜잭션으로 저장했다. 연출은 화면 표시일 뿐이다.
+            if (!string.IsNullOrEmpty(job.startPresentationKey))
+                BeginStartPresentation(job);
             AfterProgressChange();
+        }
+
+        // ───────────── 작업 시작 연출 ─────────────
+
+        /// <summary>작업 시작 직후 처리 연출 중인지. 저장하지 않으므로 재실행하면 연출은 반복되지 않는다.</summary>
+        bool presenting;
+        float presentingUntil;
+        int presentingFrame;
+        bool presentingSkipped;
+        CanvasGroup topBarGroup;
+
+        /// <summary>
+        /// 작업 데이터에 연출 문구 키가 있으면 중앙에 처리 화면을 잠깐 보여주고 입력을 막는다(클릭·Enter로 건너뛰기, Esc는 무시).
+        /// 그동안 결과 요약 자동 표시는 보류되며, 연출이 끝나면 확인하지 않은 요약을 연다.
+        /// 휴대전화 탐색·작업함·검색 상태와 업무 기록은 바꾸지 않는다(중앙을 덮기만 함).
+        /// </summary>
+        void BeginStartPresentation(ProgressJobData job)
+        {
+            CloseNotifications();
+            CloseReviewPopover();
+            presenting = true;
+            presentingUntil = Time.unscaledTime + Mathf.Max(0f, job.startPresentationSeconds);
+            presentingFrame = Time.frameCount;
+            presentingSkipped = false;
+            // 시작 버튼에 남은 선택을 지워 연출 중·직후의 Enter가 그 버튼으로 제출되지 않게 한다.
+            UnityEngine.EventSystems.EventSystem.current?.SetSelectedGameObject(null);
+            var device = job.device;
+            summaryView.Open();
+            summaryView.ShowProcessing(text.Get(job.startPresentationKey),
+                device != null ? text.Format(UIKeys.TopCaseStatus, ("case", device.DisplayName), ("status", text.Get(job.runningKey))) : null);
+            SetPresentationInputBlocked(true);
+        }
+
+        void EndStartPresentation()
+        {
+            if (!presenting)
+                return;
+            presenting = false;
+            SetPresentationInputBlocked(false);
+            // 연출 화면만 닫는다(요약 확인 처리 없음). 이어서 보류된 결과 요약이 있으면 연다.
+            summaryView.Close();
+            UnityEngine.EventSystems.EventSystem.current?.SetSelectedGameObject(null);
+            ShowPendingSummary();
+            RenderTopBar();
+        }
+
+        void SetPresentationInputBlocked(bool blocked)
+        {
+            SetSideInteractable(!blocked);
+            if (topBarGroup == null && !topBar.TryGetComponent(out topBarGroup))
+                topBarGroup = topBar.gameObject.AddComponent<CanvasGroup>();
+            topBarGroup.interactable = !blocked;
+            topBarGroup.blocksRaycasts = !blocked;
+        }
+
+        /// <summary>
+        /// 연출 중 입력: 클릭·Enter로 건너뛰고, 시간이 지나면 끝낸다. 다른 키(Esc 포함)는 아무 화면도 바꾸지 않는다.
+        /// 건너뛰기·시간 만료 뒤에도 Enter·왼쪽 버튼을 누르고 있는 동안은 닫지 않는다. 닫히는 순간 같은 프레임에 보류된 결과 요약이
+        /// 열리므로, 누른 입력이 남아 있으면 UI 입력 모듈이 그 입력을 요약의 버튼(누름·제출)으로 받을 수 있기 때문이다.
+        /// 누른 순간에는 아직 연출 화면(버튼 없음)과 막힌 상단·좌우 패널만 있어 아무 버튼도 눌리지 않는다.
+        /// </summary>
+        void UpdateStartPresentation()
+        {
+            // 시작을 누른 Enter·클릭이 같은 프레임에 건너뛰기로 읽히지 않게 한다.
+            if (Time.frameCount == presentingFrame)
+                return;
+            var keyboard = UnityEngine.InputSystem.Keyboard.current;
+            var mouse = UnityEngine.InputSystem.Mouse.current;
+            bool skip = (keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame))
+                        || (mouse != null && mouse.leftButton.wasPressedThisFrame);
+            if (skip)
+                presentingSkipped = true;
+            if (!presentingSkipped && Time.unscaledTime < presentingUntil)
+                return;
+            bool held = (keyboard != null && (keyboard.enterKey.isPressed || keyboard.numpadEnterKey.isPressed))
+                        || (mouse != null && mouse.leftButton.isPressed);
+            if (!held)
+                EndStartPresentation();
         }
 
         // ───────────── 전역 검색 ─────────────
@@ -208,6 +289,7 @@ namespace Intersection.UI
                 case AppKind.Maps: return RecordKind.Map;
                 case AppKind.Files: return RecordKind.File;
                 case AppKind.Settings: return RecordKind.Setting;
+                case AppKind.Mail: return RecordKind.Mail;
                 default: return RecordKind.Thread;
             }
         }

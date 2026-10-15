@@ -19,6 +19,9 @@ namespace Intersection.Data
 
         [Tooltip("화면 구현이 끝난 앱만 켠다. 꺼진 앱은 비활성으로 표시된다.")]
         public bool implemented;
+
+        [Tooltip("이 기기에서 지금 볼 수 있는 기록이 없으면 좌측 목록에서 숨긴다 (기록이 생기는 단계부터 나타나는 앱).")]
+        public bool hideWhenEmpty;
     }
 
     /// <summary>좌측 앱 목록의 표시명·순서·아이콘·활성 여부.</summary>

@@ -43,3 +43,9 @@ MonoBehaviour:
     order: 5
     icon: {fileID: 0}
     implemented: 1
+  - kind: 6
+    nameKey: app.mail
+    order: 6
+    icon: {fileID: 0}
+    implemented: 1
+    hideWhenEmpty: 1

@@ -27,6 +27,9 @@ namespace Intersection.Data
         [Tooltip("날짜·시각 표기에 쓰는 로케일")]
         public string cultureName = "ko-KR";
 
+        [Tooltip("경로·파일명의 날짜 토큰 {folderDate:N} 형식 (기기에 저장된 실제 이름이라 언어와 무관, 고정 문화권). 화면 문구용 날짜 형식(문자열 테이블)과 별개다.")]
+        public string folderDateFormat = PathTokens.DefaultFormat;
+
         [Header("표시 언어")]
         [Tooltip("콘텐츠 원문(데이터 에셋)의 언어. 이 언어로 표시할 때는 번역 테이블을 쓰지 않는다.")]
         public string contentSourceLanguage = "ko";
@@ -115,6 +118,13 @@ namespace Intersection.Data
         public StringTable strings;
         public UITheme theme;
         public AppRegistry apps;
+
+        // 경로 날짜 토큰은 데이터 에셋(파일 기록)이 GameConfig 없이도 같은 결과를 쓰도록 정적 설정에 맞춘다(로드·값 변경 시).
+        void OnEnable() => ApplyPathTokens();
+
+        void OnValidate() => ApplyPathTokens();
+
+        public void ApplyPathTokens() => PathTokens.Configure(CaseDate, folderDateFormat);
 
         public bool TryGetCaseDate(out DateTime date)
         {

@@ -96,6 +96,9 @@ namespace Intersection.Core
                 case RecordKind.Setting:
                     return FromRecord(Single(db.settings.Where(x => x != null && x.Id == r.recordId && x.device == result.device), result),
                         result, s => RecordQuery.SettingItemLabel(s, result.device));
+                case RecordKind.Mail:
+                    return FromRecord(Single(db.mails.Where(x => x != null && x.Id == r.recordId && x.device == result.device), result),
+                        result, m => MailSubject(m, text));
                 case RecordKind.Request:
                 {
                     var q = Single(db.requests.Where(x => x != null && x.Id == r.recordId && x.device == result.device), result);
@@ -109,6 +112,10 @@ namespace Intersection.Core
                     return Missing(result);
             }
         }
+
+        /// <summary>메일 제목. 비어 있으면 중립 표기(제목 없음).</summary>
+        public static string MailSubject(MailRecord m, UIText text) =>
+            string.IsNullOrEmpty(m.Subject) ? text.Get(UIKeys.MailSubjectNone) : m.Subject;
 
         public static string MapTitle(MapRecord r, UIText text)
         {
@@ -129,6 +136,7 @@ namespace Intersection.Core
                 case RecordKind.File: return UIKeys.RecordPrefixFile;
                 case RecordKind.Setting: return UIKeys.RecordPrefixSetting;
                 case RecordKind.Request: return UIKeys.RecordPrefixRequest;
+                case RecordKind.Mail: return UIKeys.RecordPrefixMail;
                 default: return UIKeys.RecordPrefixThread;
             }
         }

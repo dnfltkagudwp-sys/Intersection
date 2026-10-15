@@ -573,3 +573,43 @@ MonoBehaviour:
     value: "클라우드에만 있음"
   - key: notify.recoveryReady
     value: "삭제된 데이터 인덱스가 확인되었습니다. 추가 복구 작업을 시작할 수 있습니다."
+  - key: app.mail
+    value: "메일"
+  - key: app.mail.title
+    value: "메일"
+  - key: mail.empty
+    value: "표시할 메일이 없습니다."
+  - key: mail.box.inbox
+    value: "받은편지함"
+  - key: mail.box.drafts
+    value: "임시보관함"
+  - key: mail.field.from
+    value: "보낸 사람"
+  - key: mail.field.to
+    value: "받는 사람"
+  - key: mail.field.attachments
+    value: "첨부"
+  - key: mail.field.status
+    value: "상태"
+  - key: mail.to.me
+    value: "나"
+  - key: mail.to.none
+    value: "받는 사람 없음"
+  - key: mail.subject.none
+    value: "(제목 없음)"
+  - key: mail.from.unknown
+    value: "알 수 없는 발신자"
+  - key: mail.fromFormat
+    value: "{name} <{address}>"
+  - key: mail.body.empty
+    value: "본문이 없습니다."
+  - key: mail.status.unsent
+    value: "보내지 않음"
+  - key: panel.title.mail
+    value: "메일 기록"
+  - key: record.prefix.mail
+    value: MAI
+  - key: kind.mail
+    value: "메일"
+  - key: summary.app.mail
+    value: "메일"

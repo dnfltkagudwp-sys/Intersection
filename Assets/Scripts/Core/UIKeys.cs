@@ -241,6 +241,28 @@ namespace Intersection.Core
         public const string SummaryAppMaps = "summary.app.maps";
         public const string SummaryAppFiles = "summary.app.files";
         public const string SummaryAppSettings = "summary.app.settings";
+        public const string SummaryAppMail = "summary.app.mail";
+
+        // 메일 앱 (읽기 전용 기록)
+        public const string MailTitle = "app.mail.title";
+        public const string MailEmpty = "mail.empty";
+        public const string MailBoxInbox = "mail.box.inbox";
+        public const string MailBoxDrafts = "mail.box.drafts";
+        public const string MailFieldFrom = "mail.field.from";
+        public const string MailFieldTo = "mail.field.to";
+        public const string MailFieldAttachments = "mail.field.attachments";
+        public const string MailFieldStatus = "mail.field.status";
+        public const string MailToNone = "mail.to.none";
+        public const string MailSubjectNone = "mail.subject.none";
+        public const string MailFromUnknown = "mail.from.unknown";
+        public const string MailFromFormat = "mail.fromFormat";
+        public const string MailBodyEmpty = "mail.body.empty";
+        public const string PanelTitleMail = "panel.title.mail";
+        public const string RecordPrefixMail = "record.prefix.mail";
+        public const string KindMail = "kind.mail";
+
+        /// <summary>메일 목록의 메일함 구역 순서. 여기 없는 메일함 키는 그 뒤에 키 순서로 놓인다.</summary>
+        public static readonly string[] MailboxOrder = { MailBoxInbox, MailBoxDrafts };
 
         /// <summary>검토 묶음 문구에서 쓸 수 있는 토큰.</summary>
         public static readonly string[] ReviewTokens = { "total" };
@@ -254,6 +276,7 @@ namespace Intersection.Core
                 case Intersection.Data.AppKind.Maps: return SummaryAppMaps;
                 case Intersection.Data.AppKind.Files: return SummaryAppFiles;
                 case Intersection.Data.AppKind.Settings: return SummaryAppSettings;
+                case Intersection.Data.AppKind.Mail: return SummaryAppMail;
                 default: return SummaryAppMessages;
             }
         }
@@ -286,6 +309,7 @@ namespace Intersection.Core
                 case RecordKind.File: return KindFile;
                 case RecordKind.Setting: return KindSetting;
                 case RecordKind.Request: return KindRequest;
+                case RecordKind.Mail: return KindMail;
                 default: return KindMessage;
             }
         }
@@ -380,6 +404,9 @@ namespace Intersection.Core
             TopRequestNeeded, TopGuideState, TopReview, ReviewGroupCount, ReviewContinue,
             SummaryHeading, SummaryCount, SummaryRowCount, SummaryOpen, SummaryLater, SummaryEmpty,
             SummaryAppMessages, SummaryAppPhotos, SummaryAppBrowser, SummaryAppMaps, SummaryAppFiles, SummaryAppSettings,
+            SummaryAppMail, MailTitle, MailEmpty, MailBoxInbox, MailBoxDrafts, MailFieldFrom, MailFieldTo, MailFieldAttachments,
+            MailFieldStatus, MailToNone, MailSubjectNone, MailFromUnknown, MailFromFormat, MailBodyEmpty, PanelTitleMail,
+            RecordPrefixMail, KindMail,
         };
 
         public static string SourceKey(Intersection.Data.RecordSource source)

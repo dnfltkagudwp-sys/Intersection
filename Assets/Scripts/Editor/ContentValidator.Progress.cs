@@ -389,6 +389,13 @@ namespace Intersection.EditorTools
                     else
                         checkKey(key, $"진행 작업 {field} ({where})", job);
                 }
+                // 시작 연출(선택): 문구 키가 있으면 테이블에 있어야 하고, 입력을 막는 시간이라 짧게 둔다.
+                if (!string.IsNullOrEmpty(job.startPresentationKey))
+                {
+                    checkKey(job.startPresentationKey, $"진행 작업 startPresentationKey ({where})", job);
+                    if (job.startPresentationSeconds <= 0f || job.startPresentationSeconds > 5f)
+                        error($"시작 연출 시간({job.startPresentationSeconds}초)은 0초보다 길고 5초 이하여야 합니다: {where}", job);
+                }
 
                 if (job.startConditions.Count(c => c != null && c.kind == ProgressConditionKind.ReviewBatchViewed) > 1)
                     error($"한 작업에 검토 묶음 조건이 둘 이상 있습니다: {where}", job);
@@ -741,6 +748,7 @@ namespace Intersection.EditorTools
                                 || RecordQuery.For(db.maps, device, stage).Any(r => r.availableFrom > stage)
                                 || RecordQuery.For(db.files, device, stage).Any(r => r.availableFrom > stage)
                                 || RecordQuery.For(db.settings, device, stage).Any(r => r.availableFrom > stage)
+                                || RecordQuery.For(db.mails, device, stage).Any(r => r.availableFrom > stage)
                                 || DeviceQuery.Threads(db, device, stage).Any(e => e.state.availableFrom > stage);
                     if (leak)
                         error($"{stage}에서 {device.name}의 앱 목록·개수·위치에 접근 전 기록이 포함됩니다.", device);
@@ -809,6 +817,8 @@ namespace Intersection.EditorTools
                 ordered = ByTime(RecordQuery.For(db.files, device, stage));
             else if (records.All(r => r is SettingRecord))
                 ordered = ByTime(RecordQuery.For(db.settings, device, stage));
+            else if (records.All(r => r is MailRecord))
+                ordered = ByTime(RecordQuery.For(db.mails, device, stage));
             else
             {
                 warn($"검토 분류에 서로 다른 종류의 자료가 섞여 있어 최근순 상위 N건인지 확인할 수 없습니다: {where}", batch);

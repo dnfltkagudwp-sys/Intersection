@@ -394,6 +394,10 @@ namespace Intersection.UI
                     if (RecordQuery.For(db.settings, device, stage).Any(r => r.Id == id))
                         return OpenRecordPlan(AppKind.Settings, id, out apply);
                     break;
+                case RecordKind.Mail:
+                    if (RecordQuery.For(db.mails, device, stage).Any(r => r.Id == id))
+                        return OpenRecordPlan(AppKind.Mail, id, out apply);
+                    break;
                 case RecordKind.File:
                 {
                     // 파일의 출처(위치)와 폴더로 이동해 상세를 연다.

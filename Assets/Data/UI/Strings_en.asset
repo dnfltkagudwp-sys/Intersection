@@ -589,3 +589,43 @@ MonoBehaviour:
     value: "Cloud only"
   - key: notify.recoveryReady
     value: "Deleted data indexes found. Additional recovery can now begin."
+  - key: app.mail
+    value: "Mail"
+  - key: app.mail.title
+    value: "Mail"
+  - key: mail.empty
+    value: "No mail to show."
+  - key: mail.box.inbox
+    value: "Inbox"
+  - key: mail.box.drafts
+    value: "Drafts"
+  - key: mail.field.from
+    value: "From"
+  - key: mail.field.to
+    value: "To"
+  - key: mail.field.attachments
+    value: "Attachments"
+  - key: mail.field.status
+    value: "Status"
+  - key: mail.to.me
+    value: "Me"
+  - key: mail.to.none
+    value: "No recipient"
+  - key: mail.subject.none
+    value: "(No subject)"
+  - key: mail.from.unknown
+    value: "Unknown sender"
+  - key: mail.fromFormat
+    value: "{name} <{address}>"
+  - key: mail.body.empty
+    value: "No message body."
+  - key: mail.status.unsent
+    value: "Not sent"
+  - key: panel.title.mail
+    value: "Mail Record"
+  - key: record.prefix.mail
+    value: "MAI"
+  - key: kind.mail
+    value: "Mail"
+  - key: summary.app.mail
+    value: "Mail"

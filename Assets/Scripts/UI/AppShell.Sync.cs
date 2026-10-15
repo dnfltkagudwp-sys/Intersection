@@ -360,6 +360,7 @@ namespace Intersection.UI
                 case RecordKind.Map: return AppKind.Maps;
                 case RecordKind.File: return AppKind.Files;
                 case RecordKind.Setting: return AppKind.Settings;
+                case RecordKind.Mail: return AppKind.Mail;
                 default: return AppKind.Messages;
             }
         }

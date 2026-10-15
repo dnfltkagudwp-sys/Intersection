@@ -128,9 +128,16 @@ namespace Intersection.EditorTools
                     error($"파일명 번역은 원래 확장자({(string.IsNullOrEmpty(ext) ? "없음" : ext)})를 유지해야 합니다");
                 if (value.IndexOf('/') >= 0 || value.IndexOf('\\') >= 0)
                     error("파일명 번역에 경로 구분자(/ 또는 \\)를 쓸 수 없습니다(폴더 경로는 번역하지 않음)");
+                // 파일명은 경로 토큰 {folderDate:N}만 쓸 수 있다(두 언어에서 같은 날짜 문자열로 바뀜).
+                foreach (var problem in PathTokens.Problems(value))
+                    error($"파일명 번역의 토큰 오류 — {problem}");
+                string expanded = PathTokens.Expand(value);
+                if (expanded != value)
+                    Shown(expanded);
+                return;
             }
             if (HasBrace(value))
-                error("이 필드의 번역에는 토큰·중괄호를 쓸 수 없습니다(파일 미리보기 {date:N}·설정 항목 {contact}만 지원, 닫히지 않은 토큰 포함)");
+                error("이 필드의 번역에는 토큰·중괄호를 쓸 수 없습니다(파일 미리보기 {date:N}·파일명 {folderDate:N}·설정 항목 {contact}만 지원, 닫히지 않은 토큰 포함)");
         }
 
         static void CheckLocalization(GameConfig config, List<ContentAsset> assets, Func<int, string> noteDate,
@@ -196,6 +203,8 @@ namespace Intersection.EditorTools
                         error($"콘텐츠 번역 키가 사라진 파일 미리보기 블록 ID를 가리킵니다: {e.key} ({where})", table);
                     else if (field.StartsWith("message:"))
                         error($"콘텐츠 번역 키가 사라진 메시지 ID를 가리킵니다: {e.key} ({where})", table);
+                    else if (field.StartsWith(MailRecord.BodyField(string.Empty)) || field.StartsWith(MailRecord.AttachmentField(string.Empty)))
+                        error($"콘텐츠 번역 키가 사라진 메일 본문·첨부 블록 ID를 가리킵니다: {e.key} ({where})", table);
                     else
                         error($"콘텐츠 번역 키가 원문이 없는 필드를 가리킵니다(알 수 없는 필드이거나 원문이 비어 있음): {e.key} ({where})", table);
                 }

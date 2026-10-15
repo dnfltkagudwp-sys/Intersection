@@ -81,7 +81,7 @@ namespace Intersection.Core
 
             var allFolders = new HashSet<string>(StringComparer.Ordinal);
             foreach (var f in Folders(db, device, stage).Where(f => f.source == location))
-                AddWithParents(allFolders, Normalize(f.path));
+                AddWithParents(allFolders, Normalize(f.Path));
             foreach (var f in files)
                 AddWithParents(allFolders, f.FolderPath);
 

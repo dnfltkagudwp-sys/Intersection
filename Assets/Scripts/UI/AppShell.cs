@@ -38,6 +38,7 @@ namespace Intersection.UI
         {
             // 콘텐츠 원문 언어면 번역 테이블 없이 에셋 원문 그대로 보인다.
             ContentText.Use(config.ActiveContentTable);
+            config.ApplyPathTokens();
             text = new UIText(config.ActiveStrings);
             time = new PhoneTime(config, text);
             session = new SessionState(config.EffectiveStartStage);
@@ -77,6 +78,12 @@ namespace Intersection.UI
 
         void Update()
         {
+            // 작업 시작 연출 중에는 건너뛰기(클릭·Enter)만 받는다. Esc·단축키·휴대전화 조작으로 이전 화면이 바뀌지 않게 막는다.
+            if (presenting)
+            {
+                UpdateStartPresentation();
+                return;
+            }
             var keyboard = Keyboard.current;
             if (keyboard == null)
                 return;
@@ -211,16 +218,45 @@ namespace Intersection.UI
 
             var current = session.CurrentCase;
             var nav = session.Nav(current);
+            var appItems = new List<SidebarItemView>();
             foreach (var app in config.apps.apps.Where(a => a != null).OrderBy(a => a.order))
             {
                 var def = app;
                 // 개수는 실제로 조회 가능한 데이터가 있는 앱만 계산해 표시한다.
                 int? n = app.implemented ? AppItemCount(app.kind, current) : null;
+                // 기록이 생기는 단계부터 나타나는 앱(예: 메일)은 지금 이 기기에서 볼 기록이 없으면 숨긴다(지금 열려 있으면 그대로 둔다).
+                if (app.hideWhenEmpty && (n ?? 0) == 0 && !(current != null && nav.app == app.kind))
+                    continue;
                 string count = n.HasValue ? n.Value.ToString(time.Culture) : null;
                 var item = Instantiate(appItemPrefab, appListRoot);
                 item.Bind(null, text.Get(app.nameKey), count, current != null && nav.app == app.kind,
                     app.implemented && current != null, Theme.accentSoft, Color.clear, () => OpenApp(def.kind));
                 sidebarItems.Add(item);
+                appItems.Add(item);
+            }
+            FitAppItems(appItems);
+        }
+
+        /// <summary>
+        /// 좌측 앱 목록 영역(빌더가 만든 고정 높이) 안에 앱 행이 모두 들어가게 행 높이를 맞춘다.
+        /// 들어가면 프리팹 높이 그대로이고, 넘칠 때만 행 높이를 줄인다(아래 의뢰 요청 구역과 겹치지 않음). 씬은 바꾸지 않는다.
+        /// </summary>
+        void FitAppItems(List<SidebarItemView> items)
+        {
+            if (items.Count == 0)
+                return;
+            var layout = appListRoot.GetComponent<VerticalLayoutGroup>();
+            float spacing = layout != null ? layout.spacing : 0f;
+            float padding = layout != null ? layout.padding.top + layout.padding.bottom : 0f;
+            var prefabElement = appItemPrefab.GetComponent<LayoutElement>();
+            float natural = prefabElement != null && prefabElement.preferredHeight > 0 ? prefabElement.preferredHeight : 46f;
+            float available = appListRoot.rect.height - padding - spacing * (items.Count - 1);
+            float height = Mathf.Min(natural, available / items.Count);
+            foreach (var item in items)
+            {
+                var element = item.GetComponent<LayoutElement>();
+                if (element != null)
+                    element.preferredHeight = height;
             }
         }
 

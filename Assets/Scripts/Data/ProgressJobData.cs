@@ -138,6 +138,13 @@ namespace Intersection.Data
         [Tooltip("다른 작업의 효과가 아니라 이후 정식 콘텐츠(또는 에디터 검수)가 완료시키는 작업. 검증 도구의 도달 가능성 검사에서 완료 경로로 인정한다.")]
         public bool completedExternally;
 
+        [Header("시작 연출")]
+        [Tooltip("선택. 플레이어가 상단에서 이 작업을 시작했을 때 잠깐 보여줄 처리 문구 키. 비우면 연출 없음(기존 동작). 진행 데이터(작업 상태·단계·알림·요약)는 연출과 무관하게 누르는 즉시 저장된다.")]
+        public string startPresentationKey;
+
+        [Tooltip("처리 연출 길이(초). 클릭·Enter로 바로 넘길 수 있고, 연출 중 종료하면 다음 실행에서 반복하지 않는다.")]
+        [Min(0f)] public float startPresentationSeconds = 1f;
+
         [TextArea(1, 4), Tooltip("작가용 메모. 화면에 표시하지 않는다.")]
         public string authorNote;
 

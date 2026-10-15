@@ -66,6 +66,9 @@ namespace Intersection.EditorTools
             if (configs.Count != 1)
                 Error($"GameConfig는 정확히 1개여야 합니다 (현재 {configs.Count}개).");
             var config = configs.FirstOrDefault();
+            // 경로·파일명의 {folderDate:N}을 화면과 같은 기준일·형식으로 바꾼다(중복 경로·검색 검사가 변환 결과를 쓴다).
+            if (config != null)
+                config.ApplyPathTokens();
             // 파일 표시 문구의 {date:N}을 화면과 같은 규칙으로 바꿔 검사한다. 설정이 없으면 숫자 그대로.
             System.Func<int, string> noteDate = config != null && config.strings != null
                 ? new PhoneTime(config, new UIText(config.strings)).NoteDate
@@ -80,7 +83,8 @@ namespace Intersection.EditorTools
             var files = Find<FileRecord>();
             var folders = Find<FolderData>();
             var settings = Find<SettingRecord>();
-            var records = browser.Cast<DeviceRecord>().Concat(maps).Concat(files).Concat(settings).ToList();
+            var mails = Find<MailRecord>();
+            var records = browser.Cast<DeviceRecord>().Concat(maps).Concat(files).Concat(settings).Concat(mails).ToList();
             var requests = Find<WorkRequestData>();
             var tutorials = Find<TutorialData>();
             var jobs = Find<ProgressJobData>();
@@ -108,6 +112,9 @@ namespace Intersection.EditorTools
                 if (config.strings == null) Error("GameConfig.strings가 비어 있습니다.", config);
                 if (config.theme == null) Error("GameConfig.theme가 비어 있습니다.", config);
                 if (config.apps == null) Error("GameConfig.apps가 비어 있습니다.", config);
+                // 폴더 날짜 형식은 언어 문자열이 아닌 설정값이다. 두 언어에서 같은 경로가 나와야 하므로 경로 구분자·중괄호를 만들면 안 된다.
+                if (!PathTokens.IsValidFormat(config.folderDateFormat))
+                    Error($"GameConfig.folderDateFormat '{config.folderDateFormat}'이 날짜 형식이 아니거나 경로 구분자·중괄호를 만듭니다.", config);
             }
             var strings = config != null ? config.strings : null;
 
@@ -352,10 +359,13 @@ namespace Intersection.EditorTools
             {
                 if (string.IsNullOrWhiteSpace(f.path) || f.path.EndsWith("/"))
                     Error($"파일 경로가 비어 있거나 폴더로 끝납니다: {Path(f)}", f);
+                foreach (var problem in PathTokens.Problems(f.path))
+                    Error($"파일 경로의 토큰 오류 — {problem}: {Path(f)}", f);
                 CheckVisibleText(f, noteDate, msg => Error(msg, f), msg => Warn(msg, f));
             }
+            // 같은 위치 판정은 화면·검색과 같은 변환 결과로 한다({folderDate:N}이 다른 표기로 같은 날짜를 가리킬 수 있음).
             foreach (var g in files.Where(f => f.device != null && !string.IsNullOrEmpty(f.path))
-                         .GroupBy(f => (f.device, f.source, f.path.Trim('/'))).Where(g => g.Count() > 1))
+                         .GroupBy(f => (f.device, f.source, f.ExpandedPath.Trim('/'))).Where(g => g.Count() > 1))
                 Error($"같은 위치에 같은 경로의 파일이 있습니다 ({g.Key.Item3}): {string.Join(", ", g.Select(Path))}", g.First());
             foreach (var f in folders)
             {
@@ -363,7 +373,12 @@ namespace Intersection.EditorTools
                     Error($"폴더의 기기가 비어 있습니다: {Path(f)}", f);
                 if (string.IsNullOrWhiteSpace(f.path))
                     Error($"폴더 경로가 비어 있습니다: {Path(f)}", f);
+                foreach (var problem in PathTokens.Problems(f.path))
+                    Error($"폴더 경로의 토큰 오류 — {problem}: {Path(f)}", f);
             }
+
+            // 사진·파일 계보(derivedFrom): 화면·검색·비교에 쓰지 않는 제작 데이터. 기기·의뢰·출처가 달라도 되고 접근 단계는 따지지 않는다.
+            CheckLineage(photos.Cast<ContentAsset>().Concat(files).ToList(), Error);
 
             foreach (var s in settings)
             {
@@ -377,6 +392,52 @@ namespace Intersection.EditorTools
                 if (s.linkedThread == null && (s.itemLabel ?? string.Empty).Contains("{contact}"))
                     Error($"{{contact}}를 쓰려면 대상 대화가 필요합니다: {where}", s);
             }
+            // 메일 (읽기 전용): 메일함·받는 사람·상태 키, 제목·본문, 표시 문구 노출, 블록 ID
+            foreach (var m in mails)
+            {
+                string where = Path(m);
+                if (string.IsNullOrEmpty(m.mailboxKey))
+                    Error($"메일함 키가 비어 있습니다: {where}", m);
+                CheckKey(m.mailboxKey, where, m);
+                CheckKey(m.toKey, where, m);
+                CheckKey(m.statusKey, where, m);
+                bool hasBody = m.body != null && m.body.Any(b => b != null && !b.IsEmpty);
+                if (string.IsNullOrWhiteSpace(m.subject) && !hasBody)
+                    Error($"메일 제목과 본문이 모두 비어 있습니다: {where}", m);
+                if (string.IsNullOrWhiteSpace(m.fromName) && string.IsNullOrWhiteSpace(m.fromAddress))
+                    Warn($"보낸 사람 표시명과 주소가 모두 비어 있어 `알 수 없는 발신자`로 보입니다: {where}", m);
+                var blockIds = new Dictionary<string, string>();
+                var shown = new List<string> { m.subject, m.fromName, m.toText };
+                foreach (var (blocks, what) in new[] { (m.body, "본문"), (m.attachments, "첨부") })
+                {
+                    if (blocks == null)
+                        continue;
+                    for (int i = 0; i < blocks.Count; i++)
+                    {
+                        var b = blocks[i];
+                        if (b == null || b.IsEmpty)
+                        {
+                            Warn($"메일 {what} {i + 1}번 블록이 비어 있습니다: {where}", m);
+                            continue;
+                        }
+                        CheckInnerId(b.Id, $"메일 {what} 블록", where, m, blockIds, Error);
+                        shown.Add(b.text);
+                    }
+                }
+                var reported = new HashSet<string>();
+                foreach (var s in shown.Where(s => !string.IsNullOrEmpty(s)))
+                {
+                    CheckShownText(s, m.evidenceRef, m.Id, m.authorNote, "메일", where, msg => { if (reported.Add(msg)) Error(msg, m); });
+                    // 메일 문구는 받은 그대로의 글자라 caseDate 토큰을 쓰지 않는다.
+                    if (s.IndexOf('{') >= 0 || s.IndexOf('}') >= 0)
+                    {
+                        string msg = $"메일 문구에는 중괄호(토큰)를 쓸 수 없습니다: {where}";
+                        if (reported.Add(msg))
+                            Error(msg, m);
+                    }
+                }
+            }
+
             // 대화 알림 끔 상태와 마지막 알림 변경 기록이 맞는지
             foreach (var t in threads)
             {
@@ -433,13 +494,13 @@ namespace Intersection.EditorTools
                 if (!people.All(db.people.Contains) || !cases.All(db.cases.Contains) || !threads.All(db.threads.Contains)
                     || !photos.All(db.photos.Contains) || !albums.All(db.albums.Contains)
                     || !browser.All(db.browser.Contains) || !maps.All(db.maps.Contains) || !files.All(db.files.Contains)
-                    || !folders.All(db.folders.Contains) || !settings.All(db.settings.Contains)
+                    || !folders.All(db.folders.Contains) || !settings.All(db.settings.Contains) || !mails.All(db.mails.Contains)
                     || !jobs.All(db.jobs.Contains) || !reviews.All(db.reviews.Contains) || !recordGroups.All(db.recordGroups.Contains))
                     Warn("ContentDatabase가 최신이 아닙니다. Intersection/Content/Refresh Content Database를 실행하세요.", db);
                 if (db.people.Any(p => p == null) || db.cases.Any(c => c == null) || db.threads.Any(t => t == null)
                     || db.photos.Any(p => p == null) || db.albums.Any(a => a == null)
                     || db.browser.Any(x => x == null) || db.maps.Any(x => x == null) || db.files.Any(x => x == null)
-                    || db.folders.Any(x => x == null) || db.settings.Any(x => x == null)
+                    || db.folders.Any(x => x == null) || db.settings.Any(x => x == null) || db.mails.Any(x => x == null)
                     || db.jobs.Any(x => x == null) || db.reviews.Any(x => x == null) || db.recordGroups.Any(x => x == null))
                     Error("ContentDatabase에 삭제된 에셋 참조가 남아 있습니다.", db);
             }
@@ -493,6 +554,57 @@ namespace Intersection.EditorTools
                 error($"{what} 표시 문구에 내부 ID가 들어 있습니다(검색에 노출됨): {where}");
             if (!string.IsNullOrEmpty(note) && shown.IndexOf(note, System.StringComparison.Ordinal) >= 0)
                 error($"{what} 표시 문구에 작가 메모가 그대로 들어 있습니다. 실제로 보이는 글자만 넣으세요: {where}");
+        }
+
+        /// <summary>
+        /// 사진·파일 계보(derivedFrom): 원본이 존재하고(끊긴 참조 없음) 같은 ID가 하나뿐인 사진·파일이며, 자기 자신이 아니고,
+        /// 직간접 순환이 없고, 원본 시각이 파생본 시각보다 늦지 않아야 한다. 에셋 참조라 순서·파일명이 바뀌어도 유지된다.
+        /// 기기·의뢰·출처·접근 단계는 조건이 아니다.
+        /// </summary>
+        static void CheckLineage(List<ContentAsset> items, System.Action<string, Object> error)
+        {
+            static ContentAsset Source(ContentAsset a) => a is PhotoData p ? p.derivedFrom : a is FileRecord f ? f.derivedFrom : null;
+            static int Minutes(ContentAsset a) => a is PhotoData p ? p.takenAt.TotalMinutes : ((DeviceRecord)a).time.TotalMinutes;
+            var idCount = items.Where(a => !string.IsNullOrEmpty(a.Id)).GroupBy(a => a.Id).ToDictionary(g => g.Key, g => g.Count());
+            foreach (var a in items)
+            {
+                string where = Path(a);
+                var src = Source(a);
+                if (src == null)
+                {
+                    // 지정했던 원본 에셋이 삭제되면 참조 값만 남는다.
+                    var prop = new SerializedObject(a).FindProperty("derivedFrom");
+                    if (prop != null && !prop.objectReferenceEntityIdValue.Equals(default(EntityId)))
+                        error($"계보 원본(derivedFrom)이 삭제되었거나 찾을 수 없습니다: {where}", a);
+                    continue;
+                }
+                if (!(src is PhotoData) && !(src is FileRecord))
+                {
+                    error($"계보 원본(derivedFrom)은 사진 또는 파일이어야 합니다 ({src.GetType().Name}): {where}", a);
+                    continue;
+                }
+                if (src == a)
+                {
+                    error($"계보 원본(derivedFrom)이 자기 자신입니다: {where}", a);
+                    continue;
+                }
+                if (string.IsNullOrEmpty(src.Id) || !idCount.TryGetValue(src.Id, out int n) || n != 1)
+                    error($"계보 원본({Path(src)})의 ID가 비어 있거나 하나로 정해지지 않습니다: {where}", a);
+                if (Minutes(src) > Minutes(a))
+                    error($"계보 원본({Path(src)})의 시각이 파생본보다 늦습니다(시각 역전): {where}", a);
+                // 순환: 원본을 따라가다 자기 자신으로 돌아오면 오류 (다른 고리에 이어지는 경우는 그 고리에서 보고)
+                var seen = new HashSet<ContentAsset> { a };
+                for (var cur = src; cur != null; cur = Source(cur))
+                {
+                    if (cur == a)
+                    {
+                        error($"계보 원본(derivedFrom)이 순환합니다: {where}", a);
+                        break;
+                    }
+                    if (!seen.Add(cur))
+                        break;
+                }
+            }
         }
 
         static void CheckInnerId(string id, string kind, string where, Object ctx, Dictionary<string, string> seen,

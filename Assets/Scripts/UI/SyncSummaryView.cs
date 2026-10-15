@@ -40,6 +40,24 @@ namespace Intersection.UI
 
         public void Close() => gameObject.SetActive(false);
 
+        /// <summary>
+        /// 작업 시작 직후의 짧은 처리 연출: 같은 중앙 화면에 처리 문구만 보여주고 분류·버튼은 숨긴다.
+        /// 데이터는 이미 저장된 뒤이며, 연출이 끝나면 호출한 쪽이 닫거나 결과 요약으로 바꾼다.
+        /// </summary>
+        public void ShowProcessing(string headingText, string titleText)
+        {
+            heading.text = headingText;
+            title.text = titleText ?? string.Empty;
+            countLabel.text = string.Empty;
+            foreach (var r in rows)
+                UIPool.Discard(r);
+            rows.Clear();
+            emptyLabel.gameObject.SetActive(false);
+            openButton.gameObject.SetActive(false);
+            laterButton.gameObject.SetActive(false);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(listRoot);
+        }
+
         /// <summary>onOpenResults가 null이면 `연동 결과 보기`를 숨긴다(보여줄 자료가 없을 때).</summary>
         public void Show(string headingText, string titleText, string countText, string emptyText, IList<Row> items,
             string openText, Action onOpenResults, string laterText, Action onLater)
@@ -73,6 +91,7 @@ namespace Intersection.UI
             if (onOpenResults != null)
                 openButton.onClick.AddListener(() => onOpenResults());
             laterLabel.text = laterText;
+            laterButton.gameObject.SetActive(true);
             laterButton.onClick.RemoveAllListeners();
             laterButton.onClick.AddListener(() => onLater());
             LayoutRebuilder.ForceRebuildLayoutImmediate(listRoot);

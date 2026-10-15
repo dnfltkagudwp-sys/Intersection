@@ -272,6 +272,8 @@ namespace Intersection.UI
                     return ShowDetailPane(pane, FileDetail(db.files.First(x => x != null && x.Id == r.recordId && x.device == device)), r);
                 case RecordKind.Setting:
                     return ShowDetailPane(pane, SettingDetail(db.settings.First(x => x != null && x.Id == r.recordId && x.device == device), device), r);
+                case RecordKind.Mail:
+                    return ShowDetailPane(pane, MailDetail(db.mails.First(x => x != null && x.Id == r.recordId && x.device == device)), r);
                 case RecordKind.Request:
                     pane.ShowCard(res.title, res.body);
                     return true;
@@ -282,7 +284,7 @@ namespace Intersection.UI
 
         bool ShowDetailPane(ComparePaneView pane, DetailModel d, RecordRef r)
         {
-            pane.ShowDetail().Show(d.title, string.Empty, d.headline, d.hero, d.fields, Theme, () => { }, r, d.document, text);
+            pane.ShowDetail().Show(d.title, string.Empty, d.headline, d.hero, d.fields, Theme, () => { }, r, d.document, text, d.documentLast, d.wrapFields);
             return true;
         }
 
@@ -297,6 +299,7 @@ namespace Intersection.UI
                 case RecordKind.Map: app = AppKind.Maps; break;
                 case RecordKind.File: app = AppKind.Files; break;
                 case RecordKind.Setting: app = AppKind.Settings; break;
+                case RecordKind.Mail: app = AppKind.Mail; break;
                 case RecordKind.Request: return text.Get(UIKeys.CompareAppWork);
                 default: app = AppKind.Messages; break;
             }

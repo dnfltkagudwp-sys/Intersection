@@ -164,6 +164,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9456952a80e5e6f49bfd3c87ef9c61d8, type: 2}
   - {fileID: 11400000, guid: 8907d5a5f3486cd46944c70eed233c76, type: 2}
   - {fileID: 11400000, guid: 90b149e21a5a7274b9dd2367b9accdd1, type: 2}
+  mails: []
   requests:
   - {fileID: 11400000, guid: eb75ffbb5bc3dca4198eb7c1e99cd474, type: 2}
   - {fileID: 11400000, guid: 58a514d92112f294f83a2c9a8c0eb192, type: 2}

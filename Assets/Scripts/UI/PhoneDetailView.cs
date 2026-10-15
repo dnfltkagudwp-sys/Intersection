@@ -58,11 +58,12 @@ namespace Intersection.UI
         /// <param name="document">미리보기 자리에 그릴 문서 블록(파일 visibleText). 검색과 같은 원본이다.</param>
         public void Show(string title, string backText, string headlineText, Hero hero,
             List<(string label, string value)> fieldValues, UITheme theme, Action onBack, RecordRef selection,
-            IReadOnlyList<FileTextBlock> document = null, UIText text = null)
+            IReadOnlyList<FileTextBlock> document = null, UIText text = null, bool documentLast = false, bool wrapFields = false)
         {
             if (zoom != null)
                 zoom.Close();
             ShowDocument(document, theme);
+            PlaceDocument(documentLast);
             selectable.Bind(selection);
             headerTitle.text = title;
             backLabel.text = theme.backGlyph + " " + backText;
@@ -107,11 +108,21 @@ namespace Intersection.UI
                     continue;
                 var row = Instantiate(fieldPrefab, fieldRoot);
                 row.Bind(label, value, theme.regularFont);
+                row.SetWrap(wrapFields);
                 fields.Add(row.gameObject);
             }
 
             Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            // 줄바꿈 값은 실제 폭이 정해진 뒤 행 높이를 맞추고 다시 배치한다.
+            if (wrapFields)
+            {
+                bool resized = false;
+                foreach (var go in fields)
+                    resized |= go.GetComponent<InfoRowView>().FitWrapped();
+                if (resized)
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            }
             FitHero(true);
             scroll.verticalNormalizedPosition = 1f;
         }
@@ -174,6 +185,19 @@ namespace Intersection.UI
         /// 파일 미리보기 문서. 문단은 본문 글꼴, 로그·표는 고정폭 글꼴로 그린다.
         /// 데이터의 `&lt;` 같은 글자가 서식으로 해석되지 않도록 서식 태그는 끈 채 그대로 보여준다.
         /// </summary>
+        /// <summary>
+        /// 문서 블록 위치: 기본은 미리보기 자리(제목 위, 파일 미리보기), documentLast면 정보 줄 아래(메일 본문).
+        /// 같은 상세 화면을 앱마다 다시 쓰므로 매번 맞춘다. 씬 구조는 그대로이고 형제 순서만 바꾼다.
+        /// </summary>
+        void PlaceDocument(bool documentLast)
+        {
+            int doc = documentRoot.GetSiblingIndex(), field = fieldRoot.GetSiblingIndex();
+            if (documentLast && doc < field)
+                documentRoot.SetSiblingIndex(field);
+            else if (!documentLast && doc > field)
+                documentRoot.SetSiblingIndex(heroRoot.transform.GetSiblingIndex() + 1);
+        }
+
         void ShowDocument(IReadOnlyList<FileTextBlock> document, UITheme theme)
         {
             foreach (var go in blocks)

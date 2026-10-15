@@ -54,13 +54,14 @@ namespace Intersection.EditorTools
             var files = Load<FileRecord>();
             var folders = Load<FolderData>();
             var settings = Load<SettingRecord>();
+            var mails = Load<MailRecord>();
             var requests = Load<WorkRequestData>();
             var tutorials = Load<TutorialData>();
             var jobs = Load<ProgressJobData>();
             var reviews = Load<ReviewBatchData>();
             var recordGroups = Load<ProgressRecordGroupData>();
             FixDuplicateAssetIds(people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums)
-                .Concat(browser).Concat(maps).Concat(files).Concat(folders).Concat(settings).Concat(requests).Concat(tutorials).Concat(jobs).Concat(reviews).Concat(recordGroups));
+                .Concat(browser).Concat(maps).Concat(files).Concat(folders).Concat(settings).Concat(mails).Concat(requests).Concat(tutorials).Concat(jobs).Concat(reviews).Concat(recordGroups));
             FixDuplicateInnerIds(threads);
 
             foreach (var db in Load<ContentDatabase>())
@@ -68,7 +69,7 @@ namespace Intersection.EditorTools
                 if (db.people.SequenceEqual(people) && db.cases.SequenceEqual(cases) && db.threads.SequenceEqual(threads)
                     && db.photos.SequenceEqual(photos) && db.albums.SequenceEqual(albums)
                     && db.browser.SequenceEqual(browser) && db.maps.SequenceEqual(maps) && db.files.SequenceEqual(files)
-                    && db.folders.SequenceEqual(folders) && db.settings.SequenceEqual(settings)
+                    && db.folders.SequenceEqual(folders) && db.settings.SequenceEqual(settings) && db.mails.SequenceEqual(mails)
                     && db.requests.SequenceEqual(requests) && db.tutorials.SequenceEqual(tutorials) && db.jobs.SequenceEqual(jobs) && db.reviews.SequenceEqual(reviews)
                     && db.recordGroups.SequenceEqual(recordGroups))
                     continue;
@@ -87,6 +88,7 @@ namespace Intersection.EditorTools
                 db.files = files;
                 db.folders = folders;
                 db.settings = settings;
+                db.mails = mails;
                 EditorUtility.SetDirty(db);
                 AssetDatabase.SaveAssetIfDirty(db);
             }

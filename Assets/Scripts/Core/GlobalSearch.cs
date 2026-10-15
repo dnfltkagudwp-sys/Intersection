@@ -44,8 +44,14 @@ namespace Intersection.Core
             string q = (query ?? string.Empty).Trim();
             if (q.Length == 0 || db == null)
                 return result;
-            foreach (var doc in Documents(db, stage, text, time))
+            var docs = Documents(db, stage, text, time).ToList();
+            // 같은 참조 키가 둘 이상이면(불변 ID 중복) 어느 원본인지 정할 수 없어 열 수 없으므로 검색 결과에서도 뺀다.
+            // 검증 도구는 Searchable로 같은 상황을 오류로 잡는다.
+            var ambiguous = new HashSet<string>(docs.GroupBy(d => d.hit.target.Key).Where(g => g.Count() > 1).Select(g => g.Key));
+            foreach (var doc in docs)
             {
+                if (ambiguous.Contains(doc.hit.target.Key))
+                    continue;
                 foreach (var field in doc.fields)
                 {
                     if (!Find(field, q, out int index, out int length))
@@ -123,6 +129,11 @@ namespace Intersection.Core
                     string item = RecordQuery.SettingItemLabel(s, device);
                     yield return RecordDoc(s, device, AppKind.Settings, item, time, item, s.CategoryLabel, s.ValueBefore, s.ValueAfter);
                 }
+                // 메일: 화면에 보이는 제목·보낸 사람(표시명·주소)·받는 사람 문구·본문 줄·첨부 줄. 상태·메일함 이름은 넣지 않는다.
+                foreach (var m in RecordQuery.For(db.mails, device, stage))
+                    yield return RecordDoc(m, device, AppKind.Mail, RecordResolver.MailSubject(m, text), time,
+                        new[] { m.Subject, m.FromName, m.fromAddress, m.ToText }.Concat(m.BodyLines).Concat(m.AttachmentLines)
+                            .Where(s => !string.IsNullOrEmpty(s)).ToArray());
             }
         }
 

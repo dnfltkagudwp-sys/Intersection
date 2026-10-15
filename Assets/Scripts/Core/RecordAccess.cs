@@ -57,6 +57,9 @@ namespace Intersection.Core
                 case RecordKind.Setting:
                     visible = RecordQuery.For(db.settings, device, stage).Any(x => x.Id == id);
                     break;
+                case RecordKind.Mail:
+                    visible = RecordQuery.For(db.mails, device, stage).Any(x => x.Id == id);
+                    break;
                 case RecordKind.Request:
                     visible = db.requests.Any(q => q != null && q.Id == id && q.device == device && stage >= q.availableFrom);
                     break;

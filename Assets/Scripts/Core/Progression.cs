@@ -352,6 +352,10 @@ namespace Intersection.Core
                 Add(RecordRef.ForRecord(r));
             foreach (var r in RecordQuery.For(db.settings, device, Stage).Where(r => sources.Contains(r.source)))
                 Add(RecordRef.ForRecord(r));
+            foreach (var r in RecordQuery.For(db.mails, device, Stage).Where(r => sources.Contains(r.source)))
+                Add(RecordRef.ForRecord(r));
+            foreach (var r in RecordQuery.For(db.mails, device, Stage).Where(r => sources.Contains(r.source)))
+                Add(RecordRef.ForRecord(r));
             return result;
         }
 
@@ -386,6 +390,10 @@ namespace Intersection.Core
                 store.SetJob(job.Id, JobState.Running);
                 ProgressStore.Fault(ProgressFaultPoint.JobState, job.Id);
                 Apply(job, job.onStart);
+                // 시작하는 순간 완료 조건까지 이미 충족되는 자동 완료 작업은 같은 트랜잭션에서 완료한다
+                // (완료 효과·단계·알림·요약 기록이 시작과 함께 한 번에 저장됨). 그렇지 않은 작업은 기존과 같다.
+                if (job.autoCompleteWhenReady && CompletionMet(job))
+                    CompleteCore(job);
             });
         }
 

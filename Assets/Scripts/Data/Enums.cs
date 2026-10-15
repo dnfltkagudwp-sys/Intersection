@@ -36,5 +36,7 @@ namespace Intersection.Data
         Maps,
         Files,
         Settings,
+        /// <summary>읽기 전용 메일 기록(받은편지함·임시 보관함 등). 정수 순서 유지를 위해 끝에 추가한다.</summary>
+        Mail,
     }
 }

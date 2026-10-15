@@ -38,6 +38,9 @@ namespace Intersection.Data
         [Tooltip("같은 이미지 자산을 공유하는 기록끼리 같은 값 (예: 메시지 첨부와 갤러리 저장본)")]
         public string mediaAssetId;
 
+        [Tooltip("선택. 이 사진이 만들어진 원본 기록(사진·파일, 다른 기기·의뢰·출처도 가능). 콘텐츠 검증·제작 관리용이며 화면·검색·비교에 표시하지 않는다.")]
+        public ContentAsset derivedFrom;
+
         [Tooltip("실제 이미지. 비어 있으면 중립 자리 표시로 보인다.")]
         public Texture2D image;
 

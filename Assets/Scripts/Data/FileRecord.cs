@@ -78,8 +78,11 @@ namespace Intersection.Data
     [CreateAssetMenu(menuName = "Intersection/Records/File", fileName = "File")]
     public class FileRecord : DeviceRecord
     {
-        [Tooltip("위치(로컬/클라우드) 안의 경로. 폴더는 '/'로 구분한다.")]
+        [Tooltip("위치(로컬/클라우드) 안의 경로. 폴더는 '/'로 구분한다. 날짜 폴더·파일명은 {folderDate:-182}처럼 쓴다(caseDate 기준, GameConfig.folderDateFormat, 언어와 무관).")]
         public string path;
+
+        [Tooltip("선택. 이 파일이 만들어진 원본 기록(사진·파일, 다른 기기·의뢰·출처도 가능). 콘텐츠 검증·제작 관리용이며 화면·검색·비교에 표시하지 않는다.")]
+        public ContentAsset derivedFrom;
 
         [Tooltip("같은 이미지 자산을 공유하는 기록끼리 같은 값")]
         public string mediaAssetId;
@@ -118,8 +121,8 @@ namespace Intersection.Data
             }
         }
 
-        /// <summary>화면에 보이는 파일 이름 (현재 언어). 폴더 경로(FolderPath)는 위치 구조라 번역하지 않는다.</summary>
-        public string FileName => ContentText.Get(Id, ContentText.Field.FileName, RawFileName);
+        /// <summary>화면에 보이는 파일 이름 (현재 언어, 경로 날짜 토큰 변환 후). 폴더 경로(FolderPath)는 위치 구조라 번역하지 않는다.</summary>
+        public string FileName => PathTokens.Expand(ContentText.Get(Id, ContentText.Field.FileName, RawFileName));
 
         public override IEnumerable<ContentField> ContentFields()
         {
@@ -167,7 +170,7 @@ namespace Intersection.Data
                 b?.RegenerateId();
         }
 
-        /// <summary>파일이 들어 있는 폴더 경로 (위치 최상위면 빈 문자열).</summary>
+        /// <summary>파일이 들어 있는 폴더 경로 (위치 최상위면 빈 문자열). 날짜 토큰은 실제 폴더 이름으로 바꾼 값이며 언어와 무관하다.</summary>
         public string FolderPath
         {
             get
@@ -175,8 +178,11 @@ namespace Intersection.Data
                 if (string.IsNullOrEmpty(path))
                     return string.Empty;
                 int i = path.LastIndexOf('/');
-                return i < 0 ? string.Empty : path.Substring(0, i);
+                return i < 0 ? string.Empty : PathTokens.Expand(path.Substring(0, i));
             }
         }
+
+        /// <summary>날짜 토큰을 바꾼 위치 안 전체 경로 (언어와 무관, 파일명은 원문).</summary>
+        public string ExpandedPath => PathTokens.Expand(path);
     }
 }

@@ -20,6 +20,7 @@ namespace Intersection.Data
         public List<FileRecord> files = new List<FileRecord>();
         public List<FolderData> folders = new List<FolderData>();
         public List<SettingRecord> settings = new List<SettingRecord>();
+        public List<MailRecord> mails = new List<MailRecord>();
         public List<WorkRequestData> requests = new List<WorkRequestData>();
         public List<TutorialData> tutorials = new List<TutorialData>();
         public List<ProgressJobData> jobs = new List<ProgressJobData>();

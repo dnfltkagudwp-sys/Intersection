@@ -15,6 +15,8 @@ namespace Intersection.Core
         File,
         Setting,
         Request,
+        /// <summary>메일 한 통. 저장 파일에는 이름으로 기록되므로 끝에 추가한다.</summary>
+        Mail,
     }
 
     /// <summary>
@@ -80,6 +82,7 @@ namespace Intersection.Core
             var kind = record is BrowserRecord ? RecordKind.Browser
                 : record is MapRecord ? RecordKind.Map
                 : record is FileRecord ? RecordKind.File
+                : record is MailRecord ? RecordKind.Mail
                 : RecordKind.Setting;
             return new RecordRef { kind = kind, deviceId = record.device != null ? record.device.Id : null, recordId = record.Id };
         }

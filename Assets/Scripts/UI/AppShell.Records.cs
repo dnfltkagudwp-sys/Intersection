@@ -14,7 +14,7 @@ namespace Intersection.UI
     public partial class AppShell
     {
         static bool IsRecordApp(AppKind kind) =>
-            kind == AppKind.Browser || kind == AppKind.Maps || kind == AppKind.Files || kind == AppKind.Settings;
+            kind == AppKind.Browser || kind == AppKind.Maps || kind == AppKind.Files || kind == AppKind.Settings || kind == AppKind.Mail;
 
         void RenderRecords(CaseData device, DeviceNavigation nav)
         {
@@ -24,16 +24,18 @@ namespace Intersection.UI
                 case AppKind.Maps: RenderMaps(device, nav); break;
                 case AppKind.Files: RenderFiles(device, nav); break;
                 case AppKind.Settings: RenderSettings(device, nav); break;
+                case AppKind.Mail: RenderMail(device, nav); break;
             }
         }
 
         static T FindById<T>(List<T> records, string id) where T : ContentAsset =>
             id == null ? null : records.FirstOrDefault(r => r.Id == id);
 
-        void ShowRecordList(DeviceNavigation nav, string title, string backText, List<PhoneListView.Item> items, Action onBack)
+        void ShowRecordList(DeviceNavigation nav, string title, string backText, List<PhoneListView.Item> items, Action onBack,
+            string emptyKey = UIKeys.ListEmpty)
         {
             phone.Show(PhoneView.Screen.RecordList);
-            phone.RecordList.Show(title, backText, items, text.Get(UIKeys.ListEmpty), Theme, onBack,
+            phone.RecordList.Show(title, backText, items, text.Get(emptyKey), Theme, onBack,
                 SavedScroll(nav, nav.ListScrollKey(nav.app)));
         }
 
@@ -46,6 +48,10 @@ namespace Intersection.UI
             /// <summary>미리보기 자리에 그대로 그리는 문서(파일 visibleText). 없으면 null.</summary>
             public IReadOnlyList<FileTextBlock> document;
             public List<(string, string)> fields;
+            /// <summary>문서를 정보 줄 아래에 둔다(메일 본문). 기본은 미리보기 자리.</summary>
+            public bool documentLast;
+            /// <summary>정보 줄 값을 말줄임 없이 줄바꿈해 전체를 보여준다(메일 주소·첨부).</summary>
+            public bool wrapFields;
         }
 
         /// <summary>상세 화면을 보여주고 그 기록을 열람한 것으로 기록한다.</summary>
@@ -53,7 +59,7 @@ namespace Intersection.UI
         {
             store.MarkViewed(selection);
             phone.Show(PhoneView.Screen.RecordDetail);
-            phone.RecordDetail.Show(d.title, backText, d.headline, d.hero, d.fields, Theme, Back, selection, d.document, text);
+            phone.RecordDetail.Show(d.title, backText, d.headline, d.hero, d.fields, Theme, Back, selection, d.document, text, d.documentLast, d.wrapFields);
         }
 
         DetailModel BrowserDetail(BrowserRecord r) => new DetailModel
@@ -478,6 +484,99 @@ namespace Intersection.UI
             ShowCollectionPanel(UIKeys.PanelTitleSettings, device, records.Count);
         }
 
+        // ───────────── 메일 ─────────────
+
+        /// <summary>
+        /// 읽기 전용 메일 앱: 메일함 구역별 목록(최신이 위) → 상세 → 뒤로. 작성·답장·전달·삭제·첨부 내려받기는 없다.
+        /// 보이는 문구는 모두 데이터의 표시용 접근자(현재 언어)와 문자열 테이블에서 온다.
+        /// </summary>
+        void RenderMail(CaseData device, DeviceNavigation nav)
+        {
+            var records = RecordQuery.For(config.database.mails, device, session.Stage);
+            var open = FindById(records, nav.OpenRecord(AppKind.Mail));
+            nav.SetOpenRecord(AppKind.Mail, open?.Id);
+            string appTitle = text.Get(UIKeys.MailTitle);
+
+            if (open != null)
+            {
+                ShowRecordDetail(MailDetail(open), appTitle, RecordRef.ForRecord(open));
+                ShowRecordPanel(open, RecordResolver.MailSubject(open, text), UIKeys.RecordPrefixMail, device);
+                return;
+            }
+
+            var items = new List<PhoneListView.Item>();
+            var order = UIKeys.MailboxOrder.ToList();
+            foreach (var box in records.Select(r => r.mailboxKey ?? string.Empty).Distinct()
+                         .OrderBy(k => order.IndexOf(k) < 0 ? int.MaxValue : order.IndexOf(k)).ThenBy(k => k, StringComparer.Ordinal))
+            {
+                items.Add(PhoneListView.Item.Section(MailboxName(box)));
+                foreach (var m in RecordQuery.Newest(records).Where(r => (r.mailboxKey ?? string.Empty) == box))
+                {
+                    items.Add(new PhoneListView.Item
+                    {
+                        title = MailSender(m),
+                        subtitle = RecordResolver.MailSubject(m, text),
+                        trailing = time.ListLabel(m.time),
+                        icon = Theme.documentGlyph,
+                        selection = RecordRef.ForRecord(m),
+                        onClick = () => OpenRecordDetail(AppKind.Mail, RecordRef.ForRecord(m)),
+                    });
+                }
+            }
+            ShowRecordList(nav, appTitle, null, items, null, UIKeys.MailEmpty);
+            ShowCollectionPanel(UIKeys.PanelTitleMail, device, records.Count);
+        }
+
+        string MailboxName(string key) => string.IsNullOrEmpty(key) ? text.Get(UIKeys.MailBoxInbox) : text.Get(key);
+
+        /// <summary>목록의 보낸 사람: 표시명, 없으면 주소, 둘 다 없으면 중립 표기.</summary>
+        string MailSender(MailRecord m) =>
+            !string.IsNullOrEmpty(m.FromName) ? m.FromName
+            : !string.IsNullOrEmpty(m.fromAddress) ? m.fromAddress
+            : text.Get(UIKeys.MailFromUnknown);
+
+        /// <summary>상세의 보낸 사람: 표시명과 주소가 모두 있으면 함께 보여준다(주소는 원문 그대로).</summary>
+        string MailSenderFull(MailRecord m) =>
+            !string.IsNullOrEmpty(m.FromName) && !string.IsNullOrEmpty(m.fromAddress)
+                ? text.Format(UIKeys.MailFromFormat, ("name", m.FromName), ("address", m.fromAddress))
+                : MailSender(m);
+
+        string MailRecipient(MailRecord m) =>
+            !string.IsNullOrEmpty(m.ToText) ? m.ToText
+            : !string.IsNullOrEmpty(m.toKey) ? text.Get(m.toKey)
+            : text.Get(UIKeys.MailToNone);
+
+        /// <summary>
+        /// 메일 상세 (휴대전화와 비교 화면이 같은 표현을 쓴다).
+        /// 순서: 제목 → 보낸 사람(표시명·전체 주소) → 받는 사람·일시·상태 → 첨부 → 본문. 주소·첨부는 말줄임 없이 줄바꿈한다.
+        /// 본문이 없으면 본문 자리에 중립 문구를 둔다.
+        /// </summary>
+        DetailModel MailDetail(MailRecord m)
+        {
+            var body = m.Body;
+            var fields = new List<(string, string)>
+            {
+                (text.Get(UIKeys.MailFieldFrom), MailSenderFull(m)),
+                (text.Get(UIKeys.MailFieldTo), MailRecipient(m)),
+                (text.Get(UIKeys.FieldDateTime), PhoneDateTime(m.time)),
+            };
+            if (!string.IsNullOrEmpty(m.statusKey))
+                fields.Add((text.Get(UIKeys.MailFieldStatus), text.Get(m.statusKey)));
+            var attachments = m.AttachmentLines.ToList();
+            if (attachments.Count > 0)
+                fields.Add((text.Get(UIKeys.MailFieldAttachments), string.Join("\n", attachments)));
+            return new DetailModel
+            {
+                title = MailboxName(m.mailboxKey),
+                headline = RecordResolver.MailSubject(m, text),
+                document = body.Count > 0 ? body
+                    : new List<FileTextBlock> { new FileTextBlock { text = text.Get(UIKeys.MailBodyEmpty) } },
+                fields = fields,
+                documentLast = true,
+                wrapFields = true,
+            };
+        }
+
         // ───────────── 탐색 ─────────────
 
         /// <summary>고르기 모드면 그 기록을 고르고, 아니면 상세 화면을 연다. 열린 기록은 불변 ID로 기억한다.</summary>
@@ -521,6 +620,7 @@ namespace Intersection.UI
                         + RecordQuery.SharedPins(db, device, session.Stage).Count;
                 case AppKind.Files: return RecordQuery.For(db.files, device, session.Stage).Count;
                 case AppKind.Settings: return RecordQuery.For(db.settings, device, session.Stage).Count;
+                case AppKind.Mail: return RecordQuery.For(db.mails, device, session.Stage).Count;
                 default: return 0;
             }
         }

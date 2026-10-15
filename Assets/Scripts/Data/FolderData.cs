@@ -12,8 +12,11 @@ namespace Intersection.Data
 
         public RecordSource source = RecordSource.Local;
 
-        [Tooltip("위치 안의 폴더 경로 (예: Download, Documents/Work)")]
+        [Tooltip("위치 안의 폴더 경로 (예: Download, Documents/Work). 날짜 폴더는 {folderDate:-182}처럼 쓴다(caseDate 기준, GameConfig.folderDateFormat).")]
         public string path;
+
+        /// <summary>날짜 토큰을 바꾼 실제 경로 (언어와 무관).</summary>
+        public string Path => PathTokens.Expand(path);
 
         public ProgressStage availableFrom = ProgressStage.P0;
     }
