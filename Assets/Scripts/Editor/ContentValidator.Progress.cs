@@ -643,8 +643,10 @@ namespace Intersection.EditorTools
                 bool needed = jobs.Any(o => o.startConditions.Any(c => c != null && c.kind == ProgressConditionKind.JobCompleted && c.job == job))
                               || job.onComplete.Any(e => e != null);
                 bool selfCompletes = SelfCompletes(job);
-                if (needed && !job.completedExternally && !selfCompletes && completers.Count == 0)
-                    error($"작업을 완료시키는 경로가 없습니다 (다른 작업의 완료 효과도, completedExternally도, 자동 완료도 없음): {Path(job)}", job);
+                // 시작 효과가 이 작업 자신을 완료하면 플레이어가 시작하는 순간 같은 트랜잭션에서 완료된다(도달 가능 단계 계산과 같은 해석).
+                bool startCompletes = job.onStart.Any(e => e != null && e.kind == ProgressEffectKind.CompleteJob && e.job == job);
+                if (needed && !job.completedExternally && !selfCompletes && !startCompletes && completers.Count == 0)
+                    error($"작업을 완료시키는 경로가 없습니다 (다른 작업의 완료 효과도, 시작 즉시 자기 완료도, completedExternally도, 자동 완료도 없음): {Path(job)}", job);
                 foreach (var c in job.startConditions.Where(c => c != null && c.kind == ProgressConditionKind.JobCompleted && c.job != null))
                 {
                     var dep = c.job;

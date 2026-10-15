@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d887e3de658b1f449a09cf815396727d, type: 3}
+  m_Name: Group_P4_B11_Named
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ProgressRecordGroupData
+  id: 4a6568f8cd704d86a005aa76c92d5cc2
+  minCount: 1
+  targets:
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    record: {fileID: 11400000, guid: 769c5047f23ba0a45a3d5f9c05613f00, type: 2}
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    record: {fileID: 11400000, guid: 6db7148b67fad554ab67a3718164c8e7, type: 2}
+  authorNote: "P4 \uAC80\uD1A0 \uC644\uB8CC \uC870\uAC74(P4 \uC6D0\uACE0 8-2 #2): B11 \uC911 \uBB38\uC81C \uACC4\uC815\uBA85\uC774 \uD45C\uC2DC\uB41C \uC11C\uBE44\uC2A4 \uC54C\uB9BC(B11-1 @daylog_041, B11-4 @smallroom_08) \uC911 1\uAC74 \uC774\uC0C1 \uC2E4\uC81C \uC5F4\uB78C."

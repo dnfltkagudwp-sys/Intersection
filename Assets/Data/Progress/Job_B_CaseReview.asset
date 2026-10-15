@@ -1,0 +1,180 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3105beace738662489091e6b994c7d18, type: 3}
+  m_Name: Job_B_CaseReview
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ProgressJobData
+  id: 624a46ea779c41229421995bae2b0707
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  order: 2
+  request: {fileID: 11400000, guid: 58a514d92112f294f83a2c9a8c0eb192, type: 2}
+  unlocksSources: 
+  actionKey: job.review.action
+  notReadyKey: job.review.notReady
+  runningKey: job.review.running
+  doneKey: job.review.running
+  shortRunningKey: job.recovery.shortDone
+  shortDoneKey: job.recovery.shortDone
+  startConditions:
+  - kind: 3
+    request: {fileID: 0}
+    job: {fileID: 11400000, guid: 5dc790ee2d6524f47b8bbc208e1c3cad, type: 2}
+    record: {fileID: 0}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 0}
+    minCount: 1
+    source: 0
+  - kind: 7
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 0}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 11400000, guid: 79cee7a947987654bb1831bfb28b1a9b, type: 2}
+    minCount: 1
+    source: 0
+  - kind: 7
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 0}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 11400000, guid: d8d1a68124b11164b9ecb531a770e13c, type: 2}
+    minCount: 1
+    source: 0
+  - kind: 5
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 11400000, guid: 526c5d39b8170d747b932cd7797a63b5, type: 2}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 0}
+    minCount: 1
+    source: 0
+  - kind: 5
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 11400000, guid: d31ae37c226897a4489109d1ba73c3a1, type: 2}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 0}
+    minCount: 1
+    source: 0
+  - kind: 7
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 0}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 11400000, guid: cb0bebfa15d7bae4d85f56eaeed0ce2b, type: 2}
+    minCount: 1
+    source: 0
+  - kind: 7
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 0}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 11400000, guid: 84ac1042fc20c55478bb0e23f2497102, type: 2}
+    minCount: 1
+    source: 0
+  - kind: 7
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 0}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 11400000, guid: b38a4788f6f5695459e406aff6d80810, type: 2}
+    minCount: 1
+    source: 0
+  - kind: 5
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 11400000, guid: e0287cba5f089dd4e8357144b70e3da5, type: 2}
+    device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+    batch: {fileID: 0}
+    group: {fileID: 0}
+    minCount: 1
+    source: 0
+  - kind: 5
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 11400000, guid: 0ec8106da6017ee4081d05a263c54ebf, type: 2}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 0}
+    minCount: 1
+    source: 0
+  - kind: 5
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 11400000, guid: 24c45f4341e4d5448ab11f8332094ada, type: 2}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 0}
+    minCount: 1
+    source: 0
+  - kind: 7
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 0}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 11400000, guid: e3dd58a111f1ce44fb6bf191704b2977, type: 2}
+    minCount: 1
+    source: 0
+  - kind: 5
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 11400000, guid: 721957e2b159f3649aeb15c0a0577328, type: 2}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 0}
+    minCount: 1
+    source: 0
+  - kind: 5
+    request: {fileID: 0}
+    job: {fileID: 0}
+    record: {fileID: 11400000, guid: a7409e651ba8e9e4198a5d4b281f34f1, type: 2}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 0}
+    minCount: 1
+    source: 0
+  onReady: []
+  onStart:
+  - id: 1aa6847efec64231b6765da05d1091de
+    kind: 1
+    stage: 0
+    job: {fileID: 11400000}
+    templateKey: 
+    caseToken: {fileID: 0}
+    summaryHeadingKey: 
+    summaryCountKey: 
+    summaryOpenKey: 
+  onComplete:
+  - id: 8c25152af3c9402a8019a6944240fcb2
+    kind: 0
+    stage: 6
+    job: {fileID: 0}
+    templateKey: 
+    caseToken: {fileID: 0}
+    summaryHeadingKey: 
+    summaryCountKey: 
+    summaryOpenKey: 
+  completionConditions: []
+  autoCompleteWhenReady: 0
+  completedExternally: 0
+  showOnAllCases: 1
+  startPresentationKey: 
+  startPresentationSeconds: 1
+  authorNote: "P4 \uCD5C\uC885 \uAC80\uD1A0(P4 \uC6D0\uACE0 8\uC808\xB715\uC808 \uACB0\uC815 6). \uC2DC\uC791 \uC870\uAC74 = Job_B_Recovery \uC644\uB8CC(P4 \uC9C4\uC785 \uC804\uC5D0\uB294 \uC791\uC5C5\uC774 \uBCF4\uC774\uC9C0 \uC54A\uAC8C \uD558\uB294 \uAD00\uBB38) + \uC5F4\uB78C \uC870\uAC74 13\uAC1C: B11 \uACC4\uC815\uBA85 \uC54C\uB9BC \uBB36\uC74C 1\xB7B11 \uAD00\uB9AC \uC54C\uB9BC \uBB36\uC74C 1\xB7B12-1\xB7B12-2\xB7C \uACC4\uBCF4 \uBB36\uC74C 2/3\xB7D \uACC4\uBCF4 \uBB36\uC74C 2/3\xB7E \uACC4\uBCF4 \uBB36\uC74C 2/2\xB7A05(Thread_A04_C@\uC11C\uC9C0\uD6C8)\xB7A13-1 \uC790\uB8CC_2.zip\xB7A13-4 \uBBF8\uBC1C\uC1A1 \uBA54\uC77C\xB7\uC0AC\uAC74 \uB2F9\uC77C \uB300\uD654 \uBB36\uC74C 1/2(\uC591\uCABD \uAE30\uAE30)\xB7SH01-A\xB7SH01-B. \uBE44\uAD50\xB7\uBD84\uB958\xB7\uACE0\uC815\xB7\uBA54\uBAA8\xB7\uAC80\uC0C9 \uB178\uCD9C\uC740 \uC870\uAC74 \uC544\uB2D8. \uC900\uBE44 \uC54C\uB9BC \uC5C6\uC74C.\n\uBAA8\uB4E0 \uC870\uAC74\uC744 \uCC44\uC6B0\uBA74 \uC0C1\uB2E8\uC5D0 `\uC5F0\uB3D9\xB7\uBCF5\uAD6C \uC790\uB8CC \uAC80\uD1A0 \uC644\uB8CC`\uAC00 \uB098\uD0C0\uB098\uACE0(showOnAllCases\uB85C \uC11C\uC9C0\uD6C8 \uC758\uB8B0 \uD654\uBA74\uC5D0\uB3C4 \uAC19\uC740 \uC791\uC5C5\uC758 \uBC84\uD2BC), \uB204\uB974\uBA74 \uC2DC\uC791 \uD6A8\uACFC CompleteJob(\uC774 \uC791\uC5C5)\uB85C \uAC19\uC740 \uC2DC\uC791 \uD2B8\uB79C\uC7AD\uC158 \uC548\uC5D0\uC11C \uBC14\uB85C \uC644\uB8CC \u2192 \uC644\uB8CC \uD6A8\uACFC P6. \uC790\uB3D9 \uC644\uB8CC(autoCompleteWhenReady)\uB294 \uC4F0\uC9C0 \uC54A\uB294\uB2E4(P6 \uCF58\uD150\uCE20 \uC804\uC774\uB77C \uAC80\uC99D \uB3C4\uAD6C\uC758 \uBE48 \uB2E8\uACC4 \uAC00\uB4DC\uB97C \uC720\uC9C0, \uD50C\uB808\uC774\uC5B4\uAC00 \uB204\uB97C \uB54C\uB9CC \uC644\uB8CC). \uC644\uB8CC \uD6A8\uACFC\uB294 \uB2E8\uACC4 \uC0C1\uC2B9\uB9CC(\uC54C\uB9BC\xB7\uC694\uC57D\xB7\uC5F0\uCD9C \uC5C6\uC74C). \uB204\uB978 \uB4A4 \uBB38\uAD6C job.review.running\uC740 P6 \uC6D0\uACE0\uC5D0\uC11C \uD655\uC815."

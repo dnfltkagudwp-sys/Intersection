@@ -146,6 +146,10 @@ namespace Intersection.Data
         [Tooltip("다른 작업의 효과가 아니라 이후 정식 콘텐츠(또는 에디터 검수)가 완료시키는 작업. 검증 도구의 도달 가능성 검사에서 완료 경로로 인정한다.")]
         public bool completedExternally;
 
+        [Tooltip("켜면 시작 조건을 모두 만족했을 때 이 작업의 시작 버튼을 다른 의뢰 화면 상단에도 보여준다(같은 작업·같은 상태를 공유, 복제하지 않음). " +
+                 "조건 충족 전·시작 뒤에는 다른 의뢰 화면에 아무것도 더하지 않는다. 끄면(기본) 작업의 의뢰 화면에만 보인다.")]
+        public bool showOnAllCases;
+
         [Header("시작 연출")]
         [Tooltip("선택. 플레이어가 상단에서 이 작업을 시작했을 때 잠깐 보여줄 처리 문구 키. 비우면 연출 없음(기존 동작). 진행 데이터(작업 상태·단계·알림·요약)는 연출과 무관하게 누르는 즉시 저장된다.")]
         public string startPresentationKey;

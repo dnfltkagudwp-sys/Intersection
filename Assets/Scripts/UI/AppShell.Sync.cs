@@ -87,6 +87,14 @@ namespace Intersection.UI
                 || progression.JobsFor(c).Any(j => progression.StateOf(j) == JobState.Running))
                 return plain;
 
+            // 다른 의뢰의 공유 작업(showOnAllCases)이 시작 가능하면 이 의뢰 화면에도 같은 시작 버튼을 보여준다.
+            var shared = progression.SharedReadyJob(c);
+            if (shared != null)
+            {
+                statusAction = () => StartJob(shared);
+                return new TopBarView.Status { text = text.Get(shared.actionKey), style = TopBarView.StatusStyle.Primary, progress = 1f };
+            }
+
             var next = progression.NextJob(c);
             if (next != null)
             {

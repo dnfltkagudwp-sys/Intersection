@@ -501,6 +501,12 @@ MonoBehaviour:
     value: "복구 준비 중"
   - key: job.recovery.shortDone
     value: "로컬 · 연동 · 복구"
+  - key: job.review.notReady
+    value: "복구 자료 검토 중"
+  - key: job.review.action
+    value: "연동·복구 자료 검토 완료"
+  - key: job.review.running
+    value: "최종 업무 준비 중"
   - key: notify.linkedDone
     value: "{caseDisplayName} 의뢰 — 연동 데이터 확인 완료"
   - key: notify.backupIndexed

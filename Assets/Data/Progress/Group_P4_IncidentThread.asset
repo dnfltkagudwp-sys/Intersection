@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d887e3de658b1f449a09cf815396727d, type: 3}
+  m_Name: Group_P4_IncidentThread
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ProgressRecordGroupData
+  id: 77991625f59f4591be2c81859f0ec8b0
+  minCount: 1
+  targets:
+  - device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+    record: {fileID: 11400000, guid: 0d6ff91806bbab540b96464a15c0fa05, type: 2}
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    record: {fileID: 11400000, guid: 0d6ff91806bbab540b96464a15c0fa05, type: 2}
+  authorNote: "P4 \uAC80\uD1A0 \uC644\uB8CC \uC870\uAC74(#12): \uC0AC\uAC74 \uB2F9\uC77C A12/B15 \uAD6C\uAC04\uC774 \uC788\uB294 Thread_A03_B03\uC744 \uC11C\uC9C0\uD6C8 \uAE30\uAE30 \uB610\uB294 \uC724\uC11C\uD558 \uAE30\uAE30 \uC911 \uD55C\uCABD\uC5D0\uC11C \uB300\uD654\uBC29 \uC5F4\uAE30. \uB300\uD654\uBC29\uC740 \uAE30\uAE30\uBCC4 \uC5F4\uB78C \uD0A4(RecordRef.ForThread)\uB77C \uB450 \uAE30\uAE30 \uB300\uC0C1\uC744 \uBB36\uC74C\uC5D0 \uB123\uACE0 minCount 1."

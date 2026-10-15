@@ -313,6 +313,16 @@ namespace Intersection.Core
                 .Select(c => c.request)
                 .FirstOrDefault(r => !work.IsViewed(RecordRef.ForRequest(r).Key));
 
+        /// <summary>
+        /// 다른 의뢰의 작업 중 이 의뢰 화면에서도 시작할 수 있는 작업(showOnAllCases): 아직 시작하지 않았고, 보이며,
+        /// 의뢰 요청을 열람했고, 시작 조건을 모두 만족한 첫 작업. 없으면 null. 작업 상태는 하나라 어느 화면에서 시작해도 같다.
+        /// </summary>
+        public ProgressJobData SharedReadyJob(CaseData device) =>
+            db.jobs.Where(j => j != null && j.showOnAllCases && j.device != null && j.device != device
+                               && StateOf(j) == JobState.NotStarted && Visible(j) && UnviewedRequest(j) == null && ConditionsMet(j))
+                .OrderBy(j => j.device.order).ThenBy(j => j.order)
+                .FirstOrDefault();
+
         /// <summary>이 의뢰에서 아직 시작하지 않았고 지금 보이는 첫 작업 (순서 기준).</summary>
         public ProgressJobData NextJob(CaseData device) =>
             JobsFor(device).FirstOrDefault(j => StateOf(j) == JobState.NotStarted && Visible(j));

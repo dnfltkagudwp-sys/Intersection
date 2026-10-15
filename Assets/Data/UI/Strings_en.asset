@@ -513,6 +513,12 @@ MonoBehaviour:
     value: "Preparing recovery"
   - key: job.recovery.shortDone
     value: "Local · Linked · Recovered"
+  - key: job.review.notReady
+    value: "Reviewing recovered data"
+  - key: job.review.action
+    value: "Complete Linked & Recovered Data Review"
+  - key: job.review.running
+    value: "Preparing final tasks"
   - key: notify.linkedDone
     value: "Case: {caseDisplayName} — Linked data review complete"
   - key: notify.backupIndexed

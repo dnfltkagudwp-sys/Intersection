@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d887e3de658b1f449a09cf815396727d, type: 3}
+  m_Name: Group_P4_B13_E
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ProgressRecordGroupData
+  id: 186aab8d37db49b18513111ddc270d6b
+  minCount: 2
+  targets:
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    record: {fileID: 11400000, guid: 73d207f52536a0642bda47d9a2f1ee28, type: 2}
+  - device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    record: {fileID: 11400000, guid: deab6bbf0aa4e454cb14ccd033d9d15d, type: 2}
+  authorNote: "P4 \uAC80\uD1A0 \uC644\uB8CC \uC870\uAC74(#8): \uBBF8\uC0C1 \uC778\uBB3C \uACC4\uBCF4 E2\xB7E3 \uB450 \uAC74 \uBAA8\uB450(\uD3B8\uC9D1 \uD30C\uC77C \uC5C6\uC74C)."
