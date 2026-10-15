@@ -42,19 +42,14 @@ MonoBehaviour:
     textStyle: 0
     items: []
     images:
-    - texture: {fileID: 0}
+    - texture: {fileID: 2800000, guid: 7837c876fd85fb542b28afb955153900, type: 3}
       crop:
         serializedVersion: 2
         x: 0
         y: 0
         width: 1
         height: 1
-      redactions:
-      - serializedVersion: 2
-        x: 0.08
-        y: 0.05
-        width: 0.84
-        height: 0.8
+      redactions: []
       sampleWidth: 0
       jpegQuality: 50
       background: {r: 0.56, g: 0.54, b: 0.51, a: 1}
@@ -67,7 +62,7 @@ MonoBehaviour:
     height: 0
     cutBelow: 0
   bottom: 0
-  temporary: 1
-  temporaryNote: "D01-05 \uC774\uBBF8\uC9C0 \uACC4\uBCF4 \uBBF8\uD655\uC815: \uAC00\uB9BC \uC2A4\uD2F0\uCEE4 + \uC911\uB9BD \uBC30\uACBD \uAC80\uC218\uC6A9 \uC784\uC2DC \uC774\uBBF8\uC9C0. \uC6D0\uBCF8 \uACC4\uBCF4\uAC00 \uC815\uD574\uC9C0\uBA74(B13 \uC0AC\uC9C4 \uACC4\uBCF4 \uC81C\uC791 \uC804) \uC2E4\uC81C \uC6D0\uBCF8\uC744 crop\xB7\uAC00\uB9BC\xB7\uC555\uCD95\uD574 \uAD50\uCCB4\uD55C\uB2E4. \uD2B9\uC815 \uACF5\uAC1C \uCC29\uC7A5\uACFC \uC5F0\uACB0\uD558\uC9C0 \uC54A\uB294\uB2E4."
-  output: {fileID: 2800000, guid: 6fb7ed827e708b14db04c35a53fbba39, type: 3}
-  renderedHash: 6baf6e7b7062d76a763053973b3aa78f
+  temporary: 0
+  temporaryNote: 
+  output: {fileID: 2800000, guid: 35fb5d1beed45ac4ebf26e13f9ac26f0, type: 3}
+  renderedHash: e9f85f1c340dbc0e1955d51a6e6b61cb

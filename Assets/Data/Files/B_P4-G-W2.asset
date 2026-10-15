@@ -23,9 +23,9 @@ MonoBehaviour:
   availableFrom: 4
   evidenceRef: P4-G-W2
   integrityKey: integrity.recovered
-  authorNote: "\uC815\uC0AC\uAC01\uD615 \uC0C1\uBC18\uC2E0 \uD06C\uB86D \xB7 \uC774\uBBF8\uC9C0 \uC81C\uC791 \uB300\uAE30(11\uC808 #9) \u2014 \uC9C0\uAE08\uC740 \uBBF8\uB9AC\uBCF4\uAE30 \uC5C6\uC74C \uC790\uB9AC \uD45C\uC2DC"
+  authorNote: "\uC815\uC0AC\uAC01\uD615 \uC0C1\uBC18\uC2E0 \uD06C\uB86D \xB7 \uC815\uC2DD \uC774\uBBF8\uC9C0 \uC5F0\uACB0(11\uC808 #9, r1192_a.png)"
   path: Pictures/.work/edit/{folderDate:-5}/r1192_a.png
   derivedFrom: {fileID: 11400000, guid: 2bc3e1912f7f0c04faa442d380f6ec1d, type: 2}
   mediaAssetId: 
-  preview: {fileID: 0}
+  preview: {fileID: 2800000, guid: 68d167e9ec32f564e81908085e58f2b9, type: 3}
   visibleText: []

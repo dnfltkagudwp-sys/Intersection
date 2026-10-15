@@ -178,6 +178,8 @@ namespace Intersection.EditorTools
             var temps = new List<Object>();
             var scene = EditorSceneManager.NewPreviewScene();
             var rt = new RenderTexture(style.width, style.height, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            // cam.Render()가 활성 RenderTexture를 rt로 남길 수 있으므로 렌더 전 값을 기억했다가 해제 전에 되돌린다.
+            var previousActive = RenderTexture.active;
             try
             {
                 var camGo = new GameObject("CaptureCamera");
@@ -208,17 +210,16 @@ namespace Intersection.EditorTools
                 Canvas.ForceUpdateCanvases();
                 cam.Render();
 
-                var prev = RenderTexture.active;
                 RenderTexture.active = rt;
                 var shot = new Texture2D(style.width, style.height, TextureFormat.RGB24, false);
                 shot.ReadPixels(new Rect(0, 0, style.width, style.height), 0, 0);
                 shot.Apply();
-                RenderTexture.active = prev;
                 temps.Add(shot);
                 return shot.EncodeToPNG();
             }
             finally
             {
+                RenderTexture.active = previousActive;
                 EditorSceneManager.ClosePreviewScene(scene);
                 rt.Release();
                 Object.DestroyImmediate(rt);

@@ -23,9 +23,9 @@ MonoBehaviour:
   availableFrom: 4
   evidenceRef: P4-B13-C2
   integrityKey: integrity.recovered
-  authorNote: "\uD06C\uB86D (134,180) 628\xD7785 \xB7 \uC774\uBBF8\uC9C0 \uC81C\uC791 \uB300\uAE30(11\uC808 #1) \u2014 \uC9C0\uAE08\uC740 \uBBF8\uB9AC\uBCF4\uAE30 \uC5C6\uC74C \uC790\uB9AC \uD45C\uC2DC"
+  authorNote: "\uD06C\uB86D (134,180) 628\xD7785 \xB7 \uC815\uC2DD \uC774\uBBF8\uC9C0 \uC5F0\uACB0(11\uC808 #1, r0412_a.png)"
   path: Pictures/.work/edit/{folderDate:-182}/r0412_a.png
   derivedFrom: {fileID: 11400000, guid: baacc58f7b98b7c4bba97b0735d1ff93, type: 2}
   mediaAssetId: 
-  preview: {fileID: 0}
+  preview: {fileID: 2800000, guid: d29ef336ff02491488d318b8d8ee655e, type: 3}
   visibleText: []

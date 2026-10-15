@@ -25,8 +25,9 @@ MonoBehaviour:
   integrityKey: integrity.original
   authorNote: "parentId A06. D \uAD00\uB828 \uC775\uBA85 \uACC4\uC815 \uAC00\uB824\uC9C4 \uC774\uBBF8\uC9C0 \uC870\uAC01"
   path: Download/capture_1766.png
+  derivedFrom: {fileID: 11400000, guid: 7b47dbf1807aa334794f7cb5ca00dbee, type: 2}
   mediaAssetId: 
-  preview: {fileID: 2800000, guid: 6fb7ed827e708b14db04c35a53fbba39, type: 3}
+  preview: {fileID: 2800000, guid: 35fb5d1beed45ac4ebf26e13f9ac26f0, type: 3}
   visibleText:
   - id: ac9238572c0248748e7178864852a397
     kind: 0
