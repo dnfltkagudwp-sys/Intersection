@@ -19,7 +19,7 @@ MonoBehaviour:
   unlocksSources: 03000000i
   actionKey: job.recovery.action
   notReadyKey: job.recovery.notReady
-  runningKey: job.recovery.running
+  runningKey: recovery.processing
   doneKey: job.recovery.done
   shortRunningKey: job.recovery.shortRunning
   shortDoneKey: job.recovery.shortDone
@@ -58,6 +58,9 @@ MonoBehaviour:
     job: {fileID: 0}
     templateKey: notify.recoveryReady
     caseToken: {fileID: 0}
+    summaryHeadingKey: 
+    summaryCountKey: 
+    summaryOpenKey: 
   onStart: []
   onComplete:
   - id: 096622707cb54bd09cfe45988af3aa56
@@ -66,13 +69,39 @@ MonoBehaviour:
     job: {fileID: 0}
     templateKey: 
     caseToken: {fileID: 0}
+    summaryHeadingKey: 
+    summaryCountKey: 
+    summaryOpenKey: 
   - id: 9ce17068eee04d8c96f44912a13896b0
     kind: 2
     stage: 0
     job: {fileID: 0}
     templateKey: notify.recoveryDone
     caseToken: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
-  completionConditions: []
-  autoCompleteWhenReady: 0
-  completedExternally: 1
-  authorNote: "P4 \uC0AD\uC81C \uB370\uC774\uD130 \uBCF5\uAD6C \uC9C4\uD589 \uC9C0\uC810. \uC2DC\uC791 \uC870\uAC74(P3 \uC6D0\uACE0 v0.2 8\uC808, \uC21C\uC11C \uBB34\uAD00): \u2460 B \uC778\uBCA4\uD1A0\uB9AC \uC644\uB8CC(P3 \uC9C4\uC785) \u2461 B08 `IMG_0412_1.jpg`(B_IMG_0412_1, \uC724\uC11C\uD558 \uAE30\uAE30) \uC0AC\uC9C4 \uD55C \uC7A5 \uBCF4\uAE30 \uC2E4\uC81C \uC5F4\uB78C \u2462 \uC5F4\uB78C \uBB36\uC74C Group_P3_AccountOrDeletion(B09 2\xB7B16 3 \uC911 \uC11C\uB85C \uB2E4\uB978 \uC6D0\uBCF8 1\uAC74 \uC774\uC0C1) \uC2E4\uC81C \uC0C1\uC138 \uC5F4\uB78C. \uC138 \uC870\uAC74\uC744 \uCC98\uC74C \uBAA8\uB450 \uB9CC\uC871\uD558\uBA74 \uC900\uBE44 \uD6A8\uACFC(onReady)\uB85C \uC5C5\uBB34 \uC54C\uB9BC `\uC0AD\uC81C\uB41C \uB370\uC774\uD130 \uC778\uB371\uC2A4\uAC00 \uD655\uC778\uB418\uC5C8\uC2B5\uB2C8\uB2E4. \uCD94\uAC00 \uBCF5\uAD6C \uC791\uC5C5\uC744 \uC2DC\uC791\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4.` 1\uD68C. \uC791\uC5C5\uC740 \uC790\uB3D9\uC73C\uB85C \uC2DC\uC791\uD558\uC9C0 \uC54A\uC73C\uBA70 \uD50C\uB808\uC774\uC5B4\uAC00 \uC0C1\uB2E8 `\uC0AD\uC81C \uB370\uC774\uD130 \uBCF5\uAD6C \uC2DC\uC791`\uC744 \uC9C1\uC811 \uB204\uB978\uB2E4(\uC2DC\uC791 \uB4A4 `\uC0AD\uC81C \uB370\uC774\uD130 \uBCF5\uAD6C \uC900\uBE44 \uC911`, \uC7AC\uC2DC\uC791\xB7\uCDE8\uC18C \uC5C6\uC74C). \uC644\uB8CC(P4)\uB294 \uC774\uD6C4 \uC815\uC2DD \uCF58\uD150\uCE20\uAC00 \uC5F0\uACB0."
+    summaryHeadingKey: 
+    summaryCountKey: 
+    summaryOpenKey: 
+  - id: bb9b08ce410b4ff3824e12849ef86db4
+    kind: 3
+    stage: 0
+    job: {fileID: 0}
+    templateKey: notify.recoveryDone
+    caseToken: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+    summaryHeadingKey: summary.recovery.heading
+    summaryCountKey: summary.recovery.count
+    summaryOpenKey: summary.recovery.open
+  completionConditions:
+  - kind: 3
+    request: {fileID: 0}
+    job: {fileID: 11400000, guid: bfaab6d7bc1e59640b77fa8cc87b96cf, type: 2}
+    record: {fileID: 0}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 0}
+    minCount: 1
+    source: 0
+  autoCompleteWhenReady: 1
+  completedExternally: 0
+  startPresentationKey: recovery.processing
+  startPresentationSeconds: 1
+  authorNote: "P4 \uC0AD\uC81C \uB370\uC774\uD130 \uBCF5\uAD6C. \uC2DC\uC791 \uC870\uAC74(P3 \uC6D0\uACE0 v0.2 8\uC808, \uC21C\uC11C \uBB34\uAD00): \u2460 B \uC778\uBCA4\uD1A0\uB9AC \uC644\uB8CC(P3 \uC9C4\uC785) \u2461 B08 `IMG_0412_1.jpg`(B_IMG_0412_1, \uC724\uC11C\uD558 \uAE30\uAE30) \uC0AC\uC9C4 \uD55C \uC7A5 \uBCF4\uAE30 \uC2E4\uC81C \uC5F4\uB78C \u2462 \uC5F4\uB78C \uBB36\uC74C Group_P3_AccountOrDeletion(B09 2\xB7B16 3 \uC911 \uC11C\uB85C \uB2E4\uB978 \uC6D0\uBCF8 1\uAC74 \uC774\uC0C1) \uC2E4\uC81C \uC0C1\uC138 \uC5F4\uB78C. \uC138 \uC870\uAC74\uC744 \uCC98\uC74C \uBAA8\uB450 \uB9CC\uC871\uD558\uBA74 \uC900\uBE44 \uD6A8\uACFC(onReady)\uB85C \uC5C5\uBB34 \uC54C\uB9BC 1\uD68C. \uD50C\uB808\uC774\uC5B4\uAC00 \uC0C1\uB2E8 `\uC0AD\uC81C \uB370\uC774\uD130 \uBCF5\uAD6C \uC2DC\uC791`\uC744 \uC9C1\uC811 \uB204\uB978\uB2E4.\n\uC644\uB8CC(P4 \uC6D0\uACE0 7-2): \uC790\uB3D9 \uC644\uB8CC \uC791\uC5C5. \uC644\uB8CC \uC870\uAC74 = B \uC778\uBCA4\uD1A0\uB9AC \uC644\uB8CC(\uC2DC\uC791 \uC2DC\uC810\uC5D0 \uC774\uBBF8 \uCC38)\uB77C\uC11C \uC2DC\uC791 \uD2B8\uB79C\uC7AD\uC158 \uC548\uC5D0\uC11C \uBC14\uB85C \uC644\uB8CC\uB41C\uB2E4. \uC644\uB8CC \uD6A8\uACFC = P4 + \uC5C5\uBB34 \uC54C\uB9BC `\uC724\uC11C\uD558 \uC758\uB8B0 \u2014 \uBCF5\uAD6C \uB370\uC774\uD130 \uD655\uC778 \uC644\uB8CC`(notify.recoveryDone) + \uBCF5\uAD6C \uACB0\uACFC \uC694\uC57D 53\uAC74(\uBA54\uC77C 11\xB7\uD30C\uC77C 34\xB7\uC0AC\uC9C4 3\xB7\uBE0C\uB77C\uC6B0\uC800 3\xB7\uC124\uC815 2, \uC694\uC57D \uBB38\uAD6C summary.recovery.*). \uC2DC\uC791 \uC5F0\uCD9C recovery.processing \uC57D 1\uCD08(\uD074\uB9AD\xB7Enter \uAC74\uB108\uB6F0\uAE30, \uC800\uC7A5\uD558\uC9C0 \uC54A\uC74C)."

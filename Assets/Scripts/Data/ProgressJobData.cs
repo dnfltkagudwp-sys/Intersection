@@ -71,6 +71,14 @@ namespace Intersection.Data
         [Tooltip("{caseDisplayName}·{count} 토큰에 쓰는 의뢰")]
         public CaseData caseToken;
 
+        [Header("요약 문구 (SyncSummary 전용, 선택 — 비우면 기본 연동 결과 요약 문구)")]
+        [Tooltip("요약 머리 문구 키. 비우면 summary.heading")]
+        public string summaryHeadingKey;
+        [Tooltip("요약 전체 수량 문구 키({count}, 단수형은 키.one). 비우면 summary.count")]
+        public string summaryCountKey;
+        [Tooltip("첫 분류를 여는 버튼 문구 키. 비우면 summary.open")]
+        public string summaryOpenKey;
+
         public string Id => id;
 
         public bool EnsureId()

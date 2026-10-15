@@ -336,14 +336,17 @@ namespace Intersection.UI
             System.Action openFirst = null;
             if (rows.Count > 0)
                 openFirst = rows[0].onOpen;
-            summaryView.Show(text.Get(UIKeys.SummaryHeading),
+            summaryView.Show(text.Get(KeyOr(effect?.summaryHeadingKey, UIKeys.SummaryHeading)),
                 text.Format(effect != null && !string.IsNullOrEmpty(effect.templateKey) ? effect.templateKey : job.doneKey,
                     ("caseDisplayName", tokenCase.DisplayName)),
-                text.FormatCount(UIKeys.SummaryCount, records.Count, ("count", records.Count.ToString(time.Culture))),
+                text.FormatCount(KeyOr(effect?.summaryCountKey, UIKeys.SummaryCount), records.Count, ("count", records.Count.ToString(time.Culture))),
                 text.Get(UIKeys.SummaryEmpty), rows,
-                text.Get(UIKeys.SummaryOpen), openFirst,
+                text.Get(KeyOr(effect?.summaryOpenKey, UIKeys.SummaryOpen)), openFirst,
                 text.Get(UIKeys.SummaryLater), CloseSummary);
         }
+
+        /// <summary>요약 효과에 지정한 문구 키, 비어 있으면 기본 연동 결과 요약 키.</summary>
+        static string KeyOr(string key, string fallback) => string.IsNullOrEmpty(key) ? fallback : key;
 
         RecordSource SourceOf(RecordRef r)
         {

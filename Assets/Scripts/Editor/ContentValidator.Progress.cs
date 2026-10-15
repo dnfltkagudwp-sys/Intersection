@@ -502,8 +502,14 @@ namespace Intersection.EditorTools
                             if (job.onComplete.Count(x => x != null && x.kind == ProgressEffectKind.SyncSummary) > 1)
                                 error($"한 작업에 연동 결과 요약 효과가 둘 이상 있습니다: {where}", job);
                             CheckTemplate(config, e, where, job, error);
+                            foreach (var (key, field) in new[] { (e.summaryHeadingKey, "summaryHeadingKey"), (e.summaryCountKey, "summaryCountKey"), (e.summaryOpenKey, "summaryOpenKey") })
+                                if (!string.IsNullOrEmpty(key))
+                                    checkKey(key, $"연동 결과 요약 {field} ({where})", job);
                             break;
                     }
+                    if (e.kind != ProgressEffectKind.SyncSummary
+                        && (!string.IsNullOrEmpty(e.summaryHeadingKey) || !string.IsNullOrEmpty(e.summaryCountKey) || !string.IsNullOrEmpty(e.summaryOpenKey)))
+                        error($"요약 문구 키는 연동 결과 요약(SyncSummary) 효과에만 쓸 수 있습니다({e.kind}): {where}", job);
                 }
             }
 

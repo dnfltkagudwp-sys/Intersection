@@ -573,6 +573,16 @@ MonoBehaviour:
     value: "Files"
   - key: summary.app.settings
     value: "Settings Records"
+  - key: summary.recovery.heading
+    value: "RECOVERY SUMMARY"
+  - key: summary.recovery.count
+    value: "{count} recovered records"
+  - key: summary.recovery.count.one
+    value: "{count} recovered record"
+  - key: summary.recovery.open
+    value: "View Recovered Data"
+  - key: recovery.processing
+    value: "Recovering deleted data"
   - key: zoom.out
     value: "−"
   - key: zoom.in

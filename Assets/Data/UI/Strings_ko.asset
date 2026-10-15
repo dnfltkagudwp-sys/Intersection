@@ -557,6 +557,14 @@ MonoBehaviour:
     value: "파일"
   - key: summary.app.settings
     value: "설정 기록"
+  - key: summary.recovery.heading
+    value: "복구 결과 요약"
+  - key: summary.recovery.count
+    value: "복구된 자료 {count}건"
+  - key: summary.recovery.open
+    value: "복구 결과 보기"
+  - key: recovery.processing
+    value: "삭제 데이터 복구 중"
   - key: zoom.out
     value: "\u2212"
   - key: zoom.in

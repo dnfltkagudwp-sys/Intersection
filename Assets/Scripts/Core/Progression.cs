@@ -354,8 +354,6 @@ namespace Intersection.Core
                 Add(RecordRef.ForRecord(r));
             foreach (var r in RecordQuery.For(db.mails, device, Stage).Where(r => sources.Contains(r.source)))
                 Add(RecordRef.ForRecord(r));
-            foreach (var r in RecordQuery.For(db.mails, device, Stage).Where(r => sources.Contains(r.source)))
-                Add(RecordRef.ForRecord(r));
             return result;
         }
 
