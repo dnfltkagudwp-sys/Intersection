@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe001ce85f0475b4d8520e8bdcd17e1b, type: 3}
+  m_Name: B_P4-B14-3
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.MailRecord
+  id: 0b829ad24568483c9473ff415852db97
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  time:
+    dayOffset: -206
+    hour: 2
+    minute: 10
+  sortKey: 0
+  source: 3
+  availableFrom: 4
+  evidenceRef: P4-B14-3
+  integrityKey: integrity.partial
+  authorNote: "\uB2E4\uB978 \uAE30\uB85D\uACFC \uC5F0\uACB0\uB418\uC9C0 \uC54A\uB294 \uC774\uB984 \uC870\uAC01. \uC120\uD0DD \uC790\uB8CC"
+  mailboxKey: mail.box.inbox
+  fromName: 
+  fromAddress: 
+  toKey: mail.to.me
+  toText: 
+  subject: "@\u2026ly_7 \uACC4\uC815\uC5D0 \uC0C8 \uAE30\uAE30\uC5D0\uC11C \uB85C\uADF8\uC778\uD588\uC2B5\uB2C8\uB2E4"
+  body: []
+  attachments: []
+  statusKey: 

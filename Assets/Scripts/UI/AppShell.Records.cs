@@ -505,6 +505,9 @@ namespace Intersection.UI
             }
 
             var items = new List<PhoneListView.Item>();
+            // 계정 줄은 의뢰 데이터에 키가 있을 때만(예: 연결 해제된 계정의 복구 메일함). 계정 주소·소유자는 추정하지 않는다.
+            if (!string.IsNullOrEmpty(device.mailAccountKey) && records.Count > 0)
+                items.Add(PhoneListView.Item.Note(text.Get(device.mailAccountKey)));
             var order = UIKeys.MailboxOrder.ToList();
             foreach (var box in records.Select(r => r.mailboxKey ?? string.Empty).Distinct()
                          .OrderBy(k => order.IndexOf(k) < 0 ? int.MaxValue : order.IndexOf(k)).ThenBy(k => k, StringComparer.Ordinal))

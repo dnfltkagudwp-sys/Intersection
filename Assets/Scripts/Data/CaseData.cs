@@ -40,6 +40,10 @@ namespace Intersection.Data
         [Tooltip("로컬 자료 인덱싱이 끝난 단계. 이 단계 전에는 상단 바에 인덱싱 중으로 표시된다.")]
         public ProgressStage localIndexedFrom = ProgressStage.P0;
 
+        [Tooltip("선택. 메일 앱 목록 맨 위의 계정 줄 문자열 키 (예: mail.account.unknown — 연결 해제된 계정의 복구 메일함). " +
+                 "비우면 계정 줄을 표시하지 않는다. 계정 주소·소유자를 추정해 채우지 않는다.")]
+        public string mailAccountKey;
+
         /// <summary>의뢰 표시명 (현재 언어): 표시명이 있으면 그것, 없으면 소유자 이름.</summary>
         public string DisplayName =>
             !string.IsNullOrEmpty(displayNameOverride) ? ContentText.Get(Id, ContentText.Field.DisplayName, displayNameOverride)

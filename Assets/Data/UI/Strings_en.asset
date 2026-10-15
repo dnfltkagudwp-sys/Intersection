@@ -594,7 +594,7 @@ MonoBehaviour:
   - key: app.mail.title
     value: "Mail"
   - key: mail.empty
-    value: "No mail to show."
+    value: "No mail"
   - key: mail.box.inbox
     value: "Inbox"
   - key: mail.box.drafts
@@ -610,11 +610,11 @@ MonoBehaviour:
   - key: mail.to.me
     value: "Me"
   - key: mail.to.none
-    value: "No recipient"
+    value: "(empty)"
   - key: mail.subject.none
     value: "(No subject)"
   - key: mail.from.unknown
-    value: "Unknown sender"
+    value: "(unknown)"
   - key: mail.fromFormat
     value: "{name} <{address}>"
   - key: mail.body.empty
@@ -629,3 +629,11 @@ MonoBehaviour:
     value: "Mail"
   - key: summary.app.mail
     value: "Mail"
+  - key: integrity.recovered
+    value: "Recovered"
+  - key: integrity.partial
+    value: "Partially recovered"
+  - key: integrity.unrecoverable
+    value: "Unrecoverable"
+  - key: mail.account.unknown
+    value: "No account info"

@@ -38,3 +38,4 @@ MonoBehaviour:
   - person: {fileID: 11400000, guid: de39e254c683f7046b95699eb16e1f0c, type: 2}
     savedName: "\uC784\uAC00\uB78C"
   localIndexedFrom: 1
+  mailAccountKey: mail.account.unknown

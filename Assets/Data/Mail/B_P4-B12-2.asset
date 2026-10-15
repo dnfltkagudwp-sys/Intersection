@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe001ce85f0475b4d8520e8bdcd17e1b, type: 3}
+  m_Name: B_P4-B12-2
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.MailRecord
+  id: f4783c6616c8472a8f0361b50d3f6cef
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  time:
+    dayOffset: -151
+    hour: 23
+    minute: 44
+  sortKey: 0
+  source: 3
+  availableFrom: 4
+  evidenceRef: P4-B12-2
+  integrityKey: integrity.recovered
+  authorNote: "\uC804\uD654 \uB05D\uC790\uB9AC \uC870\uAC01(\uC694\uCCAD\uC11C \uD734\uB300\uC804\uD654\uC640 \uB300\uC870)"
+  mailboxKey: mail.box.inbox
+  fromName: "\uBA54\uC77C \uBCF4\uC548"
+  fromAddress: 
+  toKey: mail.to.me
+  toText: 
+  subject: "\uC778\uC99D \uCF54\uB4DC\uB97C \uBCF4\uB0C8\uC2B5\uB2C8\uB2E4"
+  body:
+  - id: 24837333ceb24f8fbef12251446036c5
+    kind: 0
+    text: "\uBE44\uBC00\uBC88\uD638\uB97C \uBC14\uAFB8\uAE30 \uC704\uD55C \uC778\uC99D \uCF54\uB4DC\uB97C \uBB38\uC790 \uBA54\uC2DC\uC9C0\uB85C \uBCF4\uB0C8\uC2B5\uB2C8\uB2E4."
+  - id: 9ba53c7f722d47e39ad89980b70228c6
+    kind: 0
+    text: "\uBC1B\uB294 \uBC88\uD638: \u2022\u2022\u2022-\u2022\u2022\u2022\u2022-\u2022\u202286"
+  - id: cc915abcd1964f3f8a247b77a142872d
+    kind: 0
+    text: "\uC778\uC99D \uCF54\uB4DC\uB294 10\uBD84 \uB3D9\uC548\uB9CC \uC4F8 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  attachments: []
+  statusKey: 

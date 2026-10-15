@@ -578,11 +578,11 @@ MonoBehaviour:
   - key: app.mail.title
     value: "메일"
   - key: mail.empty
-    value: "표시할 메일이 없습니다."
+    value: "메일 없음"
   - key: mail.box.inbox
     value: "받은편지함"
   - key: mail.box.drafts
-    value: "임시보관함"
+    value: "임시 보관함"
   - key: mail.field.from
     value: "보낸 사람"
   - key: mail.field.to
@@ -594,11 +594,11 @@ MonoBehaviour:
   - key: mail.to.me
     value: "나"
   - key: mail.to.none
-    value: "받는 사람 없음"
+    value: "(비어 있음)"
   - key: mail.subject.none
     value: "(제목 없음)"
   - key: mail.from.unknown
-    value: "알 수 없는 발신자"
+    value: "(알 수 없음)"
   - key: mail.fromFormat
     value: "{name} <{address}>"
   - key: mail.body.empty
@@ -613,3 +613,11 @@ MonoBehaviour:
     value: "메일"
   - key: summary.app.mail
     value: "메일"
+  - key: integrity.recovered
+    value: "복구됨"
+  - key: integrity.partial
+    value: "일부만 복구됨"
+  - key: integrity.unrecoverable
+    value: "복구할 수 없음"
+  - key: mail.account.unknown
+    value: "계정 정보 없음"

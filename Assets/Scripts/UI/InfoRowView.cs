@@ -38,7 +38,13 @@ namespace Intersection.UI
                 return false;
             const float gap = 16f, margin = 24f;
             var valueRt = value.rectTransform;
-            float labelWidth = label.GetPreferredValues(label.text).x + gap;
+            var labelRt = label.rectTransform;
+            float rowWidth = ((RectTransform)transform).rect.width;
+            float labelText = label.GetPreferredValues(label.text).x;
+            // 좁은 화면에서도 라벨이 말줄임되지 않게 라벨 영역을 글자 폭 이상으로 맞춘다.
+            if (labelRt.rect.width < labelText && rowWidth > labelText)
+                labelRt.offsetMax = new Vector2(-(rowWidth - labelText - labelRt.offsetMin.x), labelRt.offsetMax.y);
+            float labelWidth = labelText + gap;
             if (valueRt.offsetMin.x < labelWidth)
                 valueRt.offsetMin = new Vector2(labelWidth, valueRt.offsetMin.y);
             float width = ((RectTransform)transform).rect.width - valueRt.offsetMin.x + valueRt.offsetMax.x;

@@ -25,7 +25,12 @@ namespace Intersection.UI
             /// <summary>선택 모드에서 이 행이 가리키는 기록. null이면 선택 대상이 아니다 (폴더·위치 등).</summary>
             public RecordRef selection;
 
+            /// <summary>목록 머리의 안내 한 줄 (누를 수 없고 기록 수에 들지 않음). 구역 머리와 같은 줄 모양을 흐린 작은 글자로 쓴다.</summary>
+            public bool isNote;
+
             public static Item Section(string label) => new Item { isSection = true, title = label };
+
+            public static Item Note(string label) => new Item { isNote = true, title = label };
         }
 
         [SerializeField] TMP_Text rootTitle;
@@ -64,6 +69,17 @@ namespace Intersection.UI
             int records = 0;
             foreach (var item in items)
             {
+                if (item.isNote)
+                {
+                    var note = Instantiate(sectionPrefab, content);
+                    note.Bind(item.title);
+                    var label = note.GetComponentInChildren<TMP_Text>();
+                    label.color = theme.phoneSubText;
+                    label.font = theme.regularFont;
+                    label.fontSize = Mathf.Min(label.fontSize, 14f);
+                    rows.Add(note.gameObject);
+                    continue;
+                }
                 if (item.isSection)
                 {
                     var section = Instantiate(sectionPrefab, content);

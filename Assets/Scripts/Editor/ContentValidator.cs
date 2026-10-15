@@ -171,6 +171,7 @@ namespace Intersection.EditorTools
                     Error($"의뢰의 기기 소유자가 비어 있습니다: {Path(c)}", c);
                 if (string.IsNullOrEmpty(c.unsavedContactLabel))
                     Warn($"저장되지 않은 상대 표시 문구가 비어 있어 전화번호가 대신 표시됩니다: {Path(c)}", c);
+                CheckKey(c.mailAccountKey, $"메일 계정 줄 ({Path(c)})", c);
                 for (int i = 0; i < c.contacts.Count; i++)
                 {
                     var contact = c.contacts[i];
@@ -401,11 +402,11 @@ namespace Intersection.EditorTools
                 CheckKey(m.mailboxKey, where, m);
                 CheckKey(m.toKey, where, m);
                 CheckKey(m.statusKey, where, m);
+                // 제목 없는 초안(첨부 한 줄만)·보낸 사람을 알 수 없는 복구 메일은 정상이다. 보여줄 것이 하나도 없을 때만 오류.
                 bool hasBody = m.body != null && m.body.Any(b => b != null && !b.IsEmpty);
-                if (string.IsNullOrWhiteSpace(m.subject) && !hasBody)
-                    Error($"메일 제목과 본문이 모두 비어 있습니다: {where}", m);
-                if (string.IsNullOrWhiteSpace(m.fromName) && string.IsNullOrWhiteSpace(m.fromAddress))
-                    Warn($"보낸 사람 표시명과 주소가 모두 비어 있어 `알 수 없는 발신자`로 보입니다: {where}", m);
+                bool hasAttachment = m.attachments != null && m.attachments.Any(b => b != null && !b.IsEmpty);
+                if (string.IsNullOrWhiteSpace(m.subject) && !hasBody && !hasAttachment)
+                    Error($"메일 제목·본문·첨부가 모두 비어 있습니다: {where}", m);
                 var blockIds = new Dictionary<string, string>();
                 var shown = new List<string> { m.subject, m.fromName, m.toText };
                 foreach (var (blocks, what) in new[] { (m.body, "본문"), (m.attachments, "첨부") })
