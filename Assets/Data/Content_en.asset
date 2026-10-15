@@ -450,3 +450,9 @@ MonoBehaviour:
     value: "Classify records to be kept as Retain."
   - key: 77a22cba56e043b9bed441dbe7ec6e10:targetLabel
     value: "Family Photo"
+  - key: dfc0706b31b9495b8233d8a24e886696:placeLabel
+    value: "Old commercial building"
+  - key: 079e93add8c2452a907f4e0b3c5cf070:placeLabel
+    value: "Old commercial building"
+  - key: 8b2c6a3b7cc94999a15e057073153946:message:22c0c4d263e448f5b897ed20acf04a81:attachmentLabel
+    value: "Old commercial building"

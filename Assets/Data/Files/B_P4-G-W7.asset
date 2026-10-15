@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b94c0e0a1ae5044b84d156e93a7bf87, type: 3}
+  m_Name: B_P4-G-W7
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.FileRecord
+  id: 2d7903a3ff2a4ef797f7b5dcdc50de14
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  time:
+    dayOffset: -14
+    hour: 21
+    minute: 20
+  sortKey: 0
+  source: 3
+  availableFrom: 4
+  evidenceRef: P4-G-W7
+  integrityKey: integrity.recovered
+  authorNote: "\uBB34\uD574\uD55C \uD3B8\uC9D1 \uD30C\uC77C \uB808\uC774\uC5B4 2"
+  path: Pictures/.work/edit/{folderDate:-14}/r1158_b.psd
+  derivedFrom: {fileID: 11400000, guid: 46a6fb66502fd834abe864b2f499e763, type: 2}
+  mediaAssetId: 
+  preview: {fileID: 0}
+  visibleText:
+  - id: f7b5e92a2f76432e9aa690cc74a17506
+    kind: 0
+    text: "1080 \xD7 1080"
+  - id: 90f2e70b8b8542959a542bbdda396938
+    kind: 0
+    text: "\uB808\uC774\uC5B4 2\uAC1C"
+  - id: 15d7494a962e41bb8896db28ebc35ee2
+    kind: 0
+    text: "\uBC1D\uAE30"
+  - id: d88c5e8396a64520b745b013d74a932d
+    kind: 0
+    text: "\uBC30\uACBD"

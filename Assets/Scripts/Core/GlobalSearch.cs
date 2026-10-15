@@ -190,12 +190,36 @@ namespace Intersection.Core
                 map.Add(i);
                 compact.Append(haystack[i]);
             }
-            int c = compact.ToString().IndexOf(q, StringComparison.OrdinalIgnoreCase);
-            if (c < 0)
-                return false;
-            index = map[c];
-            length = map[c + q.Length - 1] - index + 1;
-            return true;
+            string text = compact.ToString();
+            for (int c = text.IndexOf(q, StringComparison.OrdinalIgnoreCase); c >= 0;
+                 c = c + 1 < text.Length ? text.IndexOf(q, c + 1, StringComparison.OrdinalIgnoreCase) : -1)
+            {
+                if (JoinsLatinWords(haystack, map, c, q.Length))
+                    continue;
+                index = map[c];
+                length = map[c + q.Length - 1] - index + 1;
+                return true;
+            }
+            index = -1;
+            return false;
         }
+
+        /// <summary>
+        /// 공백을 무시한 일치가 영문·숫자 단어 둘을 이어 붙여 새 부분 문자열을 만드는지 (예: `reported it` → `edit`).
+        /// 한글처럼 띄어쓰기가 흔들리는 글자 사이의 공백만 무시하고, 영문·숫자끼리 붙는 경우는 일치로 보지 않는다.
+        /// </summary>
+        static bool JoinsLatinWords(string haystack, List<int> map, int start, int length)
+        {
+            for (int k = start; k < start + length - 1; k++)
+            {
+                if (map[k + 1] - map[k] <= 1)
+                    continue;
+                if (IsLatinWordChar(haystack[map[k]]) && IsLatinWordChar(haystack[map[k + 1]]))
+                    return true;
+            }
+            return false;
+        }
+
+        static bool IsLatinWordChar(char ch) => ch < 128 && char.IsLetterOrDigit(ch);
     }
 }

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b94c0e0a1ae5044b84d156e93a7bf87, type: 3}
+  m_Name: B_P4-B13-D5
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.FileRecord
+  id: 8e80b0d8f24f4106a22cded452cb45b4
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  time:
+    dayOffset: -128
+    hour: 21
+    minute: 38
+  sortKey: 0
+  source: 3
+  availableFrom: 4
+  evidenceRef: P4-B13-D5
+  integrityKey: integrity.partial
+  authorNote: "\uC190\uC0C1 \uCE90\uC2DC f1 \u2014 \uBBF8\uB9AC\uBCF4\uAE30 \uC5C6\uC74C(\uC758\uB3C4). \uACC4\uBCF4 \uBBF8\uD655\uC815: \uC989\uC2DC \uC6D0\uBCF8(\uB0B4\uBCF4\uB0B8 f1 \uD30C\uC77C)\uC774 \uB0A8\uC544 \uC788\uC9C0 \uC54A\uC544 derivedFrom\uC744 \uB450\uC9C0 \uC54A\uC74C"
+  path: Pictures/.work/.cache/t_r0786_f1.jpg
+  derivedFrom: {fileID: 0}
+  mediaAssetId: 
+  preview: {fileID: 0}
+  visibleText: []

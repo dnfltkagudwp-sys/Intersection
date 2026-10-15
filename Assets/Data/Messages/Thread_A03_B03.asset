@@ -418,7 +418,7 @@ MonoBehaviour:
       body: 
       attachment: 2
       mediaAssetId: 
-      attachmentLabel: 
+      attachmentLabel: "오래된 상가"
     - id: 04b14243ca7145e3a5909b2a9c21ef6f
       sender: {fileID: 11400000, guid: 00eb268a3a0710d44a8baeb3f533e4ca, type: 2}
       time:

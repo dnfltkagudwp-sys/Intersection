@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b94c0e0a1ae5044b84d156e93a7bf87, type: 3}
+  m_Name: B_P4-G-W2
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.FileRecord
+  id: e1d59f5066f7478f8755ed67b5ab3e0b
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  time:
+    dayOffset: -5
+    hour: 21
+    minute: 26
+  sortKey: 0
+  source: 3
+  availableFrom: 4
+  evidenceRef: P4-G-W2
+  integrityKey: integrity.recovered
+  authorNote: "\uC815\uC0AC\uAC01\uD615 \uC0C1\uBC18\uC2E0 \uD06C\uB86D \xB7 \uC774\uBBF8\uC9C0 \uC81C\uC791 \uB300\uAE30(11\uC808 #9) \u2014 \uC9C0\uAE08\uC740 \uBBF8\uB9AC\uBCF4\uAE30 \uC5C6\uC74C \uC790\uB9AC \uD45C\uC2DC"
+  path: Pictures/.work/edit/{folderDate:-5}/r1192_a.png
+  derivedFrom: {fileID: 11400000, guid: 2bc3e1912f7f0c04faa442d380f6ec1d, type: 2}
+  mediaAssetId: 
+  preview: {fileID: 0}
+  visibleText: []

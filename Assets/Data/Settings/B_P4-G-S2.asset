@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcdf53c0d9782604f9fff89f80db184f, type: 3}
+  m_Name: B_P4-G-S2
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.SettingRecord
+  id: cee053eb6841486ba00cb4c35438e9f9
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  time:
+    dayOffset: -98
+    hour: 13
+    minute: 20
+  sortKey: 0
+  source: 3
+  availableFrom: 4
+  evidenceRef: P4-G-S2
+  integrityKey: integrity.recovered
+  authorNote: "\uC77C\uBC18 \uBCF5\uAD6C \uC124\uC815 \uAE30\uB85D"
+  settingKey: sound.keyboard
+  categoryLabel: "\uC18C\uB9AC"
+  itemLabel: "\uD0A4\uBCF4\uB4DC \uC18C\uB9AC"
+  linkedThread: {fileID: 0}
+  valueBefore: "\uCF2C"
+  valueAfter: "\uB054"
+  muteChange: 0
