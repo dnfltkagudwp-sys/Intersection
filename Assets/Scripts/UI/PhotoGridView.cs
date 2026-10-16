@@ -29,7 +29,7 @@ namespace Intersection.UI
         {
             title.text = albumTitle;
             backLabel.text = theme.backGlyph + " " + backText;
-            PhoneHeaderLayout.Fit(title, backLabel);
+            PhoneHeaderLayout.Fit(title, backLabel, theme);
             backButton.onClick.RemoveAllListeners();
             backButton.onClick.AddListener(() => onBack());
 

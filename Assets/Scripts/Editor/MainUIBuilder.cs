@@ -1910,7 +1910,7 @@ namespace Intersection.EditorTools
         static Button BackButton(RectTransform header, out TMP_Text label)
         {
             var back = Place(Node("Back", header), new Vector2(0, 1), new Vector2(0, 1), new Vector2(8, -6), new Vector2(150, 34));
-            var backBg = Img(back, Color.white);
+            var backBg = Rounded(back, Color.white, 17f);
             var button = MakeButton(back, backBg, new Color(1, 1, 1, 0), new Color(1, 1, 1, 0.08f));
             label = Text(Fill(Node("Label", back), 6, 0, 0, 0), theme.regularFont, 18, theme.phoneAccent);
             return button;

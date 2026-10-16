@@ -21,6 +21,9 @@ namespace Intersection.Data
         [Tooltip("확정된 주소만 입력한다. 미정이면 비워 둔다.")]
         public string url;
 
+        [Tooltip("저장된 페이지·검색 결과 미리보기. 없으면 '저장된 페이지 없음'을 표시한다.")]
+        public Texture2D preview;
+
         /// <summary>화면에 보이는 검색어·페이지 제목 (현재 언어). 주소(url)는 번역하지 않는다.</summary>
         public string Title => ContentText.Get(Id, ContentText.Field.Title, title);
 

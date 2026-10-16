@@ -61,7 +61,7 @@ namespace Intersection.UI
             headerTitle.text = isRoot ? string.Empty : title;
             backLabel.text = isRoot ? string.Empty : theme.backGlyph + " " + backText;
             if (!isRoot)
-                PhoneHeaderLayout.Fit(headerTitle, backLabel);
+                PhoneHeaderLayout.Fit(headerTitle, backLabel, theme);
             backButton.onClick.RemoveAllListeners();
             if (onBack != null)
                 backButton.onClick.AddListener(() => onBack());
@@ -111,7 +111,7 @@ namespace Intersection.UI
     /// </summary>
     static class PhoneHeaderLayout
     {
-        public static void Fit(TMP_Text centered, TMP_Text backLabel, params TMP_Text[] companions)
+        public static void Fit(TMP_Text centered, TMP_Text backLabel, UITheme theme, params TMP_Text[] companions)
         {
             if (centered == null || backLabel == null)
                 return;
@@ -133,10 +133,37 @@ namespace Intersection.UI
 
             var back = backLabel.transform.parent as RectTransform;
             if (back != null)
-                back.sizeDelta = new Vector2(Mathf.Max(82f, margin - 8f), back.sizeDelta.y);
+            {
+                float preferred = backLabel.GetPreferredValues(backLabel.text).x + 18f;
+                back.sizeDelta = new Vector2(Mathf.Clamp(preferred, 52f, margin - 8f), back.sizeDelta.y);
+                RoundBack(back, theme);
+            }
             backLabel.enableAutoSizing = true;
             backLabel.fontSizeMin = Mathf.Min(12f, backLabel.fontSize);
             backLabel.fontSizeMax = backLabel.fontSize;
+        }
+
+        /// <summary>중앙 제목 배치는 유지하면서 뒤로가기 호버 영역만 문구 길이의 타원형으로 줄인다.</summary>
+        public static void FitBack(TMP_Text backLabel, UITheme theme, float maxWidth = 132f)
+        {
+            if (backLabel == null)
+                return;
+            var back = backLabel.transform.parent as RectTransform;
+            if (back == null)
+                return;
+            float preferred = backLabel.GetPreferredValues(backLabel.text).x + 18f;
+            back.sizeDelta = new Vector2(Mathf.Clamp(preferred, 52f, maxWidth), back.sizeDelta.y);
+            RoundBack(back, theme);
+        }
+
+        static void RoundBack(RectTransform back, UITheme theme)
+        {
+            var background = back.GetComponent<Image>();
+            if (background == null || theme == null || theme.roundedSprite == null)
+                return;
+            background.sprite = theme.roundedSprite;
+            background.type = Image.Type.Sliced;
+            background.pixelsPerUnitMultiplier = 24f / 17f;
         }
 
         static void SetMargins(TMP_Text label, float margin)

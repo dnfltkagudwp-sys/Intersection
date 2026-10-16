@@ -36,6 +36,9 @@ namespace Intersection.Data
         [Tooltip("위치 기록의 마지막 시각 (time = 시작)")]
         public RelativeTime endTime;
 
+        [Tooltip("해당 장소·경로·위치 기록의 지도 미리보기. 없으면 공통 지도 자리 표시를 사용한다.")]
+        public Texture2D preview;
+
         public string PlaceLabel => ContentText.Get(Id, ContentText.Field.PlaceLabel, placeLabel);
         public string RouteFrom => ContentText.Get(Id, ContentText.Field.RouteFrom, routeFrom);
         public string RouteTo => ContentText.Get(Id, ContentText.Field.RouteTo, routeTo);

@@ -67,7 +67,7 @@ namespace Intersection.UI
             selectable.Bind(selection);
             headerTitle.text = title;
             backLabel.text = theme.backGlyph + " " + backText;
-            PhoneHeaderLayout.Fit(headerTitle, backLabel);
+            PhoneHeaderLayout.Fit(headerTitle, backLabel, theme);
             backButton.onClick.RemoveAllListeners();
             // 확대 열람 중이면 뒤로가기는 확대 화면만 닫는다(상세 화면·스크롤 위치는 그대로).
             backButton.onClick.AddListener(() =>

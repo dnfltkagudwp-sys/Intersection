@@ -66,7 +66,9 @@ namespace Intersection.UI
         {
             title = BrowserKind(r),
             headline = r.Title,
-            hero = new PhoneDetailView.Hero { glyph = Theme.pageGlyph, message = text.Get(UIKeys.BrowserPageUnavailable) },
+            hero = r.preview != null
+                ? new PhoneDetailView.Hero { texture = r.preview }
+                : new PhoneDetailView.Hero { glyph = Theme.pageGlyph, message = text.Get(UIKeys.BrowserPageUnavailable) },
             fields = new List<(string, string)>
             {
                 (text.Get(UIKeys.FieldKind), BrowserKind(r)),
@@ -86,7 +88,10 @@ namespace Intersection.UI
             else if (!string.IsNullOrEmpty(r.PlaceLabel))
                 fields.Add((text.Get(UIKeys.MapsFieldPlace), r.PlaceLabel));
             fields.Add((text.Get(UIKeys.FieldDateTime), MapTimeText(r)));
-            return new DetailModel { title = MapSectionTitle(r.kind), headline = MapTitle(r), hero = MapHero, fields = fields };
+            var hero = r.preview != null
+                ? new PhoneDetailView.Hero { texture = r.preview }
+                : MapHero;
+            return new DetailModel { title = MapSectionTitle(r.kind), headline = MapTitle(r), hero = hero, fields = fields };
         }
 
         PhoneDetailView.Hero MapHero => new PhoneDetailView.Hero { background = Theme.mapPlaceholder, glyph = Theme.pinGlyph };

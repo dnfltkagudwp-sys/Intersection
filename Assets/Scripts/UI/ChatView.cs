@@ -36,6 +36,7 @@ namespace Intersection.UI
             // 머리말(상대 이름 영역)을 고르면 대화방 전체가 선택된다.
             headerSelectable.Bind(RecordRef.ForThread(device, thread));
             backLabel.text = theme.backGlyph + " " + backText;
+            PhoneHeaderLayout.FitBack(backLabel, theme);
             backButton.onClick.RemoveAllListeners();
             backButton.onClick.AddListener(() => onBack());
 
