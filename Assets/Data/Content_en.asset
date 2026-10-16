@@ -160,8 +160,6 @@ MonoBehaviour:
       Check intervals again'
   - key: 1131175bffe946a5be5945ae5f026010:visibleText:33099d941160490899119b3649eff858
     value: Accounts
-  - key: 1131175bffe946a5be5945ae5f026010:visibleText:625d6f2cb8e64c8482074816a146b6ad
-    value: Compare
   - key: 1131175bffe946a5be5945ae5f026010:visibleText:cea7d494f05e44899a616f19f916fb28
     value: 'Account|Posted|Time|Photo|Text
 
@@ -174,18 +172,6 @@ MonoBehaviour:
       @mildcase_12|?|Around 1 AM|-|Like last time / no requests'
   - key: 1131175bffe946a5be5945ae5f026010:visibleText:ea2ae39aabc2462eaa4e7b186675bef7
     value: Posts
-  - key: 1131175bffe946a5be5945ae5f026010:visibleText:ecd28fb81f4245b39ecbb7039f639fe1
-    value: '|daylog|smallroom|truncated account|mildcase
-
-      Bio|Day by day / DMs ignored|A place to collect / No DMs|Not seen|Whenever / DMs unchecked
-
-      Cover|Sticker|Sticker|Sticker|-
-
-      Text|Short fragments|Short fragments|Short fragments|Short fragments
-
-      Time|Night|Night|?|Night
-
-      After disappearance|(new URL) immediately|?|?|-'
   - key: 92b04905f3c14a39a92cf32343bc8950:fileName
     value: Principles_of_Marketing_Team_2_Final.pptx
   - key: 92b04905f3c14a39a92cf32343bc8950:visibleText:ffaff6d3c6a8430a839b70f6f6a1ebb2

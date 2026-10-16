@@ -60,6 +60,8 @@ namespace Intersection.UI
             header.SetActive(!isRoot);
             headerTitle.text = isRoot ? string.Empty : title;
             backLabel.text = isRoot ? string.Empty : theme.backGlyph + " " + backText;
+            if (!isRoot)
+                PhoneHeaderLayout.Fit(headerTitle, backLabel);
             backButton.onClick.RemoveAllListeners();
             if (onBack != null)
                 backButton.onClick.AddListener(() => onBack());
@@ -100,6 +102,48 @@ namespace Intersection.UI
             Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate(content);
             scroll.verticalNormalizedPosition = scrollPosition ?? 1f;
+        }
+    }
+
+    /// <summary>
+    /// 휴대전화 폭이 줄어들면 고정 머리말 여백을 줄이고 글자 크기를 조금만 자동 조절한다.
+    /// 넓은 화면에서는 빌더의 140px 여백을 그대로 유지한다.
+    /// </summary>
+    static class PhoneHeaderLayout
+    {
+        public static void Fit(TMP_Text centered, TMP_Text backLabel, params TMP_Text[] companions)
+        {
+            if (centered == null || backLabel == null)
+                return;
+            Canvas.ForceUpdateCanvases();
+            var header = centered.transform.parent as RectTransform;
+            if (header == null || header.rect.width <= 0f)
+                return;
+
+            float margin = Mathf.Clamp((header.rect.width - 150f) * 0.5f, 94f, 140f);
+            SetMargins(centered, margin);
+            centered.enableAutoSizing = true;
+            centered.fontSizeMin = Mathf.Min(13f, centered.fontSize);
+            centered.fontSizeMax = centered.fontSize;
+
+            if (companions != null)
+                foreach (var label in companions)
+                    if (label != null)
+                        SetMargins(label, margin);
+
+            var back = backLabel.transform.parent as RectTransform;
+            if (back != null)
+                back.sizeDelta = new Vector2(Mathf.Max(82f, margin - 8f), back.sizeDelta.y);
+            backLabel.enableAutoSizing = true;
+            backLabel.fontSizeMin = Mathf.Min(12f, backLabel.fontSize);
+            backLabel.fontSizeMax = backLabel.fontSize;
+        }
+
+        static void SetMargins(TMP_Text label, float margin)
+        {
+            var rt = (RectTransform)label.transform;
+            rt.offsetMin = new Vector2(margin, rt.offsetMin.y);
+            rt.offsetMax = new Vector2(-margin, rt.offsetMax.y);
         }
     }
 }

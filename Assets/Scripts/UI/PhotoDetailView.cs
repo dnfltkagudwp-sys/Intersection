@@ -32,6 +32,7 @@ namespace Intersection.UI
             backLabel.text = theme.backGlyph + " " + backText;
             dateLabel.text = date;
             timeLabel.text = time;
+            PhoneHeaderLayout.Fit(dateLabel, backLabel, timeLabel);
             prevLabel.text = theme.backGlyph;
             nextLabel.text = theme.chevronGlyph;
             PhotoVisual.Apply(photo, image, glyph, theme, false, fitter);

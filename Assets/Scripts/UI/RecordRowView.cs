@@ -56,6 +56,8 @@ namespace Intersection.UI
                 : trailingText;
 
             bool clickable = item.onClick != null;
+            float rightInset = trailingText.Length > 0 ? 150f : item.viewed ? 58f : clickable ? 38f : 18f;
+            textBlock.offsetMax = new Vector2(-rightInset, textBlock.offsetMax.y);
             chevron.text = clickable ? theme.chevronGlyph : string.Empty;
             button.interactable = clickable;
             button.onClick.RemoveAllListeners();

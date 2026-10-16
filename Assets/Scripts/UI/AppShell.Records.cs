@@ -99,9 +99,10 @@ namespace Intersection.UI
             var document = f.RenderedDocument(time.NoteDate);
             return new DetailModel
             {
-                title = f.FileName,
+                title = text.Get(UIKeys.FilesTitle),
                 headline = f.FileName,
                 document = document,
+                wrapFields = true,
                 hero = document != null ? null : new PhoneDetailView.Hero
                 {
                     texture = f.preview,

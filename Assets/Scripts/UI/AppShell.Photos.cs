@@ -31,7 +31,8 @@ namespace Intersection.UI
                 nav.openPhotoId = null;
                 phone.Show(PhoneView.Screen.PhotoGrid);
                 phone.PhotoGrid.Show(album.Title, text.Get(UIKeys.PhotosBack), photos, Theme, text.Get(UIKeys.PhotosEmpty),
-                    Back, OpenPhoto, p => store.IsViewed(RecordRef.ForPhoto(p).Key), SavedScroll(nav, album.Id));
+                    Back, OpenPhoto, p => store.IsViewed(RecordRef.ForPhoto(p).Key),
+                    p => time.DateLabel(p.takenAt), SavedScroll(nav, album.Id));
                 ShowPhotoCollectionPanel(album.Title, device, photos.Count);
                 return;
             }
