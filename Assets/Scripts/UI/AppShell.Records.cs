@@ -183,7 +183,7 @@ namespace Intersection.UI
 
         void ShowRecordPanel(DeviceRecord r, string title, string prefixKey, CaseData device) =>
             ShowRecordPanel(title, prefixKey, r.Id, device, SourceText(r.source, null),
-                UIKeys.PanelRecordTime, time.SinceDeathWithTime(r.time), r.integrityKey, RecordRef.ForRecord(r));
+                UIKeys.PanelRecordTime, time.FullDateTime(r.time), r.integrityKey, RecordRef.ForRecord(r));
 
         // ───────────── 브라우저 ─────────────
 
@@ -209,6 +209,7 @@ namespace Intersection.UI
                 trailing = time.Time(r.time),
                 icon = r.kind == BrowserRecordKind.Search ? Theme.searchGlyph : Theme.pageGlyph,
                 selection = RecordRef.ForRecord(r),
+                viewed = store.IsViewed(RecordRef.ForRecord(r).Key),
                 onClick = () => OpenRecordDetail(AppKind.Browser, RecordRef.ForRecord(r)),
             });
             ShowRecordList(nav, appTitle, null, items, null);
@@ -238,7 +239,7 @@ namespace Intersection.UI
                 bool period = open.kind == MapRecordKind.LocationHistory;
                 ShowRecordPanel(MapTitle(open), UIKeys.RecordPrefixMap, open.Id, device, SourceText(open.source, null),
                     period ? UIKeys.PanelPeriod : UIKeys.PanelRecordTime,
-                    period ? time.SinceDeathTimeRange(open.time, open.endTime) : time.SinceDeathWithTime(open.time),
+                    period ? time.FullDateTimeRange(open.time, open.endTime) : time.FullDateTime(open.time),
                     open.integrityKey, RecordRef.ForRecord(open));
                 return;
             }
@@ -257,7 +258,7 @@ namespace Intersection.UI
                 }, appTitle, RecordRef.ForMessage(openPin.entry.device, openPin.entry.thread, openPin.message));
                 ShowRecordPanel(PlaceLabel(openPin.message.AttachmentLabel), UIKeys.RecordPrefixMap, openPin.message.Id, device,
                     SourceText(openPin.entry.state.source, openPin.entry.state.serviceKey),
-                    UIKeys.PanelRecordTime, time.SinceDeathWithTime(openPin.message.time), openPin.entry.state.integrityKey,
+                    UIKeys.PanelRecordTime, time.FullDateTime(openPin.message.time), openPin.entry.state.integrityKey,
                     RecordRef.ForMessage(openPin.entry.device, openPin.entry.thread, openPin.message));
                 return;
             }
@@ -278,6 +279,7 @@ namespace Intersection.UI
                         trailing = r.kind == MapRecordKind.LocationHistory ? MapTimeText(r) : time.ListLabel(r.time),
                         icon = icon,
                         selection = RecordRef.ForRecord(r),
+                        viewed = store.IsViewed(RecordRef.ForRecord(r).Key),
                         onClick = () => OpenRecordDetail(AppKind.Maps, RecordRef.ForRecord(r)),
                     });
                 }
@@ -296,6 +298,7 @@ namespace Intersection.UI
                         trailing = time.ListLabel(p.message.time),
                         icon = Theme.pinGlyph,
                         selection = RecordRef.ForMessage(p.entry.device, p.entry.thread, p.message),
+                        viewed = store.IsViewed(RecordRef.ForMessage(p.entry.device, p.entry.thread, p.message).Key),
                         onClick = () => OpenRecordDetail(AppKind.Maps, RecordRef.ForMessage(p.entry.device, p.entry.thread, p.message)),
                     });
                 }
@@ -397,6 +400,7 @@ namespace Intersection.UI
                     subtitle = PhoneDateTime(f.time),
                     icon = IsImageFile(f.FileName) ? Theme.photoGlyph : Theme.documentGlyph,
                     selection = RecordRef.ForRecord(f),
+                    viewed = store.IsViewed(RecordRef.ForRecord(f).Key),
                     onClick = () => OpenRecordDetail(AppKind.Files, RecordRef.ForRecord(f)),
                 });
             }
@@ -461,6 +465,7 @@ namespace Intersection.UI
                         subtitle = s.CategoryLabel,
                         trailing = s.ValueAfter,
                         selection = RecordRef.ForRecord(s),
+                        viewed = store.IsViewed(RecordRef.ForRecord(s).Key),
                         onClick = () => OpenRecordDetail(AppKind.Settings, RecordRef.ForRecord(s)),
                     });
                 }
@@ -476,6 +481,7 @@ namespace Intersection.UI
                         subtitle = text.Format(UIKeys.SettingsChangeFormat, ("before", s.ValueBefore), ("after", s.ValueAfter)),
                         trailing = time.ListLabel(s.time),
                         selection = RecordRef.ForRecord(s),
+                        viewed = store.IsViewed(RecordRef.ForRecord(s).Key),
                         onClick = () => OpenRecordDetail(AppKind.Settings, RecordRef.ForRecord(s)),
                     });
                 }
@@ -522,6 +528,7 @@ namespace Intersection.UI
                         trailing = time.ListLabel(m.time),
                         icon = Theme.documentGlyph,
                         selection = RecordRef.ForRecord(m),
+                        viewed = store.IsViewed(RecordRef.ForRecord(m).Key),
                         onClick = () => OpenRecordDetail(AppKind.Mail, RecordRef.ForRecord(m)),
                     });
                 }

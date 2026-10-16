@@ -75,6 +75,8 @@ namespace Intersection.UI
         /// <summary>현재 의뢰의 상단 상태와 누르면 할 일. 진행 표시는 실제 비율을 알 때만 비율로 보여준다.</summary>
         TopBarView.Status TopStatus(CaseData c, CaseWorkStatus status)
         {
+            if (TryFinaleTopStatus(out var finaleStatus))
+                return finaleStatus;
             var plain = new TopBarView.Status
             {
                 text = text.Get(status.statusKey),
@@ -82,9 +84,14 @@ namespace Intersection.UI
                 indeterminate = status.progress == StatusProgress.Indeterminate,
                 progress = status.progress == StatusProgress.Done ? 1f : 0f,
             };
-            // 기기 접근 전·로컬 인덱싱 중·연동 작업 진행 중은 누를 것이 없다(중복 실행 불가).
-            if (!c.IsAvailable(session.Stage) || session.Stage < c.localIndexedFrom
-                || progression.JobsFor(c).Any(j => progression.StateOf(j) == JobState.Running))
+            // 열람으로 완료되는 실행 중 작업은 개별 정답을 밝히지 않고 확인 수만 보여준다.
+            var runningJob = progression.JobsFor(c).FirstOrDefault(j => progression.StateOf(j) == JobState.Running);
+            if (runningJob != null && TryViewedProgress(runningJob, runningJob.completionConditions,
+                    text.Get(UIKeys.TopRecordReview), out var runningProgress))
+                return runningProgress;
+
+            // 기기 접근 전·로컬 인덱싱 중·그 밖의 연동 작업 진행 중은 누를 것이 없다(중복 실행 불가).
+            if (!c.IsAvailable(session.Stage) || session.Stage < c.localIndexedFrom || runningJob != null)
                 return plain;
 
             // 다른 의뢰의 공유 작업(showOnAllCases)이 시작 가능하면 이 의뢰 화면에도 같은 시작 버튼을 보여준다.
@@ -135,6 +142,10 @@ namespace Intersection.UI
                     s.open = reviewPopover.IsOpen;
                     return s;
                 }
+                // 개별 원본·원본 묶음을 여러 건 확인해야 하는 작업도 진행 수를 보여준다.
+                // 파일명이나 정답은 드러내지 않고, 실제로 열어 본 조건 수만 표시한다.
+                if (TryViewedProgress(next, next.startConditions, text.Get(next.notReadyKey), out var startProgress))
+                    return startProgress;
                 var guide = Guides().FirstOrDefault(g => g.request == next.request && RecordRef.ForAsset(g.target) != null);
                 if (guide != null)
                 {
@@ -156,6 +167,31 @@ namespace Intersection.UI
                 return s;
             }
             return plain;
+        }
+
+        bool TryViewedProgress(ProgressJobData job, IEnumerable<ProgressCondition> conditions, string title,
+            out TopBarView.Status status)
+        {
+            var viewed = conditions
+                .Where(c => c != null && (c.kind == ProgressConditionKind.RecordViewed
+                                           || c.kind == ProgressConditionKind.RecordGroupViewed))
+                .ToList();
+            if (viewed.Count == 0)
+            {
+                status = default;
+                return false;
+            }
+            int done = viewed.Count(c => progression.ConditionMet(job, c));
+            status = new TopBarView.Status
+            {
+                text = text.Format(UIKeys.TopReview,
+                    ("title", title),
+                    ("done", done.ToString(time.Culture)),
+                    ("total", viewed.Count.ToString(time.Culture))),
+                style = TopBarView.StatusStyle.Plain,
+                progress = (float)done / viewed.Count,
+            };
+            return true;
         }
 
         static TopBarView.Status Link(string value, float progress) =>
@@ -304,6 +340,8 @@ namespace Intersection.UI
         void CloseSummary()
         {
             if (!SummaryOpen)
+                return;
+            if (CloseFinaleScreen())
                 return;
             summaryView.Close();
             var job = summaryJob;

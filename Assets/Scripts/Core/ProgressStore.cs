@@ -83,6 +83,17 @@ namespace Intersection.Core
         public List<NotificationEntry> notifications = new List<NotificationEntry>();
         /// <summary>예전 저장 파일에는 없다(빈 목록으로 읽음, 형식 version 그대로).</summary>
         public List<SummaryEntry> summaries = new List<SummaryEntry>();
+        /// <summary>P6 최종 처리안이 최초 자동 표시됐는지. 예전 저장에는 없어 false로 읽힌다.</summary>
+        public bool finalPlanIntroduced;
+        /// <summary>P6 실행 전에 원자적으로 저장하는 불변 처리 결과. null이면 아직 실행 전이다.</summary>
+        public FinalProcessingSnapshot finalProcessing;
+        /// <summary>
+        /// JsonUtility는 null인 중첩 객체도 빈 객체로 기록할 수 있으므로, 실제 처리 완료 여부를 별도 값으로 보관한다.
+        /// 예전 저장에는 없어 false로 읽히며, 유효한 구형 스냅샷은 로드할 때 내용으로 판별한다.
+        /// </summary>
+        public bool finalProcessingCompleted;
+        /// <summary>새 엔딩 연출을 한 번 시작했는지. 시작 뒤 재실행하면 마지막 장면만 복원한다.</summary>
+        public bool endingSequenceIntroduced;
     }
 
     /// <summary>
@@ -99,6 +110,9 @@ namespace Intersection.Core
         readonly HashSet<string> fired = new HashSet<string>();
         readonly List<NotificationEntry> notifications = new List<NotificationEntry>();
         readonly List<SummaryEntry> summaries = new List<SummaryEntry>();
+        bool finalPlanIntroduced;
+        FinalProcessingSnapshot finalProcessing;
+        bool endingSequenceIntroduced;
         long nextSeq = 1;
         int transactionDepth;
         bool dirty;
@@ -131,6 +145,9 @@ namespace Intersection.Core
         public IReadOnlyList<NotificationEntry> Notifications => notifications;
         public int UnreadCount => notifications.Count(n => !n.read);
         public IReadOnlyList<SummaryEntry> Summaries => summaries;
+        public bool FinalPlanIntroduced => finalPlanIntroduced;
+        public FinalProcessingSnapshot FinalProcessing => finalProcessing;
+        public bool EndingSequenceIntroduced => endingSequenceIntroduced;
 
         public JobState StateOf(string jobId) => jobId != null && jobs.TryGetValue(jobId, out var s) ? s : JobState.NotStarted;
 
@@ -208,6 +225,42 @@ namespace Intersection.Core
             Save();
         }
 
+        /// <summary>최종 처리안의 최초 자동 표시를 기록한다. 이후에는 상단 버튼으로 다시 연다.</summary>
+        public bool MarkFinalPlanIntroduced()
+        {
+            if (finalPlanIntroduced)
+                return true;
+            return Transact(() =>
+            {
+                finalPlanIntroduced = true;
+                Save();
+            });
+        }
+
+        /// <summary>최종 선택과 모든 처리 단위 결과를 한 번만 저장한다. 저장 실패 시 메모리도 이전 상태로 복원한다.</summary>
+        public bool CompleteFinalProcessing(FinalProcessingSnapshot snapshot)
+        {
+            if (!ValidFinalProcessingSnapshot(snapshot) || finalProcessing != null)
+                return false;
+            return Transact(() =>
+            {
+                finalProcessing = Clone(snapshot);
+                Save();
+            });
+        }
+
+        /// <summary>엔딩 연출은 한 번만 재생하고, 이후 실행에서는 해당 엔딩의 마지막 화면만 복원한다.</summary>
+        public bool MarkEndingSequenceIntroduced()
+        {
+            if (endingSequenceIntroduced)
+                return true;
+            return Transact(() =>
+            {
+                endingSequenceIntroduced = true;
+                Save();
+            });
+        }
+
         /// <summary>에디터 검수용: 진행 상태를 모두 지운다 (파일은 다음 저장 때 다시 만든다).</summary>
         public void ResetAll(ProgressStage startStage)
         {
@@ -216,6 +269,9 @@ namespace Intersection.Core
             fired.Clear();
             notifications.Clear();
             summaries.Clear();
+            finalPlanIntroduced = false;
+            finalProcessing = null;
+            endingSequenceIntroduced = false;
             nextSeq = 1;
             Save();
         }
@@ -228,6 +284,9 @@ namespace Intersection.Core
             public HashSet<string> fired;
             public List<NotificationEntry> notifications;
             public List<SummaryEntry> summaries;
+            public bool finalPlanIntroduced;
+            public FinalProcessingSnapshot finalProcessing;
+            public bool endingSequenceIntroduced;
         }
 
         Snapshot Capture() => new Snapshot
@@ -244,6 +303,9 @@ namespace Intersection.Core
             {
                 effectId = s.effectId, jobId = s.jobId, caseId = s.caseId, seen = s.seen, seq = s.seq,
             }).ToList(),
+            finalPlanIntroduced = finalPlanIntroduced,
+            finalProcessing = Clone(finalProcessing),
+            endingSequenceIntroduced = endingSequenceIntroduced,
         };
 
         void Restore(Snapshot s)
@@ -259,6 +321,9 @@ namespace Intersection.Core
             notifications.AddRange(s.notifications);
             summaries.Clear();
             summaries.AddRange(s.summaries);
+            finalPlanIntroduced = s.finalPlanIntroduced;
+            finalProcessing = Clone(s.finalProcessing);
+            endingSequenceIntroduced = s.endingSequenceIntroduced;
         }
 
         /// <summary>
@@ -324,6 +389,10 @@ namespace Intersection.Core
                 firedEffects = fired.OrderBy(f => f).ToList(),
                 notifications = notifications.ToList(),
                 summaries = summaries.ToList(),
+                finalPlanIntroduced = finalPlanIntroduced,
+                finalProcessing = Clone(finalProcessing),
+                finalProcessingCompleted = finalProcessing != null,
+                endingSequenceIntroduced = endingSequenceIntroduced,
             };
             string tmp = path + ".tmp";
             try
@@ -388,6 +457,13 @@ namespace Intersection.Core
                     fired.Add(s.effectId);
                     summaries.Add(s);
                 }
+                finalPlanIntroduced = data.finalPlanIntroduced;
+                // JsonUtility가 null을 빈 객체로 직렬화한 예전 저장은 처리 완료로 보지 않는다.
+                // 완료 플래그가 도입되기 전에 실제로 만든 유효한 스냅샷은 내용 검증으로 계속 복원한다.
+                bool validFinalProcessing = ValidFinalProcessingSnapshot(data.finalProcessing);
+                finalProcessing = (data.finalProcessingCompleted || validFinalProcessing) && validFinalProcessing
+                    ? Clone(data.finalProcessing) : null;
+                endingSequenceIntroduced = finalProcessing != null && data.endingSequenceIntroduced;
                 nextSeq = Math.Max(nextSeq, notifications.Count == 0 ? 1 : notifications.Max(n => n.seq) + 1);
                 nextSeq = Math.Max(nextSeq, summaries.Count == 0 ? 1 : summaries.Max(s => s.seq) + 1);
             }
@@ -401,9 +477,55 @@ namespace Intersection.Core
                 fired.Clear();
                 notifications.Clear();
                 summaries.Clear();
+                finalPlanIntroduced = false;
+                finalProcessing = null;
+                endingSequenceIntroduced = false;
                 nextSeq = 1;
                 Debug.LogError($"[ProgressStore] 진행 저장 파일을 읽지 못해 시작 단계부터 시작합니다. 원본은 {backup}에 보관했습니다.\n{ex.Message}");
             }
+        }
+
+        static FinalProcessingSnapshot Clone(FinalProcessingSnapshot source)
+        {
+            if (source == null)
+                return null;
+            return new FinalProcessingSnapshot
+            {
+                choice = source.choice,
+                keptCount = source.keptCount,
+                deletedCount = source.deletedCount,
+                contractKeptCount = source.contractKeptCount,
+                exceptionKeptCount = source.exceptionKeptCount,
+                units = (source.units ?? new List<FinalProcessingUnitSnapshot>()).Select(u => new FinalProcessingUnitSnapshot
+                {
+                    recordKey = u.recordKey,
+                    groupId = u.groupId,
+                    itemCount = u.itemCount,
+                    kept = u.kept,
+                    exception = u.exception,
+                }).ToList(),
+            };
+        }
+
+        static bool ValidFinalProcessingSnapshot(FinalProcessingSnapshot source)
+        {
+            if (source == null || !Enum.TryParse(source.choice, out FinalProcessingChoice choice)
+                || !Enum.IsDefined(typeof(FinalProcessingChoice), choice)
+                || source.units == null || source.units.Count == 0
+                || source.units.Any(u => u == null || string.IsNullOrEmpty(u.recordKey)
+                                          || string.IsNullOrEmpty(u.groupId) || u.itemCount <= 0
+                                          || (u.exception && !u.kept))
+                || source.units.GroupBy(u => u.recordKey).Any(g => g.Count() > 1))
+                return false;
+
+            long kept = source.units.Where(u => u.kept).Sum(u => (long)u.itemCount);
+            long deleted = source.units.Where(u => !u.kept).Sum(u => (long)u.itemCount);
+            long exceptions = source.units.Where(u => u.exception).Sum(u => (long)u.itemCount);
+            long total = kept + deleted;
+            return total > 0 && kept == source.keptCount && deleted == source.deletedCount
+                   && source.contractKeptCount >= 0 && source.contractKeptCount <= total
+                   && exceptions == source.exceptionKeptCount
+                   && (choice != FinalProcessingChoice.Contract || source.exceptionKeptCount == 0);
         }
     }
 }

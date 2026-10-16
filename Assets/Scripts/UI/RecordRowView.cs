@@ -50,7 +50,10 @@ namespace Intersection.UI
                 titleRect.offsetMax = Vector2.zero;
             }
             title.alignment = TextAlignmentOptions.MidlineLeft;
-            trailing.text = item.trailing ?? string.Empty;
+            string trailingText = item.trailing ?? string.Empty;
+            trailing.text = item.viewed
+                ? (trailingText.Length == 0 ? "✓" : "✓  " + trailingText)
+                : trailingText;
 
             bool clickable = item.onClick != null;
             chevron.text = clickable ? theme.chevronGlyph : string.Empty;

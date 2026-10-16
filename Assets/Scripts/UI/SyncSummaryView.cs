@@ -32,6 +32,7 @@ namespace Intersection.UI
             public string label;
             public string count;
             public Action onOpen;
+            public float height;
         }
 
         public bool IsOpen => gameObject.activeSelf;
@@ -46,6 +47,7 @@ namespace Intersection.UI
         /// </summary>
         public void ShowProcessing(string headingText, string titleText)
         {
+            ConfigureBody(22f, 80f);
             heading.text = headingText;
             title.text = titleText ?? string.Empty;
             countLabel.text = string.Empty;
@@ -62,6 +64,7 @@ namespace Intersection.UI
         public void Show(string headingText, string titleText, string countText, string emptyText, IList<Row> items,
             string openText, Action onOpenResults, string laterText, Action onLater)
         {
+            ConfigureBody(22f, 80f);
             heading.text = headingText;
             title.text = titleText;
             countLabel.text = countText;
@@ -75,6 +78,8 @@ namespace Intersection.UI
                 row.transform.Find("Label").GetComponent<TMP_Text>().text = item.label;
                 row.transform.Find("Count").GetComponent<TMP_Text>().text = item.count;
                 var button = row.GetComponent<Button>();
+                if (item.height > 0f && row.TryGetComponent<LayoutElement>(out var element))
+                    element.preferredHeight = item.height;
                 button.onClick.RemoveAllListeners();
                 var open = item.onOpen;
                 button.interactable = open != null;
@@ -90,10 +95,20 @@ namespace Intersection.UI
             openButton.onClick.RemoveAllListeners();
             if (onOpenResults != null)
                 openButton.onClick.AddListener(() => onOpenResults());
-            laterLabel.text = laterText;
-            laterButton.gameObject.SetActive(true);
+            laterLabel.text = laterText ?? string.Empty;
+            laterButton.gameObject.SetActive(onLater != null);
             laterButton.onClick.RemoveAllListeners();
-            laterButton.onClick.AddListener(() => onLater());
+            if (onLater != null)
+                laterButton.onClick.AddListener(() => onLater());
+            LayoutRebuilder.ForceRebuildLayoutImmediate(listRoot);
+        }
+
+        /// <summary>연락·최종 처리처럼 본문이 긴 화면에서 본문 높이와 목록 시작점을 조절한다.</summary>
+        public void ConfigureBody(float countHeight, float listTop)
+        {
+            var countRect = (RectTransform)countLabel.transform;
+            countRect.sizeDelta = new Vector2(countRect.sizeDelta.x, countHeight);
+            listRoot.offsetMax = new Vector2(listRoot.offsetMax.x, -listTop);
             LayoutRebuilder.ForceRebuildLayoutImmediate(listRoot);
         }
     }

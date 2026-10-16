@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb57afd702477e04eb30161263fd26bf, type: 3}
+  m_Name: Request_A_FamilyQuestion
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.WorkRequestData
+  id: 1516994ba07044e4bdc535c23fe89424
+  device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+  title: "\uC720\uC871 \uBB38\uC758"
+  body: "\uC791\uC5C5\uD558\uC2DC\uBA74\uC11C \uD639\uC2DC \uC6B0\uB9AC \uC544\uC774\uAC00 \uC65C \uAC70\uAE30 \uC788\uC5C8\uB294\uC9C0 \uC54C \uC218 \uC788\uB294 \uAE30\uB85D\uC744 \uBC1C\uACAC\uD558\uC168\uB098\uC694?"
+  order: 1
+  availableFrom: 6
+  evidenceRef: F-A

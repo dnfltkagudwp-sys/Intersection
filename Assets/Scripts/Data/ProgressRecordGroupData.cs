@@ -18,7 +18,7 @@ namespace Intersection.Data
     /// <summary>
     /// 진행 조건용 열람 묶음 (예: 계정 조사 자료 중 서로 다른 2건). 대상 중 서로 다른 원본(RecordRef.Key)을 minCount건 이상
     /// 실제로 열람하면 RecordGroupViewed 조건을 만족한다. 같은 원본을 여러 번 열어도 한 건이다.
-    /// 화면에 체크리스트나 수량으로 보여주지 않는다.
+    /// 개별 대상 이름은 화면에 드러내지 않고, 작업의 전체 열람 진행 수에만 반영한다.
     /// </summary>
     [CreateAssetMenu(menuName = "Intersection/Progress Record Group", fileName = "Group")]
     public class ProgressRecordGroupData : ContentAsset

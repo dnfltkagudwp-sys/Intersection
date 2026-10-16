@@ -24,7 +24,7 @@ namespace Intersection.UI
         public float ScrollPosition => scroll.verticalNormalizedPosition;
 
         public void Show(string albumTitle, string backText, List<PhotoData> photos, UITheme theme, string emptyText,
-            Action onBack, Action<PhotoData> onOpen, float? scrollPosition)
+            Action onBack, Action<PhotoData> onOpen, Func<PhotoData, bool> isViewed, float? scrollPosition)
         {
             title.text = albumTitle;
             backLabel.text = theme.backGlyph + " " + backText;
@@ -51,7 +51,7 @@ namespace Intersection.UI
                 items.Add(tile.gameObject);
                 // 잘라내기 영역 계산을 위해 셀 크기를 먼저 맞춘다.
                 ((RectTransform)tile.transform).sizeDelta = grid.cellSize;
-                tile.Bind(photo, theme, () => onOpen(p));
+                tile.Bind(photo, theme, isViewed != null && isViewed(photo), () => onOpen(p));
             }
 
             emptyLabel.gameObject.SetActive(photos.Count == 0);

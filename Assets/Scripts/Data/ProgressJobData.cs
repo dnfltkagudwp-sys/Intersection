@@ -129,6 +129,9 @@ namespace Intersection.Data
         [Header("진행")]
         public List<ProgressCondition> startConditions = new List<ProgressCondition>();
 
+        [Tooltip("조건을 만족하면 상단 시작 버튼 없이 자동으로 Running이 된다. 순차 수신되는 연락처럼 플레이어가 따로 시작할 작업이 아닐 때만 쓴다.")]
+        public bool autoStartWhenReady;
+
         [Tooltip("시작 조건을 처음 모두 만족했을 때(아직 시작하지 않은 작업) 한 번 실행하는 효과. 업무 알림(Notify)만 쓸 수 있다 — " +
                  "작업 시작·단계 변경은 플레이어가 상단에서 직접 한다. 효과 ID로 한 번만 실행되며, 이미 시작·완료한 작업에는 실행하지 않는다.")]
         public List<ProgressEffect> onReady = new List<ProgressEffect>();

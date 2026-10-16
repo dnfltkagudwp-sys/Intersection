@@ -161,9 +161,31 @@ namespace Intersection.Core
         /// </summary>
         public bool Evaluate()
         {
-            bool changed = AutoComplete();
+            bool changed = false;
+            // 자동 완료가 다음 순차 작업을 열고, 그 작업이 다시 자동 시작될 수 있으므로 안정될 때까지 반복한다.
+            for (int guard = 0; guard <= db.jobs.Count * 2; guard++)
+            {
+                bool pass = AutoComplete();
+                var next = db.jobs.Where(j => j != null && j.autoStartWhenReady
+                                               && StateOf(j) == JobState.NotStarted && Visible(j) && ConditionsMet(j))
+                    .OrderBy(j => j.device.order).ThenBy(j => j.order).FirstOrDefault();
+                if (next != null)
+                    pass |= Start(next);
+                changed |= pass;
+                if (!pass)
+                    break;
+            }
             changed |= ApplyReady();
             return changed;
+        }
+
+        /// <summary>현재 진행에서 좌측·검색에 공개해도 되는 요청. 연결 작업이 있으면 그 작업이 보이는 시점부터 공개한다.</summary>
+        public bool RequestVisible(WorkRequestData request)
+        {
+            if (request == null || Stage < request.availableFrom)
+                return false;
+            var linked = JobsForRequest(request).ToList();
+            return linked.Count == 0 || linked.Any(Visible);
         }
 
         /// <summary>

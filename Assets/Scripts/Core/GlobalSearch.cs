@@ -38,13 +38,14 @@ namespace Intersection.Core
             public IEnumerable<string> fields;
         }
 
-        public static List<SearchHit> Run(ContentDatabase db, ProgressStage stage, string query, UIText text, PhoneTime time)
+        public static List<SearchHit> Run(ContentDatabase db, ProgressStage stage, string query, UIText text, PhoneTime time,
+            Func<WorkRequestData, bool> requestVisible = null)
         {
             var result = new List<SearchHit>();
             string q = (query ?? string.Empty).Trim();
             if (q.Length == 0 || db == null)
                 return result;
-            var docs = Documents(db, stage, text, time).ToList();
+            var docs = Documents(db, stage, text, time, requestVisible).ToList();
             // 같은 참조 키가 둘 이상이면(불변 ID 중복) 어느 원본인지 정할 수 없어 열 수 없으므로 검색 결과에서도 뺀다.
             // 검증 도구는 Searchable로 같은 상황을 오류로 잡는다.
             var ambiguous = new HashSet<string>(docs.GroupBy(d => d.hit.target.Key).Where(g => g.Count() > 1).Select(g => g.Key));
@@ -68,13 +69,15 @@ namespace Intersection.Core
 
         /// <summary>검색할 수 있는 모든 기록 (검증 도구가 접근 판정과 대조할 때도 쓴다).</summary>
         public static IEnumerable<SearchHit> Searchable(ContentDatabase db, ProgressStage stage, UIText text, PhoneTime time) =>
-            Documents(db, stage, text, time).Select(d => d.hit);
+            Documents(db, stage, text, time, null).Select(d => d.hit);
 
-        static IEnumerable<Doc> Documents(ContentDatabase db, ProgressStage stage, UIText text, PhoneTime time)
+        static IEnumerable<Doc> Documents(ContentDatabase db, ProgressStage stage, UIText text, PhoneTime time,
+            Func<WorkRequestData, bool> requestVisible)
         {
             foreach (var device in db.cases.Where(c => RecordAccess.Searchable(c, stage)).OrderBy(c => c.order))
             {
-                foreach (var q in db.requests.Where(x => x != null && x.device == device && stage >= x.availableFrom).OrderBy(x => x.order))
+                foreach (var q in db.requests.Where(x => x != null && x.device == device && stage >= x.availableFrom
+                                                         && (requestVisible == null || requestVisible(x))).OrderBy(x => x.order))
                 {
                     yield return new Doc
                     {
@@ -159,8 +162,8 @@ namespace Intersection.Core
                 sortKey = sortKey,
             };
 
-        /// <summary>caseDate 기준 표시 날짜와 업무 프로그램의 "사망 N일 전".</summary>
-        static IEnumerable<string> Dates(RelativeTime t, PhoneTime time) => time.SearchDates(t).Append(time.SinceDeath(t));
+        /// <summary>화면에 표시되는 실제 날짜 형식들.</summary>
+        static IEnumerable<string> Dates(RelativeTime t, PhoneTime time) => time.SearchDates(t);
 
         static string Label(string key, UIText text) => string.IsNullOrEmpty(key) ? null : text.Get(key);
 

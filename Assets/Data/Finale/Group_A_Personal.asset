@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff530b875a4a50e409687498ea9421a9, type: 3}
+  m_Name: Group_A_Personal
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ProcessingGroupData
+  id: 7d1eb9943ff841b6afd6f95a2ab369bc
+  title: "\uC11C\uC9C0\uD6C8 \uAC1C\uC778\uC790\uB8CC"
+  device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+  order: 1
+  contractDisposition: 1
+  includeMatchingSources: 1
+  sources: 00000000010000000200000003000000i
+  includes: []
+  excludes:
+  - device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+    record: {fileID: 11400000, guid: 80050049d4d1ada4bb6589db291a19a6, type: 2}
+  countOverrides:
+  - target:
+      device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+      record: {fileID: 11400000, guid: 0ec8106da6017ee4081d05a263c54ebf, type: 2}
+    includedItemCount: 9
+  authorNote: "P6 \uACC4\uC57D \uAE30\uBCF8 \uCC98\uB9AC \uBB36\uC74C. \uC99D\uAC70 \uC758\uBBF8\uAC00 \uC544\uB2C8\uB77C \uC758\uB8B0\uC640 \uC800\uC7A5 \uCD9C\uCC98\uB85C\uB9CC \uAD6C\uC131\uD55C\uB2E4."

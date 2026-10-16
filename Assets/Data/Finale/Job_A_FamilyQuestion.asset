@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3105beace738662489091e6b994c7d18, type: 3}
+  m_Name: Job_A_FamilyQuestion
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ProgressJobData
+  id: 87aca1abd41f47578eb138a313daedd1
+  device: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+  order: 2
+  request: {fileID: 11400000, guid: 2bf30403a58f64445ab8689067bbba17, type: 2}
+  unlocksSources: 
+  actionKey: job.finale.a.action
+  notReadyKey: job.finale.a.notReady
+  runningKey: job.finale.a.running
+  doneKey: job.finale.a.done
+  shortRunningKey: job.finale.a.shortRunning
+  shortDoneKey: job.finale.a.shortDone
+  startConditions:
+  - kind: 3
+    request: {fileID: 0}
+    job: {fileID: 11400000, guid: 0748f411264893243b74e9e6be31eac4, type: 2}
+    record: {fileID: 0}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 0}
+    minCount: 1
+    source: 0
+  autoStartWhenReady: 1
+  onReady: []
+  onStart:
+  - id: 66a039a362984fe0acd35d03038eeaa6
+    kind: 2
+    stage: 0
+    job: {fileID: 0}
+    templateKey: notification.finale.a
+    caseToken: {fileID: 11400000, guid: 5f41b32b15a3de64ebb931ecd76b3ad6, type: 2}
+    summaryHeadingKey: 
+    summaryCountKey: 
+    summaryOpenKey: 
+  onComplete: []
+  completionConditions:
+  - kind: 1
+    request: {fileID: 11400000, guid: 2bf30403a58f64445ab8689067bbba17, type: 2}
+    job: {fileID: 0}
+    record: {fileID: 0}
+    device: {fileID: 0}
+    batch: {fileID: 0}
+    group: {fileID: 0}
+    minCount: 1
+    source: 0
+  autoCompleteWhenReady: 1
+  completedExternally: 0
+  showOnAllCases: 1
+  startPresentationKey: 
+  startPresentationSeconds: 1
+  authorNote: "P6 \uC21C\uCC28 \uC720\uC871 \uC5F0\uB77D. \uC900\uBE44\uB418\uBA74 \uC790\uB3D9 \uC2DC\uC791\uD558\uACE0 \uC694\uCCAD\uC744 \uC2E4\uC81C\uB85C \uD655\uC778\uD558\uBA74 \uD55C \uBC88\uB9CC \uC644\uB8CC\uD55C\uB2E4."

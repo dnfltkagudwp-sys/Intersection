@@ -31,7 +31,7 @@ namespace Intersection.UI
                 nav.openPhotoId = null;
                 phone.Show(PhoneView.Screen.PhotoGrid);
                 phone.PhotoGrid.Show(album.Title, text.Get(UIKeys.PhotosBack), photos, Theme, text.Get(UIKeys.PhotosEmpty),
-                    Back, OpenPhoto, SavedScroll(nav, album.Id));
+                    Back, OpenPhoto, p => store.IsViewed(RecordRef.ForPhoto(p).Key), SavedScroll(nav, album.Id));
                 ShowPhotoCollectionPanel(album.Title, device, photos.Count);
                 return;
             }
@@ -121,7 +121,7 @@ namespace Intersection.UI
                 Row(UIKeys.PanelRecordId, RecordCode.Format(text, UIKeys.RecordPrefixPhoto, photo.Id, device.Id), Theme.monoFont),
                 Row(UIKeys.PanelOwner, OwnerName(device), Theme.regularFont),
                 Row(UIKeys.PanelSource, SourceText(photo.source, photo.serviceKey), Theme.regularFont),
-                Row(UIKeys.PanelTakenAt, time.SinceDeathWithTime(photo.takenAt), Theme.regularFont),
+                Row(UIKeys.PanelTakenAt, time.FullDateTime(photo.takenAt), Theme.regularFont),
                 Row(UIKeys.PanelIntegrity, string.IsNullOrEmpty(photo.integrityKey) ? null : text.Get(photo.integrityKey), Theme.regularFont),
             });
         }, RecordRef.ForPhoto(photo));

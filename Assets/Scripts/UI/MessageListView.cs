@@ -37,29 +37,30 @@ namespace Intersection.UI
         }
 
         public void Show(List<ThreadEntry> entries, UIText text, PhoneTime time, UITheme theme,
-            Action<ThreadEntry, MessageData> onOpen, float? scrollPosition)
+            Action<ThreadEntry, MessageData> onOpen, Func<RecordRef, bool> isViewed, float? scrollPosition)
         {
             Clear();
             foreach (var entry in entries)
-                AddRow(entry, null, text, time, theme, onOpen);
+                AddRow(entry, null, text, time, theme, onOpen, isViewed);
             Finish(entries.Count == 0, text.Get(UIKeys.MessagesEmpty), scrollPosition);
         }
 
         public void ShowResults(List<SearchResult> threadResults, List<SearchResult> messageResults,
-            UIText text, PhoneTime time, UITheme theme, Action<ThreadEntry, MessageData> onOpen, float? scrollPosition)
+            UIText text, PhoneTime time, UITheme theme, Action<ThreadEntry, MessageData> onOpen,
+            Func<RecordRef, bool> isViewed, float? scrollPosition)
         {
             Clear();
             if (threadResults.Count > 0)
             {
                 AddSection(text.Get(UIKeys.SearchSectionThreads));
                 foreach (var r in threadResults)
-                    AddRow(r.entry, null, text, time, theme, onOpen);
+                    AddRow(r.entry, null, text, time, theme, onOpen, isViewed);
             }
             if (messageResults.Count > 0)
             {
                 AddSection(text.Get(UIKeys.SearchSectionMessages));
                 foreach (var r in messageResults)
-                    AddRow(r.entry, r.message, text, time, theme, onOpen);
+                    AddRow(r.entry, r.message, text, time, theme, onOpen, isViewed);
             }
             Finish(threadResults.Count + messageResults.Count == 0, text.Get(UIKeys.SearchEmpty), scrollPosition);
         }
@@ -80,20 +81,22 @@ namespace Intersection.UI
 
         /// <summary>message가 null이면 대화방 행(마지막 메시지 미리보기), 아니면 해당 메시지를 보여주는 검색 결과 행.</summary>
         void AddRow(ThreadEntry entry, MessageData message, UIText text, PhoneTime time, UITheme theme,
-            Action<ThreadEntry, MessageData> onOpen)
+            Action<ThreadEntry, MessageData> onOpen, Func<RecordRef, bool> isViewed)
         {
             var row = Instantiate(rowPrefab, content);
             var shown = message ?? entry.last;
+            var target = message == null
+                ? RecordRef.ForThread(entry.device, entry.thread)
+                : RecordRef.ForMessage(entry.device, entry.thread, message);
             row.Bind(entry.displayName,
                 message == null ? DeviceQuery.Preview(shown, text) : DeviceQuery.DisplayText(message, text).Replace('\n', ' '),
                 time.ListLabel(shown.time),
                 theme.chevronGlyph,
+                isViewed != null && isViewed(target),
                 message == null && entry.state.unreadCount > 0,
                 entry.state.muted,
                 theme.mutedIcon,
-                message == null
-                    ? RecordRef.ForThread(entry.device, entry.thread)
-                    : RecordRef.ForMessage(entry.device, entry.thread, message),
+                target,
                 () => onOpen(entry, message));
             items.Add(row.gameObject);
         }

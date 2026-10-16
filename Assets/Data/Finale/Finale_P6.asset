@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86907d233d284074c94c4be98effd728, type: 3}
+  m_Name: Finale_P6
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.FinaleData
+  id: 9c1c2c9d0c94486bbfaa34648f93da98
+  availableFrom: 6
+  firstRequest: {fileID: 11400000, guid: f3b85fe64b539954a9e33f2797f18b43, type: 2}
+  firstJob: {fileID: 11400000, guid: 0748f411264893243b74e9e6be31eac4, type: 2}
+  secondRequest: {fileID: 11400000, guid: 2bf30403a58f64445ab8689067bbba17, type: 2}
+  secondJob: {fileID: 11400000, guid: 4c281c95e73f90d43a3451554cafb895, type: 2}
+  groups:
+  - {fileID: 11400000, guid: 29b7a409fb1ca6145a52314e335135f5, type: 2}
+  - {fileID: 11400000, guid: 65b133496c7b2a244a35cda2739e20df, type: 2}
+  - {fileID: 11400000, guid: 817f13640d36b034cb64f34f919d7650, type: 2}
+  - {fileID: 11400000, guid: 593f268af2c9db4439c26970edc39ab7, type: 2}
+  - {fileID: 11400000, guid: 9e922a3692665b24c91c95cf912a53ac, type: 2}
+  priorRequestBody: "\uCEA1\uCC98\uB791 \uC0AC\uC9C4\uB3C4 \uADF8\uB0E5 \uB2E4 \uC9C0\uC6CC\uC918. \uAC00\uC9C0\uACE0 \uC788\uB294 \uAC83\uB3C4 \uC2EB\uC5B4."

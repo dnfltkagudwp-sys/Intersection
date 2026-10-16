@@ -26,5 +26,7 @@ namespace Intersection.Data
         public List<ProgressJobData> jobs = new List<ProgressJobData>();
         public List<ReviewBatchData> reviews = new List<ReviewBatchData>();
         public List<ProgressRecordGroupData> recordGroups = new List<ProgressRecordGroupData>();
+        public List<ProcessingGroupData> processingGroups = new List<ProcessingGroupData>();
+        public List<FinaleData> finales = new List<FinaleData>();
     }
 }

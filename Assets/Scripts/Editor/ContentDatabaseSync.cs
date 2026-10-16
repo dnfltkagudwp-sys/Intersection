@@ -60,8 +60,11 @@ namespace Intersection.EditorTools
             var jobs = Load<ProgressJobData>();
             var reviews = Load<ReviewBatchData>();
             var recordGroups = Load<ProgressRecordGroupData>();
+            var processingGroups = Load<ProcessingGroupData>();
+            var finales = Load<FinaleData>();
             FixDuplicateAssetIds(people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums)
-                .Concat(browser).Concat(maps).Concat(files).Concat(folders).Concat(settings).Concat(mails).Concat(requests).Concat(tutorials).Concat(jobs).Concat(reviews).Concat(recordGroups));
+                .Concat(browser).Concat(maps).Concat(files).Concat(folders).Concat(settings).Concat(mails).Concat(requests).Concat(tutorials).Concat(jobs).Concat(reviews).Concat(recordGroups)
+                .Concat(processingGroups).Concat(finales));
             FixDuplicateInnerIds(threads);
 
             foreach (var db in Load<ContentDatabase>())
@@ -71,13 +74,16 @@ namespace Intersection.EditorTools
                     && db.browser.SequenceEqual(browser) && db.maps.SequenceEqual(maps) && db.files.SequenceEqual(files)
                     && db.folders.SequenceEqual(folders) && db.settings.SequenceEqual(settings) && db.mails.SequenceEqual(mails)
                     && db.requests.SequenceEqual(requests) && db.tutorials.SequenceEqual(tutorials) && db.jobs.SequenceEqual(jobs) && db.reviews.SequenceEqual(reviews)
-                    && db.recordGroups.SequenceEqual(recordGroups))
+                    && db.recordGroups.SequenceEqual(recordGroups) && db.processingGroups.SequenceEqual(processingGroups)
+                    && db.finales.SequenceEqual(finales))
                     continue;
                 db.requests = requests;
                 db.tutorials = tutorials;
                 db.jobs = jobs;
                 db.reviews = reviews;
                 db.recordGroups = recordGroups;
+                db.processingGroups = processingGroups;
+                db.finales = finales;
                 db.people = people;
                 db.cases = cases;
                 db.threads = threads;

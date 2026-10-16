@@ -22,6 +22,8 @@ namespace Intersection.UI
             public string trailing;
             public Sprite icon;
             public Action onClick;
+            /// <summary>이 원본을 실제로 열어 본 적이 있으면 목록 오른쪽에 확인 표시를 붙인다.</summary>
+            public bool viewed;
             /// <summary>선택 모드에서 이 행이 가리키는 기록. null이면 선택 대상이 아니다 (폴더·위치 등).</summary>
             public RecordRef selection;
 

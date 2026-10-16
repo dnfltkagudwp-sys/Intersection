@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb57afd702477e04eb30161263fd26bf, type: 3}
+  m_Name: Request_B_FamilyFollowup
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.WorkRequestData
+  id: 0256d716cae74a9682589e481a1c00b5
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  title: "\uC720\uC871 \uCD94\uAC00 \uC694\uCCAD"
+  body: "\uAC80\uD1A0\uD558\uC2E0 \uB0B4\uC6A9\uC740 \uB530\uB85C \uC124\uBA85\uD574 \uC8FC\uC9C0 \uC54A\uC73C\uC154\uB3C4 \uB429\uB2C8\uB2E4.\n\uCC98\uC74C \uC694\uCCAD\uB4DC\uB9B0 \uB300\uB85C \uAC1C\uC778 \uACC4\uC815\uACFC \uC628\uB77C\uC778 \uAE30\uB85D\uC740 \uBAA8\uB450 \uC815\uB9AC\uD574 \uC8FC\uC138\uC694.\n\uCD94\uAC00 \uBE44\uC6A9\uC774 \uBC1C\uC0DD\uD558\uBA74 \uB9D0\uC500\uD574 \uC8FC\uC138\uC694."
+  order: 1
+  availableFrom: 6
+  evidenceRef: F-B

@@ -90,10 +90,13 @@ namespace Intersection.EditorTools
             var jobs = Find<ProgressJobData>();
             var reviews = Find<ReviewBatchData>();
             var recordGroups = Find<ProgressRecordGroupData>();
+            var processingGroups = Find<ProcessingGroupData>();
+            var finales = Find<FinaleData>();
 
             // 에셋 ID
             var allAssets = people.Cast<ContentAsset>().Concat(cases).Concat(threads).Concat(photos).Concat(albums)
-                .Concat(records).Concat(folders).Concat(requests).Concat(tutorials).Concat(jobs).Concat(reviews).Concat(recordGroups).ToList();
+                .Concat(records).Concat(folders).Concat(requests).Concat(tutorials).Concat(jobs).Concat(reviews).Concat(recordGroups)
+                .Concat(processingGroups).Concat(finales).ToList();
             foreach (var a in allAssets.Where(a => string.IsNullOrEmpty(a.Id)))
                 Error($"ID가 비어 있습니다: {Path(a)}", a);
             foreach (var g in allAssets.Where(a => !string.IsNullOrEmpty(a.Id)).GroupBy(a => a.Id).Where(g => g.Count() > 1))
@@ -482,6 +485,9 @@ namespace Intersection.EditorTools
             if (config != null && config.database != null)
                 CheckProgress(config, jobs, reviews, recordGroups, cases, threads, photos, records, folders, requests, Error, Warn, CheckKey);
 
+            if (config != null && config.database != null)
+                CheckFinale(config, finales, processingGroups, Error, CheckKey);
+
             // 휴대전화 화면 캡처 제작 원본: 화면 글자 = 파일 표시 문구, 미리보기 연결, 다시 렌더링 필요 여부, 임시 자산 표시
             CheckCaptures(noteDate, Error, Warn, (msg, ctx) => issues.Add(new Issue { info = true, message = msg, context = ctx }));
 
@@ -496,13 +502,15 @@ namespace Intersection.EditorTools
                     || !photos.All(db.photos.Contains) || !albums.All(db.albums.Contains)
                     || !browser.All(db.browser.Contains) || !maps.All(db.maps.Contains) || !files.All(db.files.Contains)
                     || !folders.All(db.folders.Contains) || !settings.All(db.settings.Contains) || !mails.All(db.mails.Contains)
-                    || !jobs.All(db.jobs.Contains) || !reviews.All(db.reviews.Contains) || !recordGroups.All(db.recordGroups.Contains))
+                    || !jobs.All(db.jobs.Contains) || !reviews.All(db.reviews.Contains) || !recordGroups.All(db.recordGroups.Contains)
+                    || !processingGroups.All(db.processingGroups.Contains) || !finales.All(db.finales.Contains))
                     Warn("ContentDatabase가 최신이 아닙니다. Intersection/Content/Refresh Content Database를 실행하세요.", db);
                 if (db.people.Any(p => p == null) || db.cases.Any(c => c == null) || db.threads.Any(t => t == null)
                     || db.photos.Any(p => p == null) || db.albums.Any(a => a == null)
                     || db.browser.Any(x => x == null) || db.maps.Any(x => x == null) || db.files.Any(x => x == null)
                     || db.folders.Any(x => x == null) || db.settings.Any(x => x == null) || db.mails.Any(x => x == null)
-                    || db.jobs.Any(x => x == null) || db.reviews.Any(x => x == null) || db.recordGroups.Any(x => x == null))
+                    || db.jobs.Any(x => x == null) || db.reviews.Any(x => x == null) || db.recordGroups.Any(x => x == null)
+                    || db.processingGroups.Any(x => x == null) || db.finales.Any(x => x == null))
                     Error("ContentDatabase에 삭제된 에셋 참조가 남아 있습니다.", db);
             }
 

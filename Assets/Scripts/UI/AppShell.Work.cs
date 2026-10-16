@@ -315,10 +315,10 @@ namespace Intersection.UI
         /// <summary>대화방 전체는 날짜 범위, 위치 기록은 시각 범위, 나머지는 한 시점.</summary>
         WorkPanelView.Row TimeRow(RecordRef target, ResolvedRecord res) =>
             !res.hasEnd
-                ? Row(UIKeys.PanelRecordTime, time.SinceDeathWithTime(res.time), Theme.regularFont)
+                ? Row(UIKeys.PanelRecordTime, time.FullDateTime(res.time), Theme.regularFont)
                 : Row(UIKeys.PanelPeriod, target.kind == RecordKind.Thread
-                    ? time.SinceDeathRange(res.time, res.endTime)
-                    : time.SinceDeathTimeRange(res.time, res.endTime), Theme.regularFont);
+                    ? time.FullDateRange(res.time, res.endTime)
+                    : time.FullDateTimeRange(res.time, res.endTime), Theme.regularFont);
 
         /// <summary>
         /// 저장된 불변 ID를 해석해 원본이 있는 기기·앱·화면 상태를 계산한다. 열 수 없으면 false와 이유 키.
@@ -497,7 +497,7 @@ namespace Intersection.UI
 
         IEnumerable<WorkRequestData> Requests(CaseData device) =>
             config.database.requests
-                .Where(q => q != null && q.device == device && session.Stage >= q.availableFrom)
+                .Where(q => q != null && q.device == device && progression.RequestVisible(q))
                 .OrderBy(q => q.order);
 
         void RenderRequests()
@@ -520,6 +520,8 @@ namespace Intersection.UI
         /// <summary>의뢰 요청은 업무 프로그램 기록이라 휴대전화가 아니라 우측 패널에 열리고, 바로 핀할 수 있다.</summary>
         void OpenRequest(WorkRequestData request)
         {
+            if (request == null || !progression.RequestVisible(request))
+                return;
             // 좌측 요청은 좌측 탐색이라 중앙의 검색·작업함을 닫고 패널에 요청을 띄운다.
             CloseCenterScreens();
             if (selecting)

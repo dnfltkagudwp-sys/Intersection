@@ -7,7 +7,7 @@ namespace Intersection.Core
 {
     /// <summary>
     /// 상대 시각(D-14 21:18)을 caseDate 기준 실제 날짜로 바꾸고, 모든 날짜·시각 표기를 한 규칙으로 만든다.
-    /// 목록의 오늘·어제·요일은 PC 날짜가 아니라 caseDate를 기준으로 계산한다.
+    /// 화면에는 실제 달력 날짜를 표시하고, 상대 시각 값은 내부 계산에만 쓴다.
     /// </summary>
     public class PhoneTime
     {
@@ -29,36 +29,47 @@ namespace Intersection.Core
 
         public string Time(RelativeTime t) => ToDateTime(t).ToString(text.Get(UIKeys.FormatTime), culture);
 
-        /// <summary>대화 목록 오른쪽의 날짜 표기.</summary>
-        public string ListLabel(RelativeTime t) => DayLabel(t, true);
+        /// <summary>업무 화면에서 쓰는 실제 날짜.</summary>
+        public string FullDate(RelativeTime t) =>
+            ToDateTime(t).ToString(text.Get(UIKeys.FormatFullDate), culture);
 
-        /// <summary>날짜만 (오늘·어제·요일·날짜). 사진 한 장 보기 머리말 등에 쓴다.</summary>
-        public string DateLabel(RelativeTime t) => DayLabel(t, false);
+        /// <summary>업무 화면에서 쓰는 실제 날짜와 시각.</summary>
+        public string FullDateTime(RelativeTime t) =>
+            text.Format(UIKeys.SeparatorTemplate, ("date", FullDate(t)), ("time", Time(t)));
+
+        /// <summary>실제 날짜 범위. 같은 날이면 날짜를 한 번만 보여준다.</summary>
+        public string FullDateTimeRange(RelativeTime from, RelativeTime to)
+        {
+            if (from.dayOffset == to.dayOffset)
+                return text.Format(UIKeys.DateTimeRange, ("date", FullDate(from)), ("start", Time(from)), ("end", Time(to)));
+            return text.Format(UIKeys.DateRange, ("from", FullDateTime(from)), ("to", FullDateTime(to)));
+        }
+
+        public string FullDateRange(RelativeTime from, RelativeTime to)
+        {
+            if (from.dayOffset == to.dayOffset)
+                return FullDate(from);
+            return text.Format(UIKeys.DateRange, ("from", FullDate(from)), ("to", FullDate(to)));
+        }
+
+        /// <summary>좁은 목록 오른쪽의 달력 날짜. 같은 사건 연도는 월·일만 표시한다.</summary>
+        public string ListLabel(RelativeTime t)
+        {
+            var date = ToDateTime(t);
+            return date.ToString(text.Get(date.Year == caseDate.Year ? UIKeys.FormatMonthDay : UIKeys.FormatFullDate), culture);
+        }
+
+        /// <summary>사진·상세·목록 구역에 쓰는 실제 달력 날짜.</summary>
+        public string DateLabel(RelativeTime t) => FullDate(t);
 
         /// <summary>대화 안 날짜 구분선.</summary>
         public string Separator(RelativeTime t) =>
-            text.Format(UIKeys.SeparatorTemplate, ("date", DayLabel(t, false)), ("time", Time(t)));
-
-        string DayLabel(RelativeTime t, bool forList)
-        {
-            int daysBefore = -t.dayOffset;
-            var date = ToDateTime(t);
-            if (daysBefore == 0)
-                return forList ? Time(t) : text.Get(UIKeys.DateToday);
-            if (daysBefore == 1)
-                return text.Get(UIKeys.DateYesterday);
-            if (daysBefore > 1 && daysBefore < 7)
-                return date.ToString(text.Get(UIKeys.FormatWeekday), culture);
-            if (date.Year == caseDate.Year)
-                return date.ToString(text.Get(UIKeys.FormatMonthDay), culture);
-            return date.ToString(text.Get(UIKeys.FormatFullDate), culture);
-        }
+            text.Format(UIKeys.SeparatorTemplate, ("date", FullDate(t)), ("time", Time(t)));
 
         /// <summary>검색에서 맞춰 볼 수 있는 이 메시지의 표시 날짜들.</summary>
         public IEnumerable<string> SearchDates(RelativeTime t)
         {
             var date = ToDateTime(t);
-            yield return DayLabel(t, false);
             yield return date.ToString(text.Get(UIKeys.FormatMonthDay), culture);
             yield return date.ToString(text.Get(UIKeys.FormatFullDate), culture);
         }
@@ -67,32 +78,5 @@ namespace Intersection.Core
         public string NoteDate(int dayOffset) =>
             caseDate.AddDays(dayOffset).ToString(text.Get(UIKeys.FormatNoteDate), culture);
 
-        /// <summary>업무 패널용 "사망 14일 전" 표기.</summary>
-        public string SinceDeath(RelativeTime t)
-        {
-            if (t.dayOffset < 0)
-                return text.FormatCount(UIKeys.DeathBefore, -t.dayOffset, ("n", (-t.dayOffset).ToString(culture)));
-            if (t.dayOffset > 0)
-                return text.FormatCount(UIKeys.DeathAfter, t.dayOffset, ("n", t.dayOffset.ToString(culture)));
-            return text.Get(UIKeys.DeathDayOf);
-        }
-
-        public string SinceDeathWithTime(RelativeTime t) =>
-            text.Format(UIKeys.DeathWithTime, ("day", SinceDeath(t)), ("time", Time(t)));
-
-        /// <summary>시작~끝 시각. 같은 날이면 "사망 당일 · 오후 8:48 ~ 오후 9:20".</summary>
-        public string SinceDeathTimeRange(RelativeTime from, RelativeTime to)
-        {
-            if (from.dayOffset == to.dayOffset)
-                return text.Format(UIKeys.DeathTimeRange, ("day", SinceDeath(from)), ("start", Time(from)), ("end", Time(to)));
-            return text.Format(UIKeys.DeathRange, ("from", SinceDeathWithTime(from)), ("to", SinceDeathWithTime(to)));
-        }
-
-        public string SinceDeathRange(RelativeTime from, RelativeTime to)
-        {
-            if (from.dayOffset == to.dayOffset)
-                return SinceDeath(from);
-            return text.Format(UIKeys.DeathRange, ("from", SinceDeath(from)), ("to", SinceDeath(to)));
-        }
     }
 }

@@ -18,12 +18,8 @@ namespace Intersection.Core
         public const string DateYesterday = "date.yesterday";
         public const string SeparatorTemplate = "chat.separator";
 
-        // 사망일 기준 표기
-        public const string DeathBefore = "death.before";
-        public const string DeathDayOf = "death.dayOf";
-        public const string DeathAfter = "death.after";
-        public const string DeathWithTime = "death.withTime";
-        public const string DeathRange = "death.range";
+        public const string DateRange = "date.range";
+        public const string DateTimeRange = "date.timeRange";
 
         // 상단 바
         public const string TopCaseStatus = "top.caseStatus";
@@ -60,7 +56,6 @@ namespace Intersection.Core
         public const string RecordPrefixPhoto = "record.prefix.photo";
 
         // UI-04 공통
-        public const string DeathTimeRange = "death.timeRange";
         public const string ListEmpty = "list.empty";
         public const string FieldDateTime = "field.datetime";
         public const string FieldKind = "field.kind";
@@ -225,6 +220,7 @@ namespace Intersection.Core
         public const string TopGuideState = "top.guideState";
         /// <summary>검토 묶음 진행률 ({title} {done}/{total}).</summary>
         public const string TopReview = "top.review";
+        public const string TopRecordReview = "top.recordReview";
         // 검토 팝오버
         public const string ReviewGroupCount = "review.groupCount";
         public const string ReviewContinue = "review.continue";
@@ -242,6 +238,60 @@ namespace Intersection.Core
         public const string SummaryAppFiles = "summary.app.files";
         public const string SummaryAppSettings = "summary.app.settings";
         public const string SummaryAppMail = "summary.app.mail";
+
+        // P6 순차 연락·최종 처리
+        public const string FinaleContactConfirm = "finale.contact.confirm";
+        public const string FinaleTopFirst = "finale.top.first";
+        public const string FinaleTopSecond = "finale.top.second";
+        public const string FinaleTopPlan = "finale.top.plan";
+        public const string FinaleTopComplete = "finale.top.complete";
+        public const string FinaleShortPending = "finale.short.pending";
+        public const string FinaleShortComplete = "finale.short.complete";
+        public const string FinalePlanHeading = "finale.plan.heading";
+        public const string FinalePlanTitle = "finale.plan.title";
+        public const string FinalePlanBody = "finale.plan.body";
+        public const string FinaleGroupContractKeep = "finale.group.contract.keep";
+        public const string FinaleGroupContractDelete = "finale.group.contract.delete";
+        public const string FinaleGroupCandidates = "finale.group.candidates";
+        public const string FinaleChoiceContract = "finale.choice.contract";
+        public const string FinaleChoiceException = "finale.choice.exception";
+        public const string FinaleChoiceResult = "finale.choice.result";
+        public const string FinaleChoiceNoException = "finale.choice.noException";
+        public const string FinaleReview = "finale.review";
+        public const string FinaleConfirmHeading = "finale.confirm.heading";
+        public const string FinaleConfirmContract = "finale.confirm.contract";
+        public const string FinaleConfirmException = "finale.confirm.exception";
+        public const string FinaleBack = "finale.back";
+        public const string FinaleProcessing = "finale.processing";
+        public const string FinaleResultHeading = "finale.result.heading";
+        public const string FinaleResultContractTitle = "finale.result.contract.title";
+        public const string FinaleResultContractBody = "finale.result.contract.body";
+        public const string FinaleResultExceptionTitle = "finale.result.exception.title";
+        public const string FinaleResultExceptionBody = "finale.result.exception.body";
+        public const string FinalePlanRequests = "finale.plan.requests";
+        public const string FinalePlanKeep = "finale.plan.keep";
+        public const string FinalePlanDelete = "finale.plan.delete";
+        public const string FinaleProcessCurrent = "finale.process.current";
+        public const string FinaleWarningHeading = "finale.warning.heading";
+        public const string FinaleWarningBody = "finale.warning.body";
+        public const string FinaleWarningConfirm = "finale.warning.confirm";
+        public const string EndingTitle = "ending.title";
+        public const string EndingFamilyLabel = "ending.family.label";
+        public const string EndingRequestB = "ending.request.b";
+        public const string EndingRequestA = "ending.request.a";
+        public const string EndingOutcomePreserved = "ending.outcome.preserved";
+        public const string EndingOutcomeCleared = "ending.outcome.cleared";
+        public const string EndingCounts = "ending.counts";
+        public const string EndingComplete = "ending.complete";
+        public const string EndingResultHeading = "ending.result.heading";
+        public const string EndingDeletedResult = "ending.deleted.result";
+        public const string EndingDeletedUnavailable = "ending.deleted.unavailable";
+        public const string EndingDeletedFinal = "ending.deleted.final";
+        public const string EndingPreservedResult = "ending.preserved.result";
+        public const string EndingLater = "ending.later";
+        public const string EndingAuditHeading = "ending.audit.heading";
+        public const string EndingAuditBody = "ending.audit.body";
+        public const string EndingPreservedFinal = "ending.preserved.final";
 
         // 메일 앱 (읽기 전용 기록)
         public const string MailTitle = "app.mail.title";
@@ -361,7 +411,7 @@ namespace Intersection.Core
         {
             FormatTime, FormatStatusClock, FormatMonthDay, FormatFullDate, FormatNoteDate, FormatWeekday,
             DateToday, DateYesterday, SeparatorTemplate,
-            DeathBefore, DeathDayOf, DeathAfter, DeathWithTime, DeathRange,
+            DateRange, DateTimeRange,
             TopCaseStatus, TopIndexDone, TopIndexRunning,
             CaseStatusLocal, CaseStatusWaiting,
             PhoneDeviceLabel,
@@ -369,7 +419,7 @@ namespace Intersection.Core
             SearchSectionThreads, SearchSectionMessages, SearchEmpty,
             PhotosAlbumCount, PhotosBack, PhotosEmpty, PanelTitleAlbums, PanelPhotoCount, PanelPhotoCountValue, PanelTakenAt,
             RecordPrefixPhoto,
-            DeathTimeRange, ListEmpty, FieldDateTime, FieldKind, PanelRecordTime, PanelRecordCount, PanelRecordCountValue,
+            ListEmpty, FieldDateTime, FieldKind, PanelRecordTime, PanelRecordCount, PanelRecordCountValue,
             BrowserTitle, BrowserKindSearch, BrowserKindVisit, BrowserPageUnavailable, PanelTitleBrowser, RecordPrefixWeb,
             MapsTitle, MapsSectionSearches, MapsSectionRoutes, MapsSectionShared, MapsSectionHistory, MapsRouteFormat,
             MapsSharedSent, MapsSharedReceived, MapsPlaceUnknown, MapsFieldPlace, MapsFieldFrom, MapsFieldTo, MapsFieldVia,
@@ -401,12 +451,25 @@ namespace Intersection.Core
             PanelTitleMessageList, PanelTitleThread, PanelRecordId, RecordCodeFormat, RecordPrefixThread, PanelOwner, PanelSource, PanelSourceFormat,
             PanelPeriod, PanelIntegrity, PanelThreadCount, PanelThreadCountValue,
             SourceLocal, SourceCloud, SourceLinked, SourceRecovered,
-            TopRequestNeeded, TopGuideState, TopReview, ReviewGroupCount, ReviewContinue,
+            TopRequestNeeded, TopGuideState, TopReview, TopRecordReview, ReviewGroupCount, ReviewContinue,
             SummaryHeading, SummaryCount, SummaryRowCount, SummaryOpen, SummaryLater, SummaryEmpty,
             SummaryAppMessages, SummaryAppPhotos, SummaryAppBrowser, SummaryAppMaps, SummaryAppFiles, SummaryAppSettings,
             SummaryAppMail, MailTitle, MailEmpty, MailBoxInbox, MailBoxDrafts, MailFieldFrom, MailFieldTo, MailFieldAttachments,
             MailFieldStatus, MailToNone, MailSubjectNone, MailFromUnknown, MailFromFormat, MailBodyEmpty, PanelTitleMail,
             RecordPrefixMail, KindMail,
+            FinaleContactConfirm, FinaleTopFirst, FinaleTopSecond, FinaleTopPlan, FinaleTopComplete,
+            FinaleShortPending, FinaleShortComplete, FinalePlanHeading, FinalePlanTitle, FinalePlanBody,
+            FinaleGroupContractKeep, FinaleGroupContractDelete, FinaleGroupCandidates,
+            FinaleChoiceContract, FinaleChoiceException, FinaleChoiceResult, FinaleChoiceNoException,
+            FinaleReview, FinaleConfirmHeading, FinaleConfirmContract, FinaleConfirmException, FinaleBack,
+            FinaleProcessing, FinaleResultHeading, FinaleResultContractTitle, FinaleResultContractBody,
+            FinaleResultExceptionTitle, FinaleResultExceptionBody,
+            FinalePlanRequests, FinalePlanKeep, FinalePlanDelete, FinaleProcessCurrent,
+            FinaleWarningHeading, FinaleWarningBody, FinaleWarningConfirm,
+            EndingTitle, EndingFamilyLabel, EndingRequestB, EndingRequestA, EndingOutcomePreserved, EndingOutcomeCleared,
+            EndingCounts, EndingComplete, EndingResultHeading, EndingDeletedResult, EndingDeletedUnavailable,
+            EndingDeletedFinal, EndingPreservedResult, EndingLater, EndingAuditHeading, EndingAuditBody,
+            EndingPreservedFinal,
         };
 
         public static string SourceKey(Intersection.Data.RecordSource source)

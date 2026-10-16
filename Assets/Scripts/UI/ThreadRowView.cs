@@ -19,12 +19,12 @@ namespace Intersection.UI
         [SerializeField] SelectableRecord selectable;
 
         public void Bind(string titleText, string previewText, string dateText, string chevronGlyph,
-            bool unread, bool muted, Sprite mutedSprite, RecordRef selection, Action onClick)
+            bool viewed, bool unread, bool muted, Sprite mutedSprite, RecordRef selection, Action onClick)
         {
             selectable.Bind(selection);
             title.text = titleText;
             preview.text = previewText;
-            date.text = dateText;
+            date.text = viewed ? "✓  " + dateText : dateText;
             chevron.text = chevronGlyph;
             unreadDot.SetActive(unread);
             // 알림 끔 아이콘은 테마에 아이콘이 있을 때만 표시한다.

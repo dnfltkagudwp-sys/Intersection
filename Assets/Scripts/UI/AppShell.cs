@@ -73,11 +73,14 @@ namespace Intersection.UI
             Refresh();
             RenderNotifications();
             // 확인 전에 종료했던 연동 결과 요약은 다시 보여준다.
-            ShowPendingSummary();
+            if (!ShowPendingFinale())
+                ShowPendingSummary();
         }
 
         void Update()
         {
+            if (UpdateFinalePresentation())
+                return;
             // 작업 시작 연출 중에는 건너뛰기(클릭·Enter)만 받는다. Esc·단축키·휴대전화 조작으로 이전 화면이 바뀌지 않게 막는다.
             if (presenting)
             {
@@ -210,7 +213,7 @@ namespace Intersection.UI
                 bool available = c.IsAvailable(session.Stage);
                 var item = Instantiate(caseItemPrefab, caseListRoot);
                 item.Bind(Initial(c.DisplayName), c.DisplayName,
-                    text.Get(progression.StatusOf(c).shortKey),
+                    FinaleShortStatus(c) ?? text.Get(progression.StatusOf(c).shortKey),
                     c == session.CurrentCase, available, Theme.accentSoft, Color.clear,
                     () => SelectCase(device));
                 sidebarItems.Add(item);
@@ -326,13 +329,14 @@ namespace Intersection.UI
             float? listScroll = nav.scroll.TryGetValue(string.Empty, out var ls) ? ls : (float?)null;
             if (string.IsNullOrWhiteSpace(nav.searchQuery))
             {
-                list.Show(entries, text, time, Theme, OpenThread, listScroll);
+                list.Show(entries, text, time, Theme, OpenThread, r => store.IsViewed(r.Key), listScroll);
                 return;
             }
             var threadResults = new List<SearchResult>();
             var messageResults = new List<SearchResult>();
             MessageSearch.Run(entries, device, nav.searchQuery, text, time, threadResults, messageResults);
-            list.ShowResults(threadResults, messageResults, text, time, Theme, OpenThread, listScroll);
+            list.ShowResults(threadResults, messageResults, text, time, Theme, OpenThread,
+                r => store.IsViewed(r.Key), listScroll);
         }
 
         void OnQueryChanged(string query)
@@ -367,7 +371,7 @@ namespace Intersection.UI
                 Row(UIKeys.PanelRecordId, RecordCode.Format(text, UIKeys.RecordPrefixThread, entry.thread.Id, device.Id), Theme.monoFont),
                 Row(UIKeys.PanelOwner, OwnerName(device), Theme.regularFont),
                 Row(UIKeys.PanelSource, SourceText(entry.state.source, entry.state.serviceKey), Theme.regularFont),
-                Row(UIKeys.PanelPeriod, time.SinceDeathRange(ordered[0].time, ordered[ordered.Count - 1].time), Theme.regularFont),
+                Row(UIKeys.PanelPeriod, time.FullDateRange(ordered[0].time, ordered[ordered.Count - 1].time), Theme.regularFont),
                 Row(UIKeys.PanelIntegrity, string.IsNullOrEmpty(entry.state.integrityKey) ? null : text.Get(entry.state.integrityKey), Theme.regularFont),
             });
         }, RecordRef.ForThread(device, entry.thread));

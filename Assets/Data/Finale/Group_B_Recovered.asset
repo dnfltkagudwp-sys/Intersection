@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff530b875a4a50e409687498ea9421a9, type: 3}
+  m_Name: Group_B_Recovered
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.ProcessingGroupData
+  id: 1f8be1ee736b4717b85aca64abc4e391
+  title: "\uC724\uC11C\uD558 \uBCF5\uAD6C\uC790\uB8CC"
+  device: {fileID: 11400000, guid: 798ff31a5e858ac418eb17c7c1f9edc1, type: 2}
+  order: 4
+  contractDisposition: 1
+  includeMatchingSources: 1
+  sources: 03000000i
+  includes: []
+  excludes: []
+  countOverrides: []
+  authorNote: "P6 \uACC4\uC57D \uAE30\uBCF8 \uCC98\uB9AC \uBB36\uC74C. \uC99D\uAC70 \uC758\uBBF8\uAC00 \uC544\uB2C8\uB77C \uC758\uB8B0\uC640 \uC800\uC7A5 \uCD9C\uCC98\uB85C\uB9CC \uAD6C\uC131\uD55C\uB2E4."

@@ -40,6 +40,8 @@ namespace Intersection.UI
 
         /// <summary>자동 완료·준비 알림으로 진행이 바뀌어 다음 프레임에 화면을 다시 그려야 하는지.</summary>
         bool progressRefreshPending;
+        /// <summary>열람 수만 바뀐 경우 상단 진행 표시만 다시 그린다.</summary>
+        bool topRefreshPending;
 
         /// <summary>
         /// 업무 상태(열람·고정·분류·메모)가 바뀐 뒤. 완료·준비 판정과 저장은 바로 하고(데이터만 바꿈),
@@ -49,6 +51,8 @@ namespace Intersection.UI
         {
             if (progression != null && progression.Evaluate())
                 progressRefreshPending = true;
+            else
+                topRefreshPending = true;
         }
 
         void LateUpdate()
@@ -56,6 +60,11 @@ namespace Intersection.UI
             // 비교 중에는 화면을 바꾸지 않고, 비교를 마친 뒤 갱신한다.
             if (progressRefreshPending && !comparing)
                 AfterProgressChange();
+            else if (topRefreshPending && !comparing)
+            {
+                topRefreshPending = false;
+                RenderTopBar();
+            }
         }
 
         /// <summary>진행이 바뀐 뒤: 접근 단계를 맞추고 전체 화면·알림을 다시 그린다.</summary>
@@ -64,6 +73,7 @@ namespace Intersection.UI
             // 단계가 바뀌면 그 단계에서 열 수 있게 된 원본으로 완료·시작 조건이 충족될 수 있다(같은 판정 경로, 이미 완료한 작업·실행한 효과는 건너뜀).
             progression.Evaluate();
             progressRefreshPending = false;
+            topRefreshPending = false;
             session.Stage = progression.Stage;
             if (session.CurrentCase == null || !session.CurrentCase.IsAvailable(session.Stage))
                 session.CurrentCase = Cases().FirstOrDefault(c => c.IsAvailable(session.Stage));
@@ -81,7 +91,8 @@ namespace Intersection.UI
                 RenderSearch(false);
             RenderNotifications();
             // 작업 완료로 처음 만들어진 연동 결과 요약은 한 번 자동으로 보인다(비교 중이면 비교를 마친 뒤).
-            ShowPendingSummary();
+            if (!ShowPendingFinale())
+                ShowPendingSummary();
         }
 
         void StartJob(ProgressJobData job)
@@ -238,7 +249,7 @@ namespace Intersection.UI
                 searchView.Show(text.Get(UIKeys.SearchTitle), null, text.Get(UIKeys.SearchHint), new List<SearchView.Group>(), resetScroll);
                 return;
             }
-            var hits = GlobalSearch.Run(config.database, session.Stage, q, text, time);
+            var hits = GlobalSearch.Run(config.database, session.Stage, q, text, time, progression.RequestVisible);
             var appOrder = config.apps.apps.Where(a => a != null).ToDictionary(a => a.kind, a => a.order);
             var groups = hits
                 .GroupBy(h => (device: h.device, app: h.app))
@@ -265,9 +276,10 @@ namespace Intersection.UI
                 : text.Format(UIKeys.PanelSourceFormat, ("source", text.Get(UIKeys.SourceKey(h.source))), ("service", text.Get(h.serviceKey)));
             string meta = h.hasTime
                 ? text.Format(UIKeys.SearchMeta, ("app", SearchAppName(h.app)), ("source", source),
-                    ("date", time.ToDateTime(h.time).ToString(text.Get(UIKeys.FormatFullDate), time.Culture) + " " + time.Time(h.time)),
-                    ("since", time.SinceDeath(h.time)))
+                    ("date", time.FullDateTime(h.time)))
                 : text.Format(UIKeys.SearchMetaNoTime, ("app", SearchAppName(h.app)), ("source", source));
+            if (store.IsViewed(h.target.Key))
+                meta = "✓  " + meta;
             var hit = h;
             return new SearchView.Row
             {
