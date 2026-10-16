@@ -67,6 +67,7 @@ namespace Intersection.UI
             selectable.Bind(selection);
             headerTitle.text = title;
             backLabel.text = theme.backGlyph + " " + backText;
+            PhoneHeaderLayout.Fit(headerTitle, backLabel);
             backButton.onClick.RemoveAllListeners();
             // 확대 열람 중이면 뒤로가기는 확대 화면만 닫는다(상세 화면·스크롤 위치는 그대로).
             backButton.onClick.AddListener(() =>
@@ -209,34 +210,45 @@ namespace Intersection.UI
                 return;
             foreach (var block in document)
             {
+                if (block.kind == FileTextKind.Table)
+                {
+                    blocks.Add(TableGrid(block, theme));
+                    continue;
+                }
                 var t = Instantiate(documentBlockTemplate, documentRoot);
                 t.gameObject.SetActive(true);
                 t.richText = false;
                 bool mono = block.kind != FileTextKind.Text;
                 t.font = mono ? theme.monoFont : theme.regularFont;
-                t.text = block.kind == FileTextKind.Table ? TableText(block) : string.Join("\n", block.Lines());
-                blocks.Add(block.kind == FileTextKind.Table ? TableScroller(t, theme) : t.gameObject);
+                t.text = string.Join("\n", block.Lines());
+                blocks.Add(t.gameObject);
             }
         }
 
         /// <summary>
-        /// 표는 줄바꿈하면 칸이 어긋나 읽을 수 없으므로 줄바꿈 없이 그리고, 휴대전화 폭보다 넓으면 가로로 넘긴다
-        /// (가로 휠·Shift+휠·가로 끌기·아래 막대). 세로 휠은 문서 전체 스크롤로 넘어간다.
+        /// 표 블록은 공백 맞춤 텍스트가 아니라 실제 셀로 그린다. 머리글과 첫 열을 구분하고 긴 값은 셀 안에서 줄바꿈한다.
+        /// 휴대전화 폭보다 넓으면 가로 휠·Shift+휠·가로 끌기·아래 막대로 넘기며, 세로 입력은 문서 전체 스크롤로 넘긴다.
         /// </summary>
-        GameObject TableScroller(TMP_Text text, UITheme theme)
+        GameObject TableGrid(FileTextBlock block, UITheme theme)
         {
-            const float barHeight = 6f, barGap = 8f;
-            text.textWrappingMode = TextWrappingModes.NoWrap;
-            text.overflowMode = TextOverflowModes.Overflow;
-            var size = text.GetPreferredValues(text.text, 100000f, 0f);
+            const float barHeight = 12f, barGap = 10f;
+            const float cellPadX = 10f, cellPadY = 7f;
+            var rows = block.Rows().ToList();
+            int columns = rows.Count == 0 ? 0 : rows.Max(r => r.Length);
+            var widths = new float[columns];
+            for (int column = 0; column < columns; column++)
+            {
+                int units = rows.Max(r => column < r.Length ? DisplayWidth(r[column]) : 0);
+                widths[column] = Mathf.Clamp(units * 7f + cellPadX * 2f, 72f, 220f);
+            }
+            float tableWidth = widths.Sum();
 
             var root = new GameObject("TableScroll", typeof(RectTransform));
             var rootRt = (RectTransform)root.transform;
             rootRt.SetParent(documentRoot, false);
-            rootRt.SetSiblingIndex(text.transform.GetSiblingIndex());
-            root.AddComponent<LayoutElement>().preferredHeight = Mathf.Ceil(size.y) + barHeight + barGap;
             // 휠·끌기를 받을 투명 영역
-            root.AddComponent<Image>().color = Color.clear;
+            var input = root.AddComponent<Image>();
+            input.color = Color.clear;
 
             var viewport = (RectTransform)new GameObject("Viewport", typeof(RectTransform), typeof(RectMask2D)).transform;
             viewport.SetParent(rootRt, false);
@@ -245,11 +257,61 @@ namespace Intersection.UI
             viewport.offsetMin = new Vector2(0, barHeight + barGap);
             viewport.offsetMax = Vector2.zero;
 
-            var content = (RectTransform)text.transform;
-            content.SetParent(viewport, false);
-            content.anchorMin = content.anchorMax = content.pivot = new Vector2(0, 1);
-            content.anchoredPosition = Vector2.zero;
-            content.sizeDelta = new Vector2(Mathf.Ceil(size.x) + 2, Mathf.Ceil(size.y));
+            var table = (RectTransform)new GameObject("Grid", typeof(RectTransform), typeof(Image)).transform;
+            table.SetParent(viewport, false);
+            table.anchorMin = table.anchorMax = table.pivot = new Vector2(0, 1);
+            table.anchoredPosition = Vector2.zero;
+            table.GetComponent<Image>().color = new Color(theme.phoneSeparator.r, theme.phoneSeparator.g, theme.phoneSeparator.b, 0.9f);
+
+            float y = 0f;
+            for (int row = 0; row < rows.Count; row++)
+            {
+                var cells = new List<RectTransform>();
+                float x = 0f;
+                float rowHeight = row == 0 ? 38f : 34f;
+                for (int column = 0; column < columns; column++)
+                {
+                    string value = column < rows[row].Length ? rows[row][column] : string.Empty;
+                    var cell = (RectTransform)new GameObject($"Cell_{row}_{column}", typeof(RectTransform), typeof(Image)).transform;
+                    cell.SetParent(table, false);
+                    cell.anchorMin = cell.anchorMax = cell.pivot = new Vector2(0, 1);
+                    cell.anchoredPosition = new Vector2(x + 1f, -y - 1f);
+                    cell.sizeDelta = new Vector2(widths[column] - 1f, rowHeight - 1f);
+                    var background = cell.GetComponent<Image>();
+                    if (row == 0)
+                        background.color = Color.Lerp(theme.phoneField, theme.phoneAccent, 0.18f);
+                    else if (column == 0)
+                        background.color = Color.Lerp(theme.phoneScreen, theme.phoneField, 0.78f);
+                    else
+                        background.color = Color.Lerp(theme.phoneScreen, theme.phoneField, row % 2 == 0 ? 0.38f : 0.58f);
+
+                    var labelRt = (RectTransform)new GameObject("Label", typeof(RectTransform)).transform;
+                    labelRt.SetParent(cell, false);
+                    labelRt.anchorMin = Vector2.zero;
+                    labelRt.anchorMax = Vector2.one;
+                    labelRt.offsetMin = new Vector2(cellPadX, cellPadY);
+                    labelRt.offsetMax = new Vector2(-cellPadX, -cellPadY);
+                    var label = labelRt.gameObject.AddComponent<TextMeshProUGUI>();
+                    label.font = row == 0 ? theme.boldFont : theme.regularFont;
+                    label.fontSize = row == 0 ? 13f : 12.5f;
+                    label.color = row == 0 ? theme.phoneText : (string.IsNullOrEmpty(value) ? theme.phoneSubText : theme.phoneText);
+                    label.alignment = TextAlignmentOptions.TopLeft;
+                    label.richText = false;
+                    label.textWrappingMode = TextWrappingModes.Normal;
+                    label.overflowMode = TextOverflowModes.Overflow;
+                    label.raycastTarget = false;
+                    label.text = value;
+                    rowHeight = Mathf.Max(rowHeight,
+                        Mathf.Ceil(label.GetPreferredValues(value, widths[column] - cellPadX * 2f, 10000f).y) + cellPadY * 2f);
+                    cells.Add(cell);
+                    x += widths[column];
+                }
+                foreach (var cell in cells)
+                    cell.sizeDelta = new Vector2(cell.sizeDelta.x, rowHeight - 1f);
+                y += rowHeight;
+            }
+            table.sizeDelta = new Vector2(Mathf.Ceil(tableWidth), Mathf.Ceil(y));
+            root.AddComponent<LayoutElement>().preferredHeight = Mathf.Ceil(y) + barHeight + barGap;
 
             var bar = (RectTransform)new GameObject("Scrollbar", typeof(RectTransform)).transform;
             bar.SetParent(rootRt, false);
@@ -279,35 +341,11 @@ namespace Intersection.UI
             horizontal.movementType = ScrollRect.MovementType.Clamped;
             horizontal.scrollSensitivity = scroll.scrollSensitivity;
             horizontal.viewport = viewport;
-            horizontal.content = content;
+            horizontal.content = table;
             horizontal.horizontalScrollbar = scrollbar;
             horizontal.horizontalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
             horizontal.horizontalNormalizedPosition = 0f;
             return root;
-        }
-
-        /// <summary>표를 고정폭 글꼴에서 칸이 맞도록 공백으로 채운다(한글 등 전각 글자는 두 칸).</summary>
-        static string TableText(FileTextBlock block)
-        {
-            var rows = block.Rows().ToList();
-            int columns = rows.Count == 0 ? 0 : rows.Max(r => r.Length);
-            var widths = new int[columns];
-            foreach (var r in rows)
-                for (int i = 0; i < r.Length; i++)
-                    widths[i] = Math.Max(widths[i], DisplayWidth(r[i]));
-            var sb = new System.Text.StringBuilder();
-            foreach (var r in rows)
-            {
-                if (sb.Length > 0)
-                    sb.Append('\n');
-                for (int i = 0; i < r.Length; i++)
-                {
-                    sb.Append(r[i]);
-                    if (i < r.Length - 1)
-                        sb.Append(' ', widths[i] - DisplayWidth(r[i]) + 2);
-                }
-            }
-            return sb.ToString();
         }
 
         static int DisplayWidth(string s)
