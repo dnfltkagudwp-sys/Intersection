@@ -49,11 +49,10 @@ namespace Intersection.UI
         [SerializeField] TMP_Text pinLabel;
         [SerializeField] Button keepButton;
         [SerializeField] TMP_Text keepLabel;
+        [Tooltip("기존 씬에 남은 삭제 후보 버튼 참조. 실행 시 숨기며 새 UI에는 생성하지 않는다.")]
         [SerializeField] Button deleteButton;
-        [SerializeField] TMP_Text deleteLabel;
         [SerializeField] GameObject keepOn;
-        [SerializeField] GameObject deleteOn;
-        [Tooltip("처리 후보 라벨·보존/삭제 줄. 의뢰 요청처럼 분류하지 않는 기록이면 숨긴다.")]
+        [Tooltip("보존 지정 라벨·토글 줄. 의뢰 요청처럼 지정하지 않는 기록이면 숨긴다.")]
         [SerializeField] GameObject[] classParts;
         [SerializeField] GameObject memoRoot;
         [SerializeField] TMP_InputField memoField;
@@ -109,7 +108,7 @@ namespace Intersection.UI
         public class Actions
         {
             public bool pinned;
-            /// <summary>false면 처리 후보(보존·삭제)를 숨긴다 (의뢰 요청 등).</summary>
+            /// <summary>false면 보존 지정을 숨긴다 (의뢰 요청 등).</summary>
             public bool showClassification = true;
             public Classification classification;
             public string memo;
@@ -305,9 +304,15 @@ namespace Intersection.UI
             LayoutBottom();
         }
 
-        /// <summary>패널에 보이는 기록의 핀·처리 후보·작업메모. null이면 조작을 숨긴다(목록 화면 등).</summary>
+        /// <summary>패널에 보이는 기록의 핀·보존 지정·작업메모. null이면 조작을 숨긴다(목록 화면 등).</summary>
         public void SetActions(Actions actions)
         {
+            // Existing scenes still serialize the retired button; remove its hit target and layout slot.
+            if (deleteButton != null)
+            {
+                deleteButton.onClick.RemoveAllListeners();
+                deleteButton.gameObject.SetActive(false);
+            }
             actionsRoot.SetActive(actions != null);
             memoRoot.SetActive(actions != null);
             foreach (var part in classParts)
@@ -320,11 +325,8 @@ namespace Intersection.UI
                     actions.pinned ? actions.idleTextColor : actions.primaryTextColor);
                 PaintToggle(keepButton, keepLabel, keepOn, actions.classification == Classification.Keep,
                     actions.onColor, actions.onTextColor, actions.idleColor, actions.idleTextColor);
-                PaintToggle(deleteButton, deleteLabel, deleteOn, actions.classification == Classification.Delete,
-                    actions.onColor, actions.onTextColor, actions.idleColor, actions.idleTextColor);
                 Wire(pinButton, actions.togglePin);
                 Wire(keepButton, () => actions.toggleClass(Classification.Keep));
-                Wire(deleteButton, () => actions.toggleClass(Classification.Delete));
                 memoField.SetTextWithoutNotify(actions.memo ?? string.Empty);
                 memoChanged = actions.memoChanged;
             }
@@ -510,7 +512,7 @@ namespace Intersection.UI
             Add(backLink);
             Add(sourceButton, compareToggle);
             Add(pinButton);
-            Add(keepButton, deleteButton);
+            Add(keepButton);
             if (mode == Mode.Simple)
             {
                 Add(listHeader, workbenchButton);

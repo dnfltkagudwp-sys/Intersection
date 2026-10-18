@@ -29,12 +29,11 @@ namespace Intersection.UI
             All,
             Pinned,
             Keep,
-            Delete,
             Memo,
         }
 
         static readonly string[] FilterKeys =
-            { UIKeys.FilterAll, UIKeys.FilterPinned, UIKeys.FilterKeep, UIKeys.FilterDelete, UIKeys.FilterMemo };
+            { UIKeys.FilterAll, UIKeys.FilterPinned, UIKeys.FilterKeep, UIKeys.FilterMemo };
 
         /// <summary>빠른 고정 목록에 보여줄 최대 개수. 전체 고정 수는 제목에 표시한다.</summary>
         const int QuickPinnedMax = 3;
@@ -165,7 +164,6 @@ namespace Intersection.UI
             {
                 case WorkFilter.Pinned: return e.pinned;
                 case WorkFilter.Keep: return e.classification == Classification.Keep;
-                case WorkFilter.Delete: return e.classification == Classification.Delete;
                 case WorkFilter.Memo: return !string.IsNullOrEmpty(e.memo);
                 default: return true;
             }

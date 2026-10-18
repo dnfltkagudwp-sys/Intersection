@@ -10,12 +10,13 @@ namespace Intersection.Core
     {
         Unclassified,
         Keep,
+        // Reserved for old save compatibility. Loaded delete candidates now follow the contract default.
         Delete,
     }
 
     /// <summary>
     /// 한 기록에 대한 플레이어 업무 상태. 열람·핀·분류·메모는 서로 독립이며 하나의 selected 값으로 합치지 않는다.
-    /// 보존 후보와 삭제 후보는 같은 필드의 값이라 동시에 켜질 수 없다.
+    /// 보존 지정은 기본 처리에 대한 별도 지정이다. 과거 삭제 후보는 불러올 때 별도 지정 없음으로 읽는다.
     /// </summary>
     [Serializable]
     public class WorkEntry : ISerializationCallbackReceiver
@@ -32,7 +33,7 @@ namespace Intersection.Core
 
         public void OnAfterDeserialize()
         {
-            if (!Enum.TryParse(classificationName, out classification))
+            if (!Enum.TryParse(classificationName, out classification) || classification == Classification.Delete)
                 classification = Classification.Unclassified;
         }
 

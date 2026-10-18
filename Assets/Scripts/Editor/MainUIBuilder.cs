@@ -1013,7 +1013,7 @@ namespace Intersection.EditorTools
             var toolsNote = Text(Node("Note", tools), theme.regularFont, 13, theme.subText, TextAlignmentOptions.TopLeft, null, true);
             tools.gameObject.SetActive(false);
 
-            // 핀(넓은 버튼) → 처리 후보 라벨 → 보존·삭제 토글 (의뢰 요청이면 처리 후보 두 줄을 숨긴다)
+            // 핀(넓은 버튼) → 보존 지정 라벨 → 보존 토글 (의뢰 요청이면 보존 지정 두 줄을 숨긴다)
             var actions = Node("Actions", content);
             Stack(actions, 8).padding = new RectOffset(0, 0, 6, 0);
             var pinRt = Node("Pin", actions);
@@ -1028,9 +1028,7 @@ namespace Intersection.EditorTools
             toggles.childControlWidth = toggles.childControlHeight = true;
             toggles.childForceExpandWidth = toggles.childForceExpandHeight = true;
             var keep = ActionButton(Node("Keep", classRow), out var keepLabel, "panel.action.keep", 14);
-            var delete = ActionButton(Node("Delete", classRow), out var deleteLabel, "panel.action.delete", 14);
             var keepOn = ToggleOutline(keep);
-            var deleteOn = ToggleOutline(delete);
 
             var memoRoot = Node("MemoRoot", content);
             Stack(memoRoot, 6).padding = new RectOffset(0, 0, 4, 0);
@@ -1092,10 +1090,7 @@ namespace Intersection.EditorTools
             Wire(view, "pinLabel", pinLabel);
             Wire(view, "keepButton", keep);
             Wire(view, "keepLabel", keepLabel);
-            Wire(view, "deleteButton", delete);
-            Wire(view, "deleteLabel", deleteLabel);
             Wire(view, "keepOn", keepOn);
-            Wire(view, "deleteOn", deleteOn);
             WireArray(view, "classParts", new Object[] { classLabel.gameObject, classRow.gameObject });
             Wire(view, "memoRoot", memoRoot.gameObject);
             Wire(view, "memoField", memo);

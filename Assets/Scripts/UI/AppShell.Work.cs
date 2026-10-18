@@ -234,7 +234,7 @@ namespace Intersection.UI
         WorkPanelView.Actions ActionsFor(RecordRef target) => new WorkPanelView.Actions
         {
             pinned = store.IsPinned(target.Key),
-            // 의뢰 요청은 업무 문서라 개인 자료용 보존·삭제 후보를 두지 않는다.
+            // 의뢰 요청은 업무 문서라 개인 자료용 보존 지정을 두지 않는다.
             showClassification = target.kind != RecordKind.Request,
             classification = store.ClassOf(target.Key),
             memo = store.MemoOf(target.Key),
@@ -536,7 +536,7 @@ namespace Intersection.UI
         IEnumerable<TutorialData> Guides() => config.database.tutorials.Where(t => t != null && t.request != null);
 
         /// <summary>
-        /// 요청 패널의 업무 상태 한 줄: 대상 이름 · 지금 분류(미분류 / 보존 지정됨 / 삭제 후보). 단계·완료율·체크리스트는 없다.
+        /// 요청 패널의 업무 상태 한 줄: 대상 이름 · 보존 지정 여부. 단계·완료율·체크리스트는 없다.
         /// 단계와 무관하게 늘 현재 분류를 그대로 보여준다.
         /// </summary>
         IEnumerable<WorkPanelView.Row> GuideRows(RecordRef request)
@@ -609,7 +609,7 @@ namespace Intersection.UI
                 Back();
         }
 
-        /// <summary>패널에 보이는 기록에 적용: P 핀, 1 보존 토글, 2 삭제 토글, 0 미분류. 입력 중에는 무시한다.</summary>
+        /// <summary>패널에 보이는 기록에 적용: P 핀, 1 보존 토글, 0 별도 지정 해제. 입력 중에는 무시한다.</summary>
         void HandleWorkKeys(UnityEngine.InputSystem.Keyboard keyboard)
         {
             var target = ActionTarget;
@@ -619,8 +619,6 @@ namespace Intersection.UI
                 TogglePin(target);
             else if (keyboard.digit1Key.wasPressedThisFrame)
                 ToggleClass(target, Classification.Keep);
-            else if (keyboard.digit2Key.wasPressedThisFrame)
-                ToggleClass(target, Classification.Delete);
             else if (keyboard.digit0Key.wasPressedThisFrame)
                 SetClass(target, Classification.Unclassified);
         }

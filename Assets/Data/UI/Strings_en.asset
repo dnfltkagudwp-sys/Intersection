@@ -330,7 +330,7 @@ MonoBehaviour:
   - key: panel.backToCurrent
     value: < Current View
   - key: panel.classLabel
-    value: Disposition
+    value: "Retention"
   - key: panel.workList
     value: "Pinned Records \xB7 {count}"
   - key: panel.workEmpty
@@ -823,7 +823,7 @@ MonoBehaviour:
   - key: briefing.heading
     value: "Work Assignment"
   - key: briefing.body
-    value: "You've been assigned two new digital legacy cleanup cases.\nThey cover the phones and linked accounts of Seo Ji-hun and Yun Seo-ha.\nCheck each family's request first, then mark records to keep as \u2018Retain\u2019 and records to remove as \u2018Delete candidate\u2019.\nActual deletion takes place in final processing after your review is complete.\nDo not disclose any personal information you encounter during your work.\nPlease start with Seo Ji-hun's case."
+    value: "You've been assigned two new digital legacy cleanup cases.\nThey cover the phones and linked accounts of Seo Ji-hun and Yun Seo-ha.\nThe families' requests to retain records apply by default.\nMark any additional records you want to keep as \u2018Retain\u2019.\nOther records will be deleted during final processing after your review.\nDo not disclose any personal information you encounter during your work.\nPlease start with Seo Ji-hun's case."
   - key: briefing.confirm
     value: "View Request"
   - key: language.name
