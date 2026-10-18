@@ -25,7 +25,7 @@ MonoBehaviour:
   integrityKey: integrity.original
   authorNote: "A \uBA3C\uC800 \uB3C4\uCC29, 21:20\uACBD \uAE30\uB85D \uB04A\uAE40. \uC7A5\uC18C\uBA85 \uBBF8\uC815"
   kind: 2
-  placeLabel: "오래된 상가"
+  placeLabel: "\uC624\uB798\uB41C \uC0C1\uAC00"
   routeFrom: 
   routeTo: 
   routeNote: 
@@ -33,3 +33,4 @@ MonoBehaviour:
     dayOffset: 0
     hour: 21
     minute: 20
+  preview: {fileID: 2800000, guid: 9aaba51c366e06a4eb6ae176563b31cc, type: 3}

@@ -33,3 +33,4 @@ MonoBehaviour:
     dayOffset: 0
     hour: 0
     minute: 0
+  preview: {fileID: 2800000, guid: d224faf06fbd5b846aa453c835a4fe03, type: 3}
