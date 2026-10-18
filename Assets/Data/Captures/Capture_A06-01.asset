@@ -110,36 +110,26 @@ MonoBehaviour:
       jpegQuality: 70
       background: {r: 0.78, g: 0.76, b: 0.72, a: 1}
       seed: 0
-    - texture: {fileID: 0}
+    - texture: {fileID: 2800000, guid: 57e41eb52658fff4aa681bad07d5242e, type: 3}
       crop:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 0.12
         width: 1
-        height: 1
-      redactions:
-      - serializedVersion: 2
-        x: 0.3
-        y: 0.18
-        width: 0.4
-        height: 0.36
+        height: 0.74666667
+      redactions: []
       sampleWidth: 40
       jpegQuality: 70
       background: {r: 0.7, g: 0.67, b: 0.62, a: 1}
       seed: 3
-    - texture: {fileID: 0}
+    - texture: {fileID: 2800000, guid: b287f892ac461e343994cabe41ff15f7, type: 3}
       crop:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 0.15
         width: 1
-        height: 1
-      redactions:
-      - serializedVersion: 2
-        x: 0.34
-        y: 0.24
-        width: 0.34
-        height: 0.32
+        height: 0.74666667
+      redactions: []
       sampleWidth: 40
       jpegQuality: 70
       background: {r: 0.6, g: 0.62, b: 0.64, a: 1}
@@ -155,4 +145,4 @@ MonoBehaviour:
   temporary: 0
   temporaryNote: 
   output: {fileID: 2800000, guid: d3805f2c49a330d439314a7aff8183f9, type: 3}
-  renderedHash: edeb72cb620447bc567520b534910216
+  renderedHash: 3bc347a13204655e04efb4b3c1019acb

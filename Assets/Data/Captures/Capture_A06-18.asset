@@ -25,19 +25,14 @@ MonoBehaviour:
     textStyle: 0
     items: []
     images:
-    - texture: {fileID: 0}
+    - texture: {fileID: 2800000, guid: af10eadbc4bad4f4aa4d30e59dbee993, type: 3}
       crop:
         serializedVersion: 2
-        x: 0
+        x: 0.2
         y: 0
-        width: 1
+        width: 0.66964287
         height: 1
-      redactions:
-      - serializedVersion: 2
-        x: 0.22
-        y: 0.14
-        width: 0.52
-        height: 0.44
+      redactions: []
       sampleWidth: 56
       jpegQuality: 60
       background: {r: 0.63, g: 0.61, b: 0.58, a: 1}
@@ -53,4 +48,4 @@ MonoBehaviour:
   temporary: 0
   temporaryNote: 
   output: {fileID: 2800000, guid: 1af3990989f3ef24f87eb5f30d29445f, type: 3}
-  renderedHash: f9a65d3a657c38f9d50eb7be3d4a43b0
+  renderedHash: ac3eb4b0666b6927e65c8df5db8a8fc7

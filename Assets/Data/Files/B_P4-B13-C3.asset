@@ -34,10 +34,16 @@ MonoBehaviour:
     text: "628 \xD7 785"
   - id: 2078b5165bd14a10a8bb52fb2396ad92
     kind: 0
-    text: "\uB808\uC774\uC5B4 3\uAC1C"
+    text: "\uB808\uC774\uC5B4 5\uAC1C"
   - id: 9083dd28f30b4003b9dee807a7d0975d
     kind: 0
     text: "\uC6D0 1"
+  - id: 714aceb9e903442489a86f8a322bb61f
+    kind: 0
+    text: "\uB9C8\uC2A4\uD06C 1"
+  - id: ba65ef0faa6f4eb8a282f70dd82514b2
+    kind: 0
+    text: "\uC778\uBB3C"
   - id: 59a9abfb55b848158fb4c7426258f8dd
     kind: 0
     text: "\uC790\uB974\uAE30"

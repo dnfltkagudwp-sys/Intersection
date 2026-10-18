@@ -25,6 +25,7 @@ MonoBehaviour:
   integrityKey: integrity.original
   authorNote: "\uC2E0\uACE0 \uC811\uC218 \uD654\uBA74 \uAC00\uC7A5\uC790\uB9AC"
   path: Screenshots/shot_1782.png
+  derivedFrom: {fileID: 0}
   mediaAssetId: 
   preview: {fileID: 2800000, guid: d4407743fccf1cc40994667e5097d5b2, type: 3}
   visibleText:

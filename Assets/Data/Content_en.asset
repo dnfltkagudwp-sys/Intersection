@@ -151,7 +151,7 @@ MonoBehaviour:
 
       Similar upload times
 
-      Similar wording?
+      Reposts even after deletion?
 
       New account after deletion
 
@@ -163,11 +163,11 @@ MonoBehaviour:
   - key: 1131175bffe946a5be5945ae5f026010:visibleText:cea7d494f05e44899a616f19f916fb28
     value: 'Account|Posted|Time|Photo|Text
 
-      @daylog_041|{date:-181}|Night?|Sticker, cropped above knees|Last one / one more
+      @daylog_041|{date:-181}|Night?|Face sticker, center covered, cropped above knees|She took it and sent it herself / face next time
 
-      @smallroom_08|{date:-128}|After midnight?|Sticker|Same handle
+      @smallroom_08|{date:-128}|After midnight?|Face sticker|This one''s Rin''s Closet / moved here since she asked to delete it
 
-      (truncated account)|?|?|Sticker|Deleted yesterday''s / reposted
+      (truncated account)|?|?|Back view, no face|She doesn''t even know it''s up / taken down and reposted
 
       @mildcase_12|?|Around 1 AM|-|Like last time / no requests'
   - key: 1131175bffe946a5be5945ae5f026010:visibleText:ea2ae39aabc2462eaa4e7b186675bef7
@@ -299,7 +299,7 @@ MonoBehaviour:
   - key: 8b2c6a3b7cc94999a15e057073153946:message:fd9d47d27a8b4ad898073630b38208e1:text
     value: Where?
   - key: e7ff801140884941a9f3ac0fc5a62ad4:message:3ecd7bbb9e2f46cc89785d5dc533254c:text
-    value: It was posted again. Different URL this time.
+    value: It was posted again. Different URL this time. They edited my photo to make it look like I was undressed, and wrote that I took it and sent it myself.
   - key: e7ff801140884941a9f3ac0fc5a62ad4:message:55360aa0b06f4c16a8c517df5c4425a6:text
     value: I just need to check a few more.
   - key: e7ff801140884941a9f3ac0fc5a62ad4:message:5a6441e50bbf4787a2f60d9e5cc13d65:text
@@ -307,7 +307,7 @@ MonoBehaviour:
   - key: e7ff801140884941a9f3ac0fc5a62ad4:message:5f6d7c36ae724352847360283fb385f1:text
     value: I said I don't want to. Let's just stop.
   - key: e7ff801140884941a9f3ac0fc5a62ad4:message:a3cf3c27fd0044178d4ffddcafdfe9e7:text
-    value: I reported it, but I think they deleted it and made another account.
+    value: I reported it, but I think they deleted it and made another account. They put my name and school on it too.
   - key: e7ff801140884941a9f3ac0fc5a62ad4:message:bb7d23e877094d228c61a706ace4684a:text
     value: You said you understood, but you keep looking.
   - key: e7ff801140884941a9f3ac0fc5a62ad4:message:c5553dd460f243cda2aa5c2e87c9a267:text

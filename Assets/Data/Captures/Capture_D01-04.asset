@@ -42,19 +42,14 @@ MonoBehaviour:
     textStyle: 0
     items: []
     images:
-    - texture: {fileID: 0}
+    - texture: {fileID: 2800000, guid: 7837c876fd85fb542b28afb955153900, type: 3}
       crop:
         serializedVersion: 2
         x: 0
         y: 0
         width: 1
         height: 1
-      redactions:
-      - serializedVersion: 2
-        x: -0.1
-        y: -0.1
-        width: 1.2
-        height: 1.2
+      redactions: []
       sampleWidth: 0
       jpegQuality: 60
       background: {r: 0.5, g: 0.5, b: 0.5, a: 1}
@@ -89,7 +84,7 @@ MonoBehaviour:
     title: 
     account: smallroom_08
     meta: 
-    text: "\uC774\uBC88 \uAC70 \uB9B0\uC637\uC7A5\n\uB354 \uC788\uC74C"
+    text: "\uC774\uBC88 \uAC70 \uB9B0\uC637\uC7A5\n\uC9C0\uC6CC\uB2EC\uB77C\uAE38\uB798 \uC5EC\uAE30\uB85C \uC62E\uAE40"
     textStyle: 0
     items: []
     images: []
@@ -155,4 +150,4 @@ MonoBehaviour:
   temporary: 0
   temporaryNote: 
   output: {fileID: 2800000, guid: 11c21eaf1f4c0174d993c0447f2039b9, type: 3}
-  renderedHash: a68d427da172378851d81505d39ec3e1
+  renderedHash: c16862d301ab092df4c3eabf875d3b1d

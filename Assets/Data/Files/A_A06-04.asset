@@ -25,6 +25,7 @@ MonoBehaviour:
   integrityKey: integrity.original
   authorNote: "@smallroom_08 \uD504\uB85C\uD544"
   path: Screenshots/shot_1750.png
+  derivedFrom: {fileID: 0}
   mediaAssetId: 
   preview: {fileID: 2800000, guid: 070eb8a2207578f49a3ad97dc12722fc, type: 3}
   visibleText:

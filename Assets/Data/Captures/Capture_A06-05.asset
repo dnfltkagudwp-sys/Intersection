@@ -25,19 +25,14 @@ MonoBehaviour:
     textStyle: 0
     items: []
     images:
-    - texture: {fileID: 2800000, guid: 6f3b0c18840e47043ba8b12b07ea76b3, type: 3}
+    - texture: {fileID: 2800000, guid: 3dd1fe0db9192204396172e8d57d3442, type: 3}
       crop:
         serializedVersion: 2
         x: 0
-        y: 0.0333
+        y: 0
         width: 1
-        height: 0.9333
-      redactions:
-      - serializedVersion: 2
-        x: 0.17
-        y: 0.09
-        width: 0.36
-        height: 0.3
+        height: 1
+      redactions: []
       sampleWidth: 0
       jpegQuality: 70
       background: {r: 0.78, g: 0.76, b: 0.72, a: 1}
@@ -72,7 +67,7 @@ MonoBehaviour:
     title: 
     account: 
     meta: 
-    text: "\uC5B4\uC81C \uC62C\uB9B0 \uAC70 \uC9C0\uC6C0\n\uB2E4\uC2DC \uC62C\uB9BC"
+    text: "\uBCF8\uC778\uC740 \uC62C\uB77C\uC628 \uC904\uB3C4 \uBAA8\uB984\n\uB0B4\uB824\uAC00\uC11C \uB2E4\uC2DC \uC62C\uB9BC"
     textStyle: 0
     items: []
     images: []
@@ -104,4 +99,4 @@ MonoBehaviour:
   temporary: 0
   temporaryNote: 
   output: {fileID: 2800000, guid: 8cbde91712817dc4199b03914dcc4098, type: 3}
-  renderedHash: e60d959ae5af1612878131b3e2a9bf95
+  renderedHash: d5ed9246d62d59aae69352a79f9768d5
