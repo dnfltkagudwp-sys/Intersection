@@ -90,7 +90,12 @@ namespace Intersection.EditorTools
                 var lines = CaptureRenderer.LocalizedLines(c, table);
                 foreach (var line in lines.Where(TextTokens.HasTokens))
                     error($"[{lang}] 캡처 글자에는 토큰을 쓸 수 없습니다: '{line}' — {where}", c);
-                var blocks = c.LocalizedBlocks(lines, out var mapError);
+                foreach (var swap in (c.localizedImages ?? new List<LocalizedCaptureImage>()).Where(x => x != null && x.language == lang))
+                    if (swap.source == null || swap.texture == null || swap.source == swap.texture)
+                        error($"[{lang}] 언어별 대체 사진의 원본·대체 이미지가 비어 있거나 같습니다: {where}", c);
+                    else if (!c.blocks.Where(b => b != null).SelectMany(b => b.images).Any(i => i != null && i.texture == swap.source))
+                        warn($"[{lang}] 언어별 대체 사진의 원본을 이 캡처가 쓰지 않습니다: {Path(swap.source)} — {where}", c);
+                var blocks = c.LocalizedBlocks(lines, out var mapError, lang);
                 if (blocks == null)
                 {
                     error($"[{lang}] 파일 표시 문구를 캡처 덩어리에 나눌 수 없습니다({mapError}): {where}", c);

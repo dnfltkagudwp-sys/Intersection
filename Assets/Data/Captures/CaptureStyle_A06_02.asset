@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dee17f9a077e62043b55db8f6ed21733, type: 3}
+  m_Name: CaptureStyle_A06_02
+  m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.CaptureStyleData
+  width: 1080
+  height: 2340
+  clockFormatKey: format.statusClock
+  metaSeparator: " \xB7 "
+  regularFont: {fileID: 11400000, guid: 0a28f84cc5929984d8c478c4456fc47b, type: 2}
+  mediumFont: {fileID: 11400000, guid: faa19084ec91dae42b4e8e6e26a253cd, type: 2}
+  boldFont: {fileID: 11400000, guid: 573fbc1e4f4a4e94aab86bae3bc1c8af, type: 2}
+  accountSize: 58
+  titleSize: 58
+  bodySize: 58
+  commentSize: 48
+  metaSize: 46
+  labelSize: 48
+  statusSize: 40
+  lineSpacing: 18
+  padding: 28
+  tightGap: 12
+  gap: 28
+  sectionGap: 44
+  statusBarHeight: 104
+  navHeight: 132
+  headerAvatarSize: 84
+  profileAvatarSize: 200
+  commentAvatarSize: 80
+  listIconSize: 96
+  iconSize: 68
+  iconStroke: 0.09
+  buttonHeight: 96
+  fieldHeight: 108
+  cornerRadius: 18
+  dividerThickness: 2
+  noticeAnchor: 0.38
+  background: {r: 1, g: 1, b: 1, a: 1}
+  text: {r: 0.078431375, g: 0.08235294, b: 0.09019608, a: 1}
+  muted: {r: 0.3372549, g: 0.3529412, b: 0.3764706, a: 1}
+  link: {r: 0.11764706, g: 0.30980393, b: 0.6117647, a: 1}
+  icon: {r: 0.16470589, g: 0.17254902, b: 0.1882353, a: 1}
+  divider: {r: 0.9019608, g: 0.90588236, b: 0.91764706, a: 1}
+  field: {r: 0.94509804, g: 0.9490196, b: 0.95686275, a: 1}
+  button: {r: 0.9372549, g: 0.9411765, b: 0.9490196, a: 1}
+  buttonText: {r: 0.10980392, g: 0.11372549, b: 0.1254902, a: 1}
+  statusBar: {r: 1, g: 1, b: 1, a: 1}
+  statusText: {r: 0.078431375, g: 0.08235294, b: 0.09019608, a: 1}
+  avatarPlaceholder: {r: 0.8862745, g: 0.8901961, b: 0.9019608, a: 1}
+  viewerOverlay: {r: 0, g: 0, b: 0, a: 0.86}
+  viewerText: {r: 1, g: 1, b: 1, a: 1}
+  stickerFill: {r: 0.9529412, g: 0.91764706, b: 0.84705883, a: 1}
+  stickerRim: {r: 0.8509804, g: 0.8039216, b: 0.7137255, a: 1}
+  stickerInk: {r: 0.30588236, g: 0.26666668, b: 0.23137255, a: 1}
+  stickerShadow: 0.16
+  avatarPalette:
+  - {r: 0.7882353, g: 0.827451, b: 0.8392157, a: 1}
+  - {r: 0.84705883, g: 0.8117647, b: 0.76862746, a: 1}
+  - {r: 0.78039217, g: 0.80784315, b: 0.7529412, a: 1}
+  - {r: 0.8352941, g: 0.7882353, b: 0.8117647, a: 1}
+  - {r: 0.7254902, g: 0.7607843, b: 0.7882353, a: 1}
+  - {r: 0.8117647, g: 0.77254903, b: 0.70980394, a: 1}
+  - {r: 0.7490196, g: 0.78431374, b: 0.7372549, a: 1}
+  - {r: 0.7764706, g: 0.74509805, b: 0.78431374, a: 1}
+  mipmaps: 0
+  defaultBottom: 2
+  roundedSprite: {fileID: 21300000, guid: b1998f62f4cc4154b86872842dfc8d1b, type: 3}
+  circleSprite: {fileID: 21300000, guid: 417ceaf3c2b71e340b1b95950658bf0e, type: 3}

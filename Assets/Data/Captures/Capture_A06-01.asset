@@ -149,4 +149,8 @@ MonoBehaviour:
   localizedOutputs:
   - language: en
     output: {fileID: 2800000, guid: a1395c9596fd72a4aad86b9a0c914274, type: 3}
-    renderedHash: c712ea7a89b4e8aa549f82adb644be52
+    renderedHash: 83ad31048f21b0301c05b417f7e39afa
+  localizedImages:
+  - language: en
+    source: {fileID: 2800000, guid: 036455b20db02754fbcdf98c3f8f2dac, type: 3}
+    texture: {fileID: 2800000, guid: 46a04a8b30c7442db8fcf10ec970d057, type: 3}

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Capture_A06-02
   m_EditorClassIdentifier: Assembly-CSharp::Intersection.Data.CaptureScreenData
   record: {fileID: 11400000, guid: 600aecd8fdb2ac3409c5cc70338b7cec, type: 2}
-  style: {fileID: 11400000, guid: f3c1e482b2079eb4d891b9e970ec8514, type: 2}
+  style: {fileID: 11400000, guid: bd70a20e39d1fcf4487ac8d4f2ffbf4c, type: 2}
   blocks:
   - kind: 0
     barStyle: 1
@@ -55,7 +55,7 @@ MonoBehaviour:
       background: {r: 0.78, g: 0.76, b: 0.72, a: 1}
       seed: 0
     aspect: 0.8
-    visibleFrom: 0
+    visibleFrom: 0.12
     visibleTo: 1
     badge: 
     multiIcon: 0
@@ -84,7 +84,7 @@ MonoBehaviour:
     title: 
     account: 
     meta: 
-    text: "\uB313\uAE00 0\uAC1C"
+    text: "\uB313\uAE00 1\uAC1C"
     textStyle: 2
     items: []
     images: []
@@ -112,12 +112,33 @@ MonoBehaviour:
     multiIcon: 0
     height: 0
     cutBelow: 0
-  bottom: 0
+  - kind: 7
+    barStyle: 0
+    reactions: 0
+    title: 
+    account: noon_27
+    meta: "12\uBD84"
+    text: "\uC81C \uC0AC\uC9C4\uC73C\uB85C \uB9CC\uB4E0 \uD569\uC131\uC785\uB2C8\uB2E4.\n\uB0B4\uB824 \uC8FC\uC138\uC694."
+    textStyle: 0
+    items: []
+    images: []
+    aspect: 0.8
+    visibleFrom: 0
+    visibleTo: 1
+    badge: 
+    multiIcon: 0
+    height: 0
+    cutBelow: 0
+  bottom: 1
   temporary: 0
   temporaryNote: 
   output: {fileID: 2800000, guid: 33cbf216fe46e9345a2de8ae95056aa0, type: 3}
-  renderedHash: 8f1c6dec5fbab5f36edfa223fa8662cb
+  renderedHash: aacbb2ef2a9f2dccc7ab0af781d7fbed
   localizedOutputs:
   - language: en
     output: {fileID: 2800000, guid: f82aba5f145d1304ab83e33a805c436c, type: 3}
-    renderedHash: ee944f76d25b2f6e591f5ee1ad45dc5c
+    renderedHash: ab896f80e2cc7fab85b6436cdb5ec6b8
+  localizedImages:
+  - language: en
+    source: {fileID: 2800000, guid: 036455b20db02754fbcdf98c3f8f2dac, type: 3}
+    texture: {fileID: 2800000, guid: 46a04a8b30c7442db8fcf10ec970d057, type: 3}

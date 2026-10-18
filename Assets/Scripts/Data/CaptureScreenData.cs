@@ -400,9 +400,34 @@ namespace Intersection.Data
         [Tooltip("원문 언어 외 언어별 렌더링 결과(자동). 글자는 그 언어의 파일 표시 문구(visibleText 번역)에서 가져온다.")]
         public List<LocalizedCaptureOutput> localizedOutputs = new List<LocalizedCaptureOutput>();
 
+        [Tooltip("원문 언어 외 언어에서 쓸 사진. 그 언어의 캡처에서 source 사진 대신 texture를 쓴다(사진에 글자가 박힌 경우). 자르기·가림·압축 설정은 그대로다.")]
+        public List<LocalizedCaptureImage> localizedImages = new List<LocalizedCaptureImage>();
+
         /// <summary>캡처에서 읽히는 글자 전체 (상태바 시각·배터리 제외).</summary>
         public IEnumerable<string> Lines() =>
             style == null ? Enumerable.Empty<string>() : blocks.Where(b => b != null).SelectMany(b => b.Lines(style));
+
+        /// <summary>그 언어의 대체 사진을 적용한 사진 목록. 바꿀 것이 없으면 원래 목록 그대로(원문 사진 설정은 바꾸지 않음).</summary>
+        List<CaptureImage> LocalizedImages(List<CaptureImage> images, string language)
+        {
+            if (string.IsNullOrEmpty(language) || images == null || localizedImages == null || localizedImages.Count == 0)
+                return images;
+            Texture2D Swap(Texture2D t) =>
+                t == null ? null : localizedImages.FirstOrDefault(x => x != null && x.language == language && x.source == t && x.texture != null)?.texture;
+            if (!images.Any(i => i != null && Swap(i.texture) != null))
+                return images;
+            return images.Select(i =>
+            {
+                var swapped = i == null ? null : Swap(i.texture);
+                if (swapped == null)
+                    return i;
+                return new CaptureImage
+                {
+                    texture = swapped, crop = i.crop, redactions = new List<Rect>(i.redactions), sampleWidth = i.sampleWidth,
+                    jpegQuality = i.jpegQuality, background = i.background, seed = i.seed,
+                };
+            }).ToList();
+        }
 
         public LocalizedCaptureOutput OutputFor(string language) =>
             localizedOutputs?.FirstOrDefault(o => o != null && o.language == language);
@@ -412,7 +437,7 @@ namespace Intersection.Data
         /// 사진·모양·수치 배치는 그대로이고 글자만 바뀐다. 계정명은 바꾸지 않으므로 계정명이 붙는 줄은 같은 계정명으로 시작해야 한다.
         /// 맞지 않으면 null과 이유를 돌려준다(검증 도구가 오류로 알린다).
         /// </summary>
-        public List<CaptureBlock> LocalizedBlocks(IReadOnlyList<string> lines, out string error)
+        public List<CaptureBlock> LocalizedBlocks(IReadOnlyList<string> lines, out string error, string language = null)
         {
             error = null;
             if (style == null)
@@ -429,6 +454,7 @@ namespace Intersection.Data
                 var copy = b.Clone();
                 if (!copy.Assign(queue, style, out error))
                     return null;
+                copy.images = LocalizedImages(copy.images, language);
                 result.Add(copy);
             }
             if (queue.Count > 0)
@@ -438,6 +464,17 @@ namespace Intersection.Data
             }
             return result;
         }
+    }
+
+    /// <summary>원문 언어 외 언어 하나에서 바꿔 쓸 사진(같은 장면의 그 언어 판).</summary>
+    [Serializable]
+    public class LocalizedCaptureImage
+    {
+        public string language;
+        [Tooltip("원문 캡처가 쓰는 사진")]
+        public Texture2D source;
+        [Tooltip("그 언어 캡처에서 대신 쓸 사진")]
+        public Texture2D texture;
     }
 
     /// <summary>원문 언어 외 언어 하나의 캡처 렌더링 결과.</summary>

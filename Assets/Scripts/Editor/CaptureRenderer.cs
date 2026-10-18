@@ -177,7 +177,7 @@ namespace Intersection.EditorTools
 
         /// <summary>그 언어 캡처의 덩어리(글자 교체본)와 해시. 줄이 맞지 않으면 null.</summary>
         public static List<CaptureBlock> LocalizedBlocks(CaptureScreenData spec, ContentLocaleTable table, out string error) =>
-            spec.LocalizedBlocks(LocalizedLines(spec, table), out error);
+            spec.LocalizedBlocks(LocalizedLines(spec, table), out error, table.language);
 
         // ───────────────────────── 렌더링
 
