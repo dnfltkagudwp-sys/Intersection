@@ -261,19 +261,25 @@ namespace Intersection.Core
             });
         }
 
-        /// <summary>에디터 검수용: 진행 상태를 모두 지운다 (파일은 다음 저장 때 다시 만든다).</summary>
-        public void ResetAll(ProgressStage startStage)
+        /// <summary>
+        /// 진행 상태를 모두 지우고 시작 단계로 저장한다(새로 시작하기·에디터 검수).
+        /// 한 트랜잭션이라 저장에 실패하면 메모리도 이전 상태로 돌아가고 기존 저장 파일은 그대로 남는다. 성공하면 true.
+        /// </summary>
+        public bool ResetAll(ProgressStage startStage)
         {
-            Stage = startStage;
-            jobs.Clear();
-            fired.Clear();
-            notifications.Clear();
-            summaries.Clear();
-            finalPlanIntroduced = false;
-            finalProcessing = null;
-            endingSequenceIntroduced = false;
-            nextSeq = 1;
-            Save();
+            return Transact(() =>
+            {
+                Stage = startStage;
+                jobs.Clear();
+                fired.Clear();
+                notifications.Clear();
+                summaries.Clear();
+                finalPlanIntroduced = false;
+                finalProcessing = null;
+                endingSequenceIntroduced = false;
+                nextSeq = 1;
+                Save();
+            });
         }
 
         class Snapshot

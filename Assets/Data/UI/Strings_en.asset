@@ -792,3 +792,37 @@ MonoBehaviour:
     value: 'The job was gone, but the records remained.
 
       Where they would lead was unknown.'
+  - key: title.name
+    value: "Intersection"
+  - key: title.subtitle
+    value: "\uAD50\uCC28\uC810"
+  - key: title.start
+    value: "Start"
+  - key: title.continue
+    value: "Continue"
+  - key: title.newGame
+    value: "New Game"
+  - key: title.result
+    value: "View Outcome"
+  - key: title.quit
+    value: "Quit"
+  - key: title.reset.heading
+    value: "Start over from the beginning?"
+  - key: title.reset.body
+    value: "All saved progress and work records (viewed, pinned, classified, memos) will be erased.\nLanguage and display settings are kept."
+  - key: title.reset.confirm
+    value: "Start Over"
+  - key: title.reset.cancel
+    value: "Cancel"
+  - key: title.reset.failed
+    value: "The save could not be reset.\nYour existing save has not been changed."
+  - key: requestIntro.heading
+    value: "Request from the family of {case}"
+  - key: requestIntro.confirm
+    value: "Acknowledge and Begin"
+  - key: briefing.heading
+    value: "Work Assignment"
+  - key: briefing.body
+    value: "You've been assigned two new digital legacy cleanup cases.\nThey cover the phones and linked accounts of Seo Ji-hun and Yun Seo-ha.\nCheck each family's request first, then mark records to keep as \u2018Retain\u2019 and records to remove as \u2018Delete candidate\u2019.\nActual deletion takes place in final processing after your review is complete.\nDo not disclose any personal information you encounter during your work.\nPlease start with Seo Ji-hun's case."
+  - key: briefing.confirm
+    value: "View Request"

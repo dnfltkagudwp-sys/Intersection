@@ -72,13 +72,15 @@ namespace Intersection.UI
             phone.Init(ClockFactory.Create(config), text, time.Culture);
             Refresh();
             RenderNotifications();
-            // 확인 전에 종료했던 연동 결과 요약은 다시 보여준다.
-            if (!ShowPendingFinale())
-                ShowPendingSummary();
+            // 타이틀(또는 새로 시작한 직후의 첫 요청 장면)부터 보여준다. 확인 전에 종료했던 연락·연동 결과 요약은 시작 화면을 닫은 뒤 다시 보여준다.
+            BeginEntry();
         }
 
         void Update()
         {
+            // 타이틀·유족 요청 장면은 업무 화면 전체를 덮는다. 그동안 업무 단축키·Esc·휴대전화 조작은 받지 않는다.
+            if (UpdateEntry())
+                return;
             if (UpdateFinalePresentation())
                 return;
             // 작업 시작 연출 중에는 건너뛰기(클릭·Enter)만 받는다. Esc·단축키·휴대전화 조작으로 이전 화면이 바뀌지 않게 막는다.

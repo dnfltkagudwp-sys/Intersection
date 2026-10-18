@@ -165,6 +165,47 @@ namespace Intersection.Core
             return true;
         }
 
+        // ───────────── 초기화 ─────────────
+
+        /// <summary>
+        /// 새로 시작하기: 열람·고정·분류·메모·비교 이력·예전 튜토리얼 단계를 모두 지우고 저장한다.
+        /// 저장에 실패하면 메모리를 이전 상태로 되돌리고 false(기존 저장 파일은 그대로). 성공하면 true와 함께,
+        /// 함께 초기화하는 다른 저장이 실패했을 때 이전 상태를 다시 저장하는 되돌리기를 준다.
+        /// </summary>
+        public bool ResetAll(out Func<bool> undo)
+        {
+            var oldEntries = entries.Values.ToList();
+            var oldSteps = completedSteps.ToList();
+            var oldComparisons = comparisons.ToList();
+            long oldNext = nextPinOrder;
+            void Apply(IEnumerable<WorkEntry> e, IEnumerable<string> s, IEnumerable<ComparisonEntry> c, long next)
+            {
+                entries.Clear();
+                foreach (var x in e)
+                    entries[x.target.Key] = x;
+                completedSteps.Clear();
+                completedSteps.UnionWith(s);
+                comparisons.Clear();
+                comparisons.AddRange(c);
+                nextPinOrder = next;
+            }
+
+            Apply(Enumerable.Empty<WorkEntry>(), Enumerable.Empty<string>(), Enumerable.Empty<ComparisonEntry>(), 1);
+            if (!Save())
+            {
+                Apply(oldEntries, oldSteps, oldComparisons, oldNext);
+                undo = null;
+                return false;
+            }
+            undo = () =>
+            {
+                Apply(oldEntries, oldSteps, oldComparisons, oldNext);
+                return Save();
+            };
+            Changed?.Invoke();
+            return true;
+        }
+
         // ───────────── 저장 ─────────────
 
         void Commit()
@@ -173,7 +214,8 @@ namespace Intersection.Core
             Changed?.Invoke();
         }
 
-        public void Save()
+        /// <summary>현재 상태를 저장한다. 실패하면 오류를 남기고 false.</summary>
+        public bool Save()
         {
             var data = new WorkSaveData
             {
@@ -190,10 +232,12 @@ namespace Intersection.Core
                 if (File.Exists(path))
                     File.Delete(path);
                 File.Move(tmp, path);
+                return true;
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[WorkStore] 업무 상태를 저장하지 못했습니다: {path}\n{ex.Message}");
+                return false;
             }
         }
 

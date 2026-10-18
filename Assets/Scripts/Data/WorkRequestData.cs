@@ -25,6 +25,13 @@ namespace Intersection.Data
         [Tooltip("증거 마스터표 ID (예: T01). 화면에 표시하지 않는다.")]
         public string evidenceRef;
 
+        [Header("도입 장면")]
+        [Tooltip("이 의뢰를 처음 검토할 때 요청 본문을 업무 화면을 덮는 도입 장면으로 보여준다. '확인하고 시작'을 누르면 요청 열람으로 기록한다.")]
+        public bool introScene;
+
+        [Tooltip("도입 장면에서 작은 글씨의 부가 정보로 보여줄 첫 본문 줄(0부터). 0이면 본문 전체가 주요 요청이다. 표시 구분일 뿐 원문은 그대로다.")]
+        [Min(0)] public int introDetailFromLine;
+
         /// <summary>화면에 보이는 요청 제목 (현재 언어).</summary>
         public string Title => ContentText.Get(Id, ContentText.Field.Title, title);
 

@@ -39,7 +39,8 @@ namespace Intersection.UI
         bool ShowPendingFinale()
         {
             var finale = Finale;
-            if (finale == null || comparing || presenting)
+            // 타이틀·요청 장면이 떠 있는 동안에는 열지 않는다(닫은 뒤 ResumeAfterEntry가 다시 확인한다).
+            if (finale == null || comparing || presenting || EntryActive)
                 return false;
             if (progressStore.FinalProcessing != null)
             {

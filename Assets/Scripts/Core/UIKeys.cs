@@ -293,6 +293,25 @@ namespace Intersection.Core
         public const string EndingAuditBody = "ending.audit.body";
         public const string EndingPreservedFinal = "ending.preserved.final";
 
+        // 시작 화면·유족 요청 도입 장면
+        public const string TitleName = "title.name";
+        public const string TitleSubtitle = "title.subtitle";
+        public const string TitleStart = "title.start";
+        public const string TitleContinue = "title.continue";
+        public const string TitleNewGame = "title.newGame";
+        public const string TitleResult = "title.result";
+        public const string TitleQuit = "title.quit";
+        public const string TitleResetHeading = "title.reset.heading";
+        public const string TitleResetBody = "title.reset.body";
+        public const string TitleResetConfirm = "title.reset.confirm";
+        public const string TitleResetCancel = "title.reset.cancel";
+        public const string TitleResetFailed = "title.reset.failed";
+        public const string RequestIntroHeading = "requestIntro.heading";
+        public const string RequestIntroConfirm = "requestIntro.confirm";
+        public const string BriefingHeading = "briefing.heading";
+        public const string BriefingBody = "briefing.body";
+        public const string BriefingConfirm = "briefing.confirm";
+
         // 메일 앱 (읽기 전용 기록)
         public const string MailTitle = "app.mail.title";
         public const string MailEmpty = "mail.empty";
@@ -470,6 +489,9 @@ namespace Intersection.Core
             EndingCounts, EndingComplete, EndingResultHeading, EndingDeletedResult, EndingDeletedUnavailable,
             EndingDeletedFinal, EndingPreservedResult, EndingLater, EndingAuditHeading, EndingAuditBody,
             EndingPreservedFinal,
+            TitleName, TitleSubtitle, TitleStart, TitleContinue, TitleNewGame, TitleResult, TitleQuit,
+            TitleResetHeading, TitleResetBody, TitleResetConfirm, TitleResetCancel, TitleResetFailed,
+            RequestIntroHeading, RequestIntroConfirm, BriefingHeading, BriefingBody, BriefingConfirm,
         };
 
         public static string SourceKey(Intersection.Data.RecordSource source)
