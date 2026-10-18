@@ -25,8 +25,12 @@ MonoBehaviour:
   integrityKey: integrity.original
   authorNote: "\uAC19\uC740 \uAC8C\uC2DC\uBB3C \uC0AD\uC81C \uD6C4 \uBE48 \uC8FC\uC18C \uD654\uBA74"
   path: Download/capture_1743.png
+  derivedFrom: {fileID: 0}
   mediaAssetId: 
   preview: {fileID: 2800000, guid: fc2685db70c27564a82f77d1149d59c8, type: 3}
+  localizedPreviews:
+  - language: en
+    texture: {fileID: 2800000, guid: bdba5ccffe6162b458bb096d290c6abd, type: 3}
   visibleText:
   - id: b1550a4261254892a3d9ce765a6f5010
     kind: 0

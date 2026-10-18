@@ -311,6 +311,8 @@ namespace Intersection.Core
         public const string BriefingHeading = "briefing.heading";
         public const string BriefingBody = "briefing.body";
         public const string BriefingConfirm = "briefing.confirm";
+        /// <summary>그 언어 자신의 이름(타이틀 언어 선택). 각 언어 테이블에 자기 언어 표기로 둔다.</summary>
+        public const string LanguageName = "language.name";
 
         // 메일 앱 (읽기 전용 기록)
         public const string MailTitle = "app.mail.title";
@@ -491,7 +493,7 @@ namespace Intersection.Core
             EndingPreservedFinal,
             TitleName, TitleSubtitle, TitleStart, TitleContinue, TitleNewGame, TitleResult, TitleQuit,
             TitleResetHeading, TitleResetBody, TitleResetConfirm, TitleResetCancel, TitleResetFailed,
-            RequestIntroHeading, RequestIntroConfirm, BriefingHeading, BriefingBody, BriefingConfirm,
+            RequestIntroHeading, RequestIntroConfirm, BriefingHeading, BriefingBody, BriefingConfirm, LanguageName,
         };
 
         public static string SourceKey(Intersection.Data.RecordSource source)

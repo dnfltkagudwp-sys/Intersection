@@ -61,6 +61,60 @@ namespace Intersection.EditorTools
 
                 if (c.temporary)
                     info($"임시 제작 자산(정식 미완료): {Path(c.record)} — {(string.IsNullOrWhiteSpace(c.temporaryNote) ? "사유 없음" : c.temporaryNote.Trim())}", c);
+
+                CheckLocalizedCapture(c, where, error, warn);
+            }
+        }
+
+        /// <summary>
+        /// 원문 언어 외 언어(콘텐츠 번역 테이블마다)의 캡처: 그 언어의 파일 표시 문구가 캡처 덩어리에 줄 단위로 맞게 나뉘는지(계정명 유지),
+        /// 나눈 결과가 표시 문구와 같은지, 렌더링 결과가 그 언어 폴더에 있고 파일의 언어별 미리보기로 연결돼 있는지.
+        /// </summary>
+        static void CheckLocalizedCapture(CaptureScreenData c, string where,
+            System.Action<string, Object> error, System.Action<string, Object> warn)
+        {
+            var config = CaptureRenderer.Config();
+            if (config == null || config.contentTables == null)
+                return;
+            foreach (var table in config.contentTables.Where(t => t != null && !string.IsNullOrEmpty(t.language)))
+            {
+                string lang = table.language;
+                // Do not silently produce a source-language image from fallback text.
+                foreach (var field in c.record.ContentFields().Where(f => f.field.StartsWith(ContentText.Field.VisibleText + ":")))
+                    if (!table.TryGet(field.Key, out var translated) || string.IsNullOrEmpty(translated))
+                        error($"[{lang}] 캡처 전사본 번역이 없습니다: {field.Key} — {where}", c);
+                if (c.localizedOutputs != null && c.localizedOutputs.Count(o => o != null && o.language == lang) > 1)
+                    error($"[{lang}] 언어별 캡처 출력이 중복됩니다: {where}", c);
+                if (c.record.localizedPreviews != null && c.record.localizedPreviews.Count(p => p != null && p.language == lang) > 1)
+                    error($"[{lang}] 언어별 파일 미리보기가 중복됩니다: {Path(c.record)}", c.record);
+                var lines = CaptureRenderer.LocalizedLines(c, table);
+                foreach (var line in lines.Where(TextTokens.HasTokens))
+                    error($"[{lang}] 캡처 글자에는 토큰을 쓸 수 없습니다: '{line}' — {where}", c);
+                var blocks = c.LocalizedBlocks(lines, out var mapError);
+                if (blocks == null)
+                {
+                    error($"[{lang}] 파일 표시 문구를 캡처 덩어리에 나눌 수 없습니다({mapError}): {where}", c);
+                    continue;
+                }
+                var shown = blocks.SelectMany(b => b.Lines(c.style)).ToList();
+                if (!shown.SequenceEqual(lines))
+                    error($"[{lang}] 캡처에 보이는 글자와 파일 표시 문구가 다릅니다: {where}", c);
+
+                var output = c.OutputFor(lang);
+                if (output == null || output.output == null)
+                {
+                    warn($"[{lang}] 언어별 캡처를 아직 렌더링하지 않았습니다. Intersection/Content/Render Localized Captures를 실행하세요: {where}", c);
+                    continue;
+                }
+                var linked = c.record.localizedPreviews?.FirstOrDefault(p => p != null && p.language == lang)?.texture;
+                if (linked != output.output)
+                    warn($"[{lang}] 파일의 언어별 미리보기가 캡처 결과와 다릅니다. Render Localized Captures를 실행하세요: {Path(c.record)}", c.record);
+                if (output.renderedHash != CaptureRenderer.Hash(c, blocks, CaptureRenderer.Clock(c, config.StringsFor(lang))))
+                    warn($"[{lang}] 캡처 원본 또는 번역이 마지막 렌더링 뒤에 바뀌었습니다. Render Localized Captures를 실행하세요: {where}", c);
+                if (Path(output.output) != CaptureRenderer.OutputPath(c, lang))
+                    warn($"[{lang}] 언어별 캡처 결과 파일 위치가 맞지 않습니다: {Path(output.output)}", c);
+                if (output.output == c.output)
+                    error($"[{lang}] 언어별 캡처가 원문 캡처와 같은 이미지입니다: {where}", c);
             }
         }
     }

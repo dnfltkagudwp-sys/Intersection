@@ -110,7 +110,8 @@ namespace Intersection.UI
                 wrapFields = true,
                 hero = document != null ? null : new PhoneDetailView.Hero
                 {
-                    texture = f.preview,
+                    // 글자가 든 캡처는 현재 언어의 이미지(없으면 원문 이미지)를 쓴다. 확대 열람도 같은 이미지다.
+                    texture = f.Preview,
                     glyph = IsImageFile(f.FileName) ? Theme.photoGlyph : Theme.documentGlyph,
                     message = text.Get(UIKeys.FilesPreviewUnavailable),
                 },

@@ -28,6 +28,9 @@ MonoBehaviour:
   derivedFrom: {fileID: 11400000, guid: 7b47dbf1807aa334794f7cb5ca00dbee, type: 2}
   mediaAssetId: 
   preview: {fileID: 2800000, guid: 35fb5d1beed45ac4ebf26e13f9ac26f0, type: 3}
+  localizedPreviews:
+  - language: en
+    texture: {fileID: 2800000, guid: 5ea6a5fc2aa01b94fb881f18f13781f9, type: 3}
   visibleText:
   - id: ac9238572c0248748e7178864852a397
     kind: 0

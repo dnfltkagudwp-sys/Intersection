@@ -25,8 +25,12 @@ MonoBehaviour:
   integrityKey: integrity.original
   authorNote: "@daylog_041 \uC0AD\uC81C \uC548\uB0B4"
   path: Screenshots/shot_1771.png
+  derivedFrom: {fileID: 0}
   mediaAssetId: 
   preview: {fileID: 2800000, guid: 5029519308872ad44bbefac92f5ba16f, type: 3}
+  localizedPreviews:
+  - language: en
+    texture: {fileID: 2800000, guid: affd8b387dc258e43b1061f752769860, type: 3}
   visibleText:
   - id: de5468e0e24447e899a72997df6b0938
     kind: 0

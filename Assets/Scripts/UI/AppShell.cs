@@ -36,6 +36,8 @@ namespace Intersection.UI
 
         void Awake()
         {
+            // 플레이어가 타이틀에서 고른 언어(진행 저장과 별개로 보관)를 먼저 적용한다. 없으면 GameConfig 기본 언어.
+            config.UseLanguage(SavedLanguage());
             // 콘텐츠 원문 언어면 번역 테이블 없이 에셋 원문 그대로 보인다.
             ContentText.Use(config.ActiveContentTable);
             config.ApplyPathTokens();
@@ -65,7 +67,11 @@ namespace Intersection.UI
         }
 
         // 도메인 리로드를 끈 에디터에서는 정적 값이 플레이 뒤에도 남는다. 에디터 도구(검증·캡처 렌더러)가 원문을 쓰도록 되돌린다.
-        void OnDestroy() => ContentText.Use(null);
+        void OnDestroy()
+        {
+            ContentText.Use(null);
+            config.UseLanguage(null);
+        }
 
         void Start()
         {

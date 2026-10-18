@@ -161,6 +161,14 @@ namespace Intersection.UI
     /// </summary>
     public class TitleScreenView : MonoBehaviour
     {
+        /// <summary>타이틀 아래 작은 언어 선택 항목. 이름은 그 언어 자신의 표기(각 언어 문자열 테이블).</summary>
+        public struct LanguageOption
+        {
+            public string label;
+            public bool selected;
+            public Action onClick;
+        }
+
         public struct MenuItem
         {
             public string label;
@@ -178,6 +186,7 @@ namespace Intersection.UI
         TitleScreenContent content;
         CanvasGroup titleGroup;
         CanvasGroup menuGroup;
+        CanvasGroup languageGroup;
         CanvasGroup confirmGroup;
         TMP_Text confirmBody;
         Button confirmCancel;
@@ -189,7 +198,8 @@ namespace Intersection.UI
 
         public bool ConfirmOpen => confirmGroup != null && confirmGroup.gameObject.activeSelf;
 
-        public static TitleScreenView Create(Canvas canvas, UITheme theme, TitleScreenContent content, IReadOnlyList<MenuItem> menu)
+        public static TitleScreenView Create(Canvas canvas, UITheme theme, TitleScreenContent content, IReadOnlyList<MenuItem> menu,
+            IReadOnlyList<LanguageOption> languages = null)
         {
             var root = FullScreenParts.Root(canvas, theme, "TitleScreen");
             var view = root.AddComponent<TitleScreenView>();
@@ -197,6 +207,7 @@ namespace Intersection.UI
             view.content = content;
             view.shownAt = Time.unscaledTime;
             view.Build(root.transform, menu);
+            view.BuildLanguages(root.transform, languages);
             view.Tick();
             return view;
         }
@@ -223,6 +234,53 @@ namespace Intersection.UI
             }
 
             BuildConfirm(root);
+        }
+
+        /// <summary>메뉴 아래 작은 `한국어 / English`. 고른 언어는 본문 색, 나머지는 보조 색. 메뉴와 함께 나타난다.</summary>
+        void BuildLanguages(Transform root, IReadOnlyList<LanguageOption> languages)
+        {
+            if (languages == null || languages.Count < 2)
+                return;
+            languageGroup = FullScreenParts.Group(root, "Languages", new Vector2(0.3f, 0.025f), new Vector2(0.7f, 0.075f));
+            var row = languageGroup.gameObject.AddComponent<HorizontalLayoutGroup>();
+            row.childAlignment = TextAnchor.MiddleCenter;
+            row.spacing = 10f;
+            row.childControlWidth = true;
+            row.childControlHeight = true;
+            row.childForceExpandWidth = false;
+            row.childForceExpandHeight = true;
+            for (int i = 0; i < languages.Count; i++)
+            {
+                var option = languages[i];
+                if (i > 0)
+                {
+                    var slash = new GameObject("Separator", typeof(RectTransform));
+                    slash.transform.SetParent(languageGroup.transform, false);
+                    FullScreenParts.Label(slash, "/", theme.regularFont, 14f, theme.border, TMPro.TextAlignmentOptions.Center);
+                }
+                var go = new GameObject("Language", typeof(RectTransform), typeof(Image), typeof(Button));
+                go.transform.SetParent(languageGroup.transform, false);
+                var hit = go.GetComponent<Image>();
+                hit.color = new Color(0f, 0f, 0f, 0f);
+                var button = go.GetComponent<Button>();
+                var colors = button.colors;
+                colors.highlightedColor = new Color(1f, 1f, 1f, 0.06f);
+                colors.selectedColor = new Color(1f, 1f, 1f, 0.06f);
+                button.colors = colors;
+                button.onClick.AddListener(() =>
+                {
+                    if (!ConfirmOpen)
+                        option.onClick?.Invoke();
+                });
+                var label = FullScreenParts.Label(new GameObject("Label", typeof(RectTransform)), option.label,
+                    option.selected ? theme.mediumFont : theme.regularFont, 14f, option.selected ? theme.text : theme.subText,
+                    TMPro.TextAlignmentOptions.Center);
+                label.transform.SetParent(go.transform, false);
+                FullScreenParts.Stretch((RectTransform)label.transform);
+                label.margin = new Vector4(8f, 0f, 8f, 0f);
+                var fit = go.AddComponent<LayoutElement>();
+                fit.preferredWidth = label.GetPreferredValues(option.label).x + 16f;
+            }
         }
 
         void BuildConfirm(Transform root)
@@ -302,6 +360,8 @@ namespace Intersection.UI
             menuGroup.blocksRaycasts = on;
             if (!on)
                 menuGroup.alpha = 0f;
+            if (languageGroup != null && !on)
+                FullScreenParts.Show(languageGroup, 0f);
         }
 
         public void Tick()
@@ -311,6 +371,8 @@ namespace Intersection.UI
             if (ConfirmOpen)
                 return;
             FullScreenParts.Show(menuGroup, FullScreenParts.FadeIn(t, MenuDelay, MenuFade));
+            if (languageGroup != null)
+                FullScreenParts.Show(languageGroup, menuGroup.alpha);
             // 메뉴가 다 나타난 뒤 첫 항목을 선택해 Enter·방향키로도 고를 수 있게 한다.
             if (!menuSelected && menuGroup.interactable)
             {
@@ -325,6 +387,10 @@ namespace Intersection.UI
             foreach (var b in menuButtons)
                 yield return b.GetComponentInChildren<TMP_Text>().text;
         }
+
+        /// <summary>검수용: 언어 선택 버튼(표시 순서).</summary>
+        public IEnumerable<Button> LanguageButtons() =>
+            languageGroup == null ? Array.Empty<Button>() : (IEnumerable<Button>)languageGroup.GetComponentsInChildren<Button>(true);
 
         /// <summary>검수용: 연출을 끝낸 상태로 맞춘다.</summary>
         public void SkipFade() => shownAt = Time.unscaledTime - (MenuDelay + MenuFade + 1f);

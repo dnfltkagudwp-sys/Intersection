@@ -220,6 +220,154 @@ namespace Intersection.Data
             lines[0] = account + " " + lines[0];
             return lines;
         }
+
+        /// <summary>글자를 바꿔 넣을 사본. 사진 목록은 같은 원본을 가리킨다(바꾸지 않음).</summary>
+        public CaptureBlock Clone() => new CaptureBlock
+        {
+            kind = kind, barStyle = barStyle, reactions = reactions, title = title, account = account, meta = meta, text = text,
+            textStyle = textStyle, items = new List<string>(items), images = images, aspect = aspect,
+            visibleFrom = visibleFrom, visibleTo = visibleTo, badge = badge, multiIcon = multiIcon, height = height, cutBelow = cutBelow,
+        };
+
+        /// <summary>
+        /// Lines()와 같은 순서로 줄을 받아 글자 칸을 바꾼다(다른 언어 캡처용). 계정명은 그대로 두고, 계정명이 붙는 줄은 그 계정명으로 시작해야 한다.
+        /// </summary>
+        public bool Assign(Queue<string> q, CaptureStyleData style, out string error)
+        {
+            string err = null;
+            string Next()
+            {
+                if (q.Count > 0)
+                    return q.Dequeue();
+                err ??= $"{kind} 덩어리에 넣을 줄이 모자랍니다";
+                return null;
+            }
+            string ReplaceText(string original)
+            {
+                // 작성자가 나눈 빈 줄·문단 구조는 두고 글자 줄만 차례로 바꾼다.
+                if (string.IsNullOrEmpty(original))
+                    return original;
+                var src = original.Replace("\r", string.Empty).Split('\n');
+                for (int i = 0; i < src.Length; i++)
+                    if (src[i].Trim().Length > 0)
+                        src[i] = Next() ?? src[i];
+                return string.Join("\n", src);
+            }
+            string StripAccount(string line, string separator)
+            {
+                if (line == null)
+                    return null;
+                string prefix = account + separator;
+                if (line.StartsWith(prefix, StringComparison.Ordinal))
+                    return line.Substring(prefix.Length);
+                err ??= $"{kind} 줄이 계정명 '{account}'으로 시작해야 합니다: '{line}'";
+                return null;
+            }
+            void ReplaceJoined()
+            {
+                var count = Split(text).Count();
+                if (string.IsNullOrEmpty(account))
+                {
+                    text = ReplaceText(text);
+                    return;
+                }
+                if (count == 0)
+                {
+                    string only = Next();
+                    if (only != null && only != account)
+                        err ??= $"{kind} 줄은 계정명 '{account}'이어야 합니다: '{only}'";
+                    return;
+                }
+                string first = StripAccount(Next(), " ");
+                var rest = new List<string> { first };
+                for (int i = 1; i < count; i++)
+                    rest.Add(Next());
+                if (err == null)
+                    text = string.Join("\n", rest);
+            }
+            void ReplaceItems()
+            {
+                for (int i = 0; i < items.Count; i++)
+                    if (!string.IsNullOrEmpty(items[i]))
+                        items[i] = Next() ?? items[i];
+            }
+
+            switch (kind)
+            {
+                case CaptureBlockKind.TopBar:
+                    if (!string.IsNullOrEmpty(title))
+                        title = Next();
+                    else if (!string.IsNullOrEmpty(account))
+                    {
+                        if (string.IsNullOrEmpty(meta))
+                        {
+                            string only = Next();
+                            if (only != null && only != account)
+                                err ??= $"TopBar 줄은 계정명 '{account}'이어야 합니다: '{only}'";
+                        }
+                        else
+                            meta = StripAccount(Next(), style.metaSeparator) ?? meta;
+                    }
+                    break;
+                case CaptureBlockKind.Profile:
+                case CaptureBlockKind.Buttons:
+                case CaptureBlockKind.Tabs:
+                    ReplaceItems();
+                    break;
+                case CaptureBlockKind.Text:
+                case CaptureBlockKind.SearchBar:
+                case CaptureBlockKind.AddressBar:
+                    text = ReplaceText(text);
+                    break;
+                case CaptureBlockKind.Grid:
+                    if (images.Count == 0)
+                        text = ReplaceText(text);
+                    break;
+                case CaptureBlockKind.Image:
+                    if (!string.IsNullOrEmpty(badge))
+                        badge = Next();
+                    break;
+                case CaptureBlockKind.Caption:
+                    ReplaceJoined();
+                    break;
+                case CaptureBlockKind.Comment:
+                    ReplaceJoined();
+                    if (!string.IsNullOrEmpty(meta))
+                        meta = Next();
+                    break;
+                case CaptureBlockKind.Notice:
+                    if (!string.IsNullOrEmpty(title))
+                        title = Next();
+                    text = ReplaceText(text);
+                    ReplaceItems();
+                    break;
+                case CaptureBlockKind.ListItem:
+                    if (!string.IsNullOrEmpty(title))
+                        title = Next();
+                    text = ReplaceText(text);
+                    break;
+                case CaptureBlockKind.PostCard:
+                    if (!string.IsNullOrEmpty(title))
+                        title = Next();
+                    ReplaceJoined();
+                    if (!string.IsNullOrEmpty(meta))
+                        meta = Next();
+                    break;
+                case CaptureBlockKind.PhotoViewer:
+                    if (!string.IsNullOrEmpty(account))
+                    {
+                        string only = Next();
+                        if (only != null && only != account)
+                            err ??= $"PhotoViewer 첫 줄은 계정명 '{account}'이어야 합니다: '{only}'";
+                    }
+                    if (!string.IsNullOrEmpty(title))
+                        title = Next();
+                    text = ReplaceText(text);
+                    break;
+            }
+            error = err;
+            return err == null;
+        }
     }
 
     /// <summary>
@@ -249,8 +397,56 @@ namespace Intersection.Data
         [Tooltip("마지막 렌더링 때의 원본 해시. 원본이 바뀌면 검증 도구가 다시 렌더링하라고 경고한다.")]
         public string renderedHash;
 
+        [Tooltip("원문 언어 외 언어별 렌더링 결과(자동). 글자는 그 언어의 파일 표시 문구(visibleText 번역)에서 가져온다.")]
+        public List<LocalizedCaptureOutput> localizedOutputs = new List<LocalizedCaptureOutput>();
+
         /// <summary>캡처에서 읽히는 글자 전체 (상태바 시각·배터리 제외).</summary>
         public IEnumerable<string> Lines() =>
             style == null ? Enumerable.Empty<string>() : blocks.Where(b => b != null).SelectMany(b => b.Lines(style));
+
+        public LocalizedCaptureOutput OutputFor(string language) =>
+            localizedOutputs?.FirstOrDefault(o => o != null && o.language == language);
+
+        /// <summary>
+        /// 다른 언어의 화면 글자(파일 표시 문구 한 줄씩, Lines()와 같은 순서·같은 줄 수)를 덩어리에 다시 나눠 넣은 사본.
+        /// 사진·모양·수치 배치는 그대로이고 글자만 바뀐다. 계정명은 바꾸지 않으므로 계정명이 붙는 줄은 같은 계정명으로 시작해야 한다.
+        /// 맞지 않으면 null과 이유를 돌려준다(검증 도구가 오류로 알린다).
+        /// </summary>
+        public List<CaptureBlock> LocalizedBlocks(IReadOnlyList<string> lines, out string error)
+        {
+            error = null;
+            if (style == null)
+            {
+                error = "스타일이 비어 있습니다";
+                return null;
+            }
+            var queue = new Queue<string>(lines ?? new List<string>());
+            var result = new List<CaptureBlock>();
+            foreach (var b in blocks)
+            {
+                if (b == null)
+                    continue;
+                var copy = b.Clone();
+                if (!copy.Assign(queue, style, out error))
+                    return null;
+                result.Add(copy);
+            }
+            if (queue.Count > 0)
+            {
+                error = $"글자 줄이 {queue.Count}줄 남습니다(첫 줄: '{queue.Peek()}')";
+                return null;
+            }
+            return result;
+        }
+    }
+
+    /// <summary>원문 언어 외 언어 하나의 캡처 렌더링 결과.</summary>
+    [Serializable]
+    public class LocalizedCaptureOutput
+    {
+        public string language;
+        public Texture2D output;
+        [Tooltip("마지막 렌더링 때의 원본 해시(그 언어의 글자 포함)")]
+        public string renderedHash;
     }
 }

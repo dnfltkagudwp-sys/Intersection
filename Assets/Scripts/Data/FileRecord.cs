@@ -71,6 +71,14 @@ namespace Intersection.Data
         }
     }
 
+    /// <summary>원문 언어 외 언어 하나의 파일 미리보기.</summary>
+    [Serializable]
+    public class LocalizedPreview
+    {
+        public string language;
+        public Texture2D texture;
+    }
+
     /// <summary>
     /// 파일 앱의 파일 한 개. 폴더 구조는 path에서 계산한다 (예: "Download/compare.xlsx").
     /// time은 수정 시각이다.
@@ -89,6 +97,32 @@ namespace Intersection.Data
 
         [Tooltip("미리보기 이미지. 비어 있으면 visibleText를 문서로 그리고, 그것도 비어 있으면 중립 자리 표시로 보인다.")]
         public Texture2D preview;
+
+        [Tooltip("원문 언어 외 언어의 미리보기(글자가 든 캡처 등). 지금 언어의 값이 있으면 preview 대신 쓴다. 캡처 렌더러가 연결한다.")]
+        public List<LocalizedPreview> localizedPreviews = new List<LocalizedPreview>();
+
+        /// <summary>화면에 보일 미리보기 이미지 (현재 언어). 그 언어의 이미지가 없으면 원문 미리보기.</summary>
+        public Texture2D Preview
+        {
+            get
+            {
+                var table = ContentText.Current;
+                if (table != null && localizedPreviews != null)
+                    foreach (var p in localizedPreviews)
+                        if (p != null && p.texture != null && p.language == table.language)
+                            return p.texture;
+                return preview;
+            }
+        }
+
+        /// <summary>언어별 미리보기를 연결한다(렌더러 전용). texture가 null이면 그 언어 항목을 지운다.</summary>
+        public void SetLocalizedPreview(string language, Texture2D texture)
+        {
+            localizedPreviews ??= new List<LocalizedPreview>();
+            localizedPreviews.RemoveAll(p => p == null || p.language == language);
+            if (texture != null)
+                localizedPreviews.Add(new LocalizedPreview { language = language, texture = texture });
+        }
 
         [Tooltip("플레이어가 이 파일 미리보기에서 실제로 읽을 수 있는 문구만 넣는다.\n" +
                  "· preview 이미지가 없으면 이 블록이 그대로 미리보기로 그려진다.\n" +

@@ -134,3 +134,7 @@ MonoBehaviour:
   temporaryNote: 
   output: {fileID: 2800000, guid: 070eb8a2207578f49a3ad97dc12722fc, type: 3}
   renderedHash: eff93594185e50269cce46b6f9f326d7
+  localizedOutputs:
+  - language: en
+    output: {fileID: 2800000, guid: 6c91b22022945b34caf0ebd822f0338b, type: 3}
+    renderedHash: 77ac93134cc439881ff312b779463857

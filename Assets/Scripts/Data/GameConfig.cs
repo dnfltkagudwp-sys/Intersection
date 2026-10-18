@@ -34,8 +34,43 @@ namespace Intersection.Data
         [Tooltip("콘텐츠 원문(데이터 에셋)의 언어. 이 언어로 표시할 때는 번역 테이블을 쓰지 않는다.")]
         public string contentSourceLanguage = "ko";
 
-        [Tooltip("지금 표시할 언어. 같은 코드의 UI·콘텐츠 테이블과 문화권을 함께 쓰며, 콘텐츠 번역이 없는 값은 원문으로 보인다.")]
+        [Tooltip("기본 표시 언어. 같은 코드의 UI·콘텐츠 테이블과 문화권을 함께 쓰며, 콘텐츠 번역이 없는 값은 원문으로 보인다. 플레이어가 타이틀에서 고른 언어가 있으면 그것이 우선한다(이 값은 바꾸지 않음).")]
         public string contentLanguage = "ko";
+
+        /// <summary>플레이어가 고른 언어(실행 중에만, 에셋에 저장하지 않음). 비어 있으면 contentLanguage.</summary>
+        [System.NonSerialized] string languageOverride;
+
+        /// <summary>지금 표시 언어 코드.</summary>
+        public string ActiveLanguage => string.IsNullOrEmpty(languageOverride) ? contentLanguage : languageOverride;
+
+        /// <summary>플레이어가 고른 언어를 적용한다. 고를 수 없는 언어면 무시하고 기본 언어로 둔다. null이면 기본 언어.</summary>
+        public void UseLanguage(string language) =>
+            languageOverride = !string.IsNullOrEmpty(language) && AvailableLanguages.Contains(language) ? language : null;
+
+        /// <summary>고를 수 있는 언어: 원문 언어 + UI 문자열 테이블이 있는 언어.</summary>
+        public System.Collections.Generic.List<string> AvailableLanguages
+        {
+            get
+            {
+                var list = new System.Collections.Generic.List<string> { contentSourceLanguage };
+                if (localizedStrings != null)
+                    foreach (var t in localizedStrings)
+                        if (t != null && !string.IsNullOrEmpty(t.language) && !list.Contains(t.language))
+                            list.Add(t.language);
+                return list;
+            }
+        }
+
+        /// <summary>그 언어의 UI 문자열 테이블(원문 언어면 기본 strings).</summary>
+        public StringTable StringsFor(string language)
+        {
+            if (string.IsNullOrEmpty(language) || language == contentSourceLanguage || localizedStrings == null)
+                return strings;
+            foreach (var table in localizedStrings)
+                if (table != null && table.language == language)
+                    return table;
+            return strings;
+        }
 
         [Tooltip("언어별 콘텐츠 번역 테이블 (원문 언어는 넣지 않는다). UI 공통 문구는 strings가 담당한다.")]
         public System.Collections.Generic.List<ContentLocaleTable> contentTables = new System.Collections.Generic.List<ContentLocaleTable>();
@@ -48,11 +83,12 @@ namespace Intersection.Data
         {
             get
             {
-                if (string.IsNullOrEmpty(contentLanguage) || contentLanguage == contentSourceLanguage || contentTables == null)
+                string language = ActiveLanguage;
+                if (string.IsNullOrEmpty(language) || language == contentSourceLanguage || contentTables == null)
                     return null;
                 foreach (var t in contentTables)
                 {
-                    if (t != null && t.language == contentLanguage)
+                    if (t != null && t.language == language)
                         return t;
                 }
                 return null;
@@ -60,20 +96,7 @@ namespace Intersection.Data
         }
 
         /// <summary>현재 표시 언어의 UI 문자열 테이블. 번역 테이블이 없으면 기본(strings) 테이블로 대체한다.</summary>
-        public StringTable ActiveStrings
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(contentLanguage) || contentLanguage == contentSourceLanguage || localizedStrings == null)
-                    return strings;
-                foreach (var table in localizedStrings)
-                {
-                    if (table != null && table.language == contentLanguage)
-                        return table;
-                }
-                return strings;
-            }
-        }
+        public StringTable ActiveStrings => StringsFor(ActiveLanguage);
 
         [Header("진행")]
         public ProgressStage startStage = ProgressStage.P0;

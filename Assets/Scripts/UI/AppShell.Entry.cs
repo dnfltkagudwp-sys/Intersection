@@ -147,9 +147,35 @@ namespace Intersection.UI
                 resetCancel = text.Get(UIKeys.TitleResetCancel),
                 resetFailed = text.Get(UIKeys.TitleResetFailed),
             };
+            var languages = config.AvailableLanguages.Select(code => new TitleScreenView.LanguageOption
+            {
+                label = new UIText(config.StringsFor(code)).Get(UIKeys.LanguageName),
+                selected = code == config.ActiveLanguage,
+                onClick = () => ChangeLanguage(code),
+            }).ToList();
             PrepareEntryCover();
             entryScreen = EntryScreen.Title;
-            titleView = TitleScreenView.Create(canvas, Theme, content, menu);
+            titleView = TitleScreenView.Create(canvas, Theme, content, menu, languages);
+        }
+
+        // ───────────── 언어 ─────────────
+
+        /// <summary>플레이어가 고른 표시 언어 저장 키. 진행·업무 저장과 별개라 새로 시작하기로 지워지지 않는다.</summary>
+        const string LanguagePrefKey = "Intersection.Language";
+
+        static string SavedLanguage() => PlayerPrefs.GetString(LanguagePrefKey, string.Empty);
+
+        /// <summary>
+        /// 타이틀에서 언어를 바꾼다: 설정만 저장하고 같은 씬을 다시 열어 UI·콘텐츠·캡처·검색을 그 언어로 다시 만든다.
+        /// 진행·업무 저장은 건드리지 않으며 다시 열린 화면도 타이틀이다(안내·요청 장면을 열지 않음).
+        /// </summary>
+        void ChangeLanguage(string language)
+        {
+            if (entryScreen != EntryScreen.Title || !EntryInputReady() || language == config.ActiveLanguage)
+                return;
+            PlayerPrefs.SetString(LanguagePrefKey, language);
+            PlayerPrefs.Save();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
         void CloseTitle()

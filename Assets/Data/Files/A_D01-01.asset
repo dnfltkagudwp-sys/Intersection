@@ -25,8 +25,12 @@ MonoBehaviour:
   integrityKey: integrity.original
   authorNote: "parentId A06. D \uACF5\uAC1C \uD504\uB85C\uD544"
   path: Screenshots/shot_1760.png
+  derivedFrom: {fileID: 0}
   mediaAssetId: d-public-01
   preview: {fileID: 2800000, guid: 9384fe62857ab504aafdb0dab81f503a, type: 3}
+  localizedPreviews:
+  - language: en
+    texture: {fileID: 2800000, guid: f777a8a0df4422042b6383088a41e757, type: 3}
   visibleText:
   - id: 56c0a90eca824edcb8784efa8de80385
     kind: 0

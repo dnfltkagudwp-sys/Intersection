@@ -39,6 +39,63 @@ namespace Intersection.EditorTools
             Debug.Log($"[Capture] 캡처 {n}건을 렌더링했습니다.");
         }
 
+        /// <summary>
+        /// 원문 언어 외 언어(콘텐츠 번역 테이블마다)의 캡처를 같은 템플릿으로 만든다. 글자는 그 언어의 파일 표시 문구(visibleText 번역)에서 가져오고,
+        /// 원문 PNG·원문 미리보기는 건드리지 않는다. 결과는 Assets/Art/Captures/{언어}/에 저장하고 파일 기록의 언어별 미리보기로 연결한다.
+        /// </summary>
+        [MenuItem("Intersection/Content/Render Localized Captures")]
+        static void RenderLocalizedMenu()
+        {
+            int n = RenderAllLocalized(out var errors);
+            foreach (var e in errors)
+                Debug.LogError("[Capture] " + e);
+            Debug.Log($"[Capture] 언어별 캡처 {n}건을 렌더링했습니다.");
+        }
+
+        public static int RenderAllLocalized(out List<string> errors)
+        {
+            errors = new List<string>();
+            var config = Config();
+            int count = 0;
+            if (config == null)
+            {
+                errors.Add("GameConfig를 찾지 못했습니다.");
+                return 0;
+            }
+            foreach (var table in config.contentTables.Where(t => t != null && !string.IsNullOrEmpty(t.language)))
+                foreach (var spec in FindAll())
+                {
+                    if (RenderLocalized(spec, table, config.StringsFor(table.language), out var error))
+                        count++;
+                    else
+                        errors.Add($"{AssetDatabase.GetAssetPath(spec)} ({table.language}): {error}");
+                }
+            AssetDatabase.SaveAssets();
+            return count;
+        }
+
+        public static GameConfig Config() =>
+            AssetDatabase.FindAssets("t:" + nameof(GameConfig))
+                .Select(g => AssetDatabase.LoadAssetAtPath<GameConfig>(AssetDatabase.GUIDToAssetPath(g))).FirstOrDefault(c => c != null);
+
+        /// <summary>그 언어의 파일 표시 문구 한 줄씩(캡처 글자의 원본). 캡처에는 토큰이 없으므로 날짜 변환은 쓰지 않는다.</summary>
+        public static List<string> LocalizedLines(CaptureScreenData spec, ContentLocaleTable table)
+        {
+            var previous = ContentText.Current;
+            ContentText.Use(table);
+            try
+            {
+                return spec.record.VisibleLines(_ => string.Empty).ToList();
+            }
+            finally
+            {
+                ContentText.Use(previous);
+            }
+        }
+
+        public static string OutputPath(CaptureScreenData spec, string language) =>
+            $"{OutputFolder}/{language}/{(spec.temporary ? TemporaryPrefix : string.Empty)}{spec.name}.png";
+
         public static List<CaptureScreenData> FindAll() =>
             AssetDatabase.FindAssets("t:" + nameof(CaptureScreenData), new[] { "Assets/Data" })
                 .Select(g => AssetDatabase.LoadAssetAtPath<CaptureScreenData>(AssetDatabase.GUIDToAssetPath(g)))
@@ -72,15 +129,18 @@ namespace Intersection.EditorTools
             public CaptureBottomBar bottom;
         }
 
-        public static string Hash(CaptureScreenData spec)
+        public static string Hash(CaptureScreenData spec) => Hash(spec, spec.blocks, Clock(spec));
+
+        /// <summary>그 언어의 캡처 원본 해시(글자를 바꿔 넣은 덩어리와 그 언어의 상태바 시각 포함).</summary>
+        public static string Hash(CaptureScreenData spec, List<CaptureBlock> blocks, string clock)
         {
             var src = new HashSource
             {
                 version = TemplateVersion,
-                blocks = spec.blocks,
+                blocks = blocks,
                 temporary = spec.temporary,
                 style = spec.style != null ? EditorJsonUtility.ToJson(spec.style) : string.Empty,
-                clock = Clock(spec),
+                clock = clock,
                 bottom = spec.bottom,
             };
             using (var md5 = MD5.Create())
@@ -90,17 +150,34 @@ namespace Intersection.EditorTools
             }
         }
 
-        /// <summary>상태바 시각: 파일 기록 시각을 게임 휴대전화 상태바와 같은 형식으로 (장식, 검색 대상 아님).</summary>
-        public static string Clock(CaptureScreenData spec)
+        /// <summary>
+        /// 상태바 시각: 파일 기록 시각을 게임 휴대전화 상태바와 같은 형식으로 (장식, 검색 대상 아님).
+        /// strings를 주지 않으면 원문 언어 형식(플레이어가 고른 실행 중 언어와 무관).
+        /// </summary>
+        public static string Clock(CaptureScreenData spec, StringTable strings = null)
         {
-            var config = AssetDatabase.FindAssets("t:" + nameof(GameConfig))
-                .Select(g => AssetDatabase.LoadAssetAtPath<GameConfig>(AssetDatabase.GUIDToAssetPath(g))).FirstOrDefault(c => c != null);
-            if (spec.record == null || spec.style == null || config == null || config.ActiveStrings == null)
+            var config = Config();
+            if (spec.record == null || spec.style == null || config == null)
                 return string.Empty;
-            var culture = config.Culture;
+            strings ??= config.StringsFor(config.contentSourceLanguage);
+            if (strings == null)
+                return string.Empty;
+            CultureInfo culture;
+            try
+            {
+                culture = CultureInfo.GetCultureInfo(!string.IsNullOrEmpty(strings.cultureName) ? strings.cultureName : config.cultureName);
+            }
+            catch (CultureNotFoundException)
+            {
+                culture = CultureInfo.InvariantCulture;
+            }
             var t = spec.record.time;
-            return new DateTime(2000, 1, 1, t.hour, t.minute, 0).ToString(new UIText(config.ActiveStrings).Get(spec.style.clockFormatKey), culture);
+            return new DateTime(2000, 1, 1, t.hour, t.minute, 0).ToString(new UIText(strings).Get(spec.style.clockFormatKey), culture);
         }
+
+        /// <summary>그 언어 캡처의 덩어리(글자 교체본)와 해시. 줄이 맞지 않으면 null.</summary>
+        public static List<CaptureBlock> LocalizedBlocks(CaptureScreenData spec, ContentLocaleTable table, out string error) =>
+            spec.LocalizedBlocks(LocalizedLines(spec, table), out error);
 
         // ───────────────────────── 렌더링
 
@@ -115,6 +192,36 @@ namespace Intersection.EditorTools
             spec.output = tex;
             spec.renderedHash = Hash(spec);
             spec.record.preview = tex;
+            EditorUtility.SetDirty(spec);
+            EditorUtility.SetDirty(spec.record);
+            return true;
+        }
+
+        /// <summary>
+        /// 그 언어의 캡처를 렌더링해 언어 폴더에 저장하고 파일 기록의 언어별 미리보기로 연결한다. 원문 PNG·원문 미리보기는 바꾸지 않는다.
+        /// </summary>
+        public static bool RenderLocalized(CaptureScreenData spec, ContentLocaleTable table, StringTable strings, out string error)
+        {
+            error = null;
+            if (!Valid(spec) || table == null)
+            {
+                error ??= "캡처 원본 또는 번역 테이블이 비어 있습니다";
+                return false;
+            }
+            var blocks = LocalizedBlocks(spec, table, out error);
+            if (blocks == null)
+                return false;
+            string clock = Clock(spec, strings);
+            string folder = $"{OutputFolder}/{table.language}";
+            if (!AssetDatabase.IsValidFolder(folder))
+                AssetDatabase.CreateFolder(OutputFolder, table.language);
+            string path = OutputPath(spec, table.language);
+            WriteAndImport(path, RenderPng(spec, blocks, clock), spec.style);
+            var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            spec.localizedOutputs ??= new List<LocalizedCaptureOutput>();
+            spec.localizedOutputs.RemoveAll(o => o == null || o.language == table.language);
+            spec.localizedOutputs.Add(new LocalizedCaptureOutput { language = table.language, output = tex, renderedHash = Hash(spec, blocks, clock) });
+            spec.record.SetLocalizedPreview(table.language, tex);
             EditorUtility.SetDirty(spec);
             EditorUtility.SetDirty(spec.record);
             return true;
@@ -172,7 +279,9 @@ namespace Intersection.EditorTools
             importer.SaveAndReimport();
         }
 
-        static byte[] RenderPng(CaptureScreenData spec)
+        static byte[] RenderPng(CaptureScreenData spec) => RenderPng(spec, spec.blocks, Clock(spec));
+
+        static byte[] RenderPng(CaptureScreenData spec, List<CaptureBlock> blocks, string clock)
         {
             var style = spec.style;
             var temps = new List<Object>();
@@ -202,7 +311,7 @@ namespace Intersection.EditorTools
                 canvas.planeDistance = 1f;
                 canvasGo.AddComponent<CanvasScaler>();
 
-                new Page(style, (RectTransform)canvasGo.transform, temps, spec.bottom).Build(spec.blocks, Clock(spec));
+                new Page(style, (RectTransform)canvasGo.transform, temps, spec.bottom).Build(blocks, clock);
 
                 Canvas.ForceUpdateCanvases();
                 foreach (var t in canvasGo.GetComponentsInChildren<TMP_Text>(true))
@@ -385,6 +494,10 @@ namespace Intersection.EditorTools
                     string rich = sp < 0
                         ? Esc(item)
                         : $"<color={Hex(s.muted)}>{Esc(item.Substring(0, sp))}</color> <b>{Esc(item.Substring(sp + 1))}</b>";
+                    // Number-first languages need two lines in these narrow columns.
+                    // Keep the source language's single baseline and the existing avatar/row size.
+                    if (sp > 0 && char.IsDigit(item[0]))
+                        rich = $"<b>{Esc(item.Substring(0, sp))}</b>\n<color={Hex(s.muted)}>{Esc(item.Substring(sp + 1))}</color>";
                     Label(c, rich, s.regularFont, s.labelSize, s.text, x0 + colW * i, top, colW, size, TextAlignmentOptions.Center, false);
                 }
                 return top + size + s.tightGap;
