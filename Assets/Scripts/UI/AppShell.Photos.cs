@@ -24,7 +24,7 @@ namespace Intersection.UI
                 return;
             }
 
-            var photos = PhotoQuery.AlbumPhotos(album, all);
+            var photos = GalleryOrder(album, all);
             int index = nav.openPhotoId != null ? photos.FindIndex(p => p.Id == nav.openPhotoId) : -1;
             if (index < 0)
             {
@@ -54,7 +54,7 @@ namespace Intersection.UI
             SaveScroll();
             nav.photoAlbumId = album.Id;
             nav.openPhotoId = null;
-            // 앨범을 새로 열면 실제 사진 앱처럼 최신 사진이 보이는 아래쪽에서 시작한다.
+            // 앨범을 새로 열면 최신 사진이 있는 맨 위에서 시작한다.
             nav.scroll.Remove(album.Id);
             RenderCenter();
         }
@@ -69,7 +69,7 @@ namespace Intersection.UI
             RenderCenter();
         }
 
-        /// <summary>한 장 보기에서 앞(-1)/뒤(+1) 사진으로 이동. 순서는 앨범의 촬영 시각순.</summary>
+        /// <summary>한 장 보기에서 앞(-1)/뒤(+1) 사진으로 이동. 순서는 그리드와 같은 최신순(뒤로 갈수록 오래된 사진).</summary>
         void StepPhoto(int delta)
         {
             var device = session.CurrentCase;
@@ -79,13 +79,21 @@ namespace Intersection.UI
             var album = PhotoQuery.Albums(config.database, device).FirstOrDefault(a => a.Id == nav.photoAlbumId);
             if (album == null)
                 return;
-            var photos = PhotoQuery.AlbumPhotos(album, PhotoQuery.DevicePhotos(config.database, device, session.Stage));
+            var photos = GalleryOrder(album, PhotoQuery.DevicePhotos(config.database, device, session.Stage));
             int index = photos.FindIndex(p => p.Id == nav.openPhotoId);
             int next = index + delta;
             if (index < 0 || next < 0 || next >= photos.Count)
                 return;
             nav.openPhotoId = photos[next].Id;
             RenderCenter();
+        }
+
+        /// <summary>사진 앱 화면의 표시 순서: 최신 사진이 위(앞). 다른 기능이 쓰는 촬영 시각순 목록(PhotoQuery)은 바꾸지 않는다.</summary>
+        static List<PhotoData> GalleryOrder(AlbumData album, List<PhotoData> devicePhotos)
+        {
+            var photos = PhotoQuery.AlbumPhotos(album, devicePhotos);
+            photos.Reverse();
+            return photos;
         }
 
         void BackPhotos(DeviceNavigation nav)

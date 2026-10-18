@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Intersection.UI
 {
-    /// <summary>앨범의 사진 그리드. 실제 사진 앱처럼 최신 사진이 보이는 아래쪽에서 열린다.</summary>
+    /// <summary>앨범의 사진 그리드. 받은 순서(최신순)대로 날짜별로 묶고, 최신 사진이 있는 맨 위에서 열린다.</summary>
     public class PhotoGridView : MonoBehaviour
     {
         [SerializeField] Button backButton;
@@ -62,7 +62,7 @@ namespace Intersection.UI
             emptyLabel.text = emptyText;
             Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate(content);
-            scroll.verticalNormalizedPosition = scrollPosition ?? 0f;
+            scroll.verticalNormalizedPosition = scrollPosition ?? 1f;
         }
 
         void EnsureGroupedLayout()
